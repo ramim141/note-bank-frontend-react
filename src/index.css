@@ -1,0 +1,138 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utilities */
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Safari and Chrome */
+  }
+  
+  /* Sidebar layout utilities */
+  .sidebar-open {
+    width: 20rem; /* 320px */
+  }
+  
+  .sidebar-closed {
+    width: 0;
+    overflow: hidden;
+  }
+  
+  /* Smooth transitions for sidebar */
+  .sidebar-transition {
+    transition: width 0.3s ease-in-out, transform 0.3s ease-in-out;
+  }
+  
+  /* Flexbox layout utilities */
+  .flex-sidebar {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+  
+  .flex-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .flex-content {
+    flex: 1;
+    overflow-y: auto;
+  }
+  
+  /* Sidebar visibility fixes */
+  .sidebar-mobile-open {
+    width: 20rem;
+    transform: translateX(0);
+  }
+  
+  .sidebar-mobile-closed {
+    width: 0;
+    transform: translateX(-100%);
+  }
+  
+  .sidebar-desktop-open {
+    width: 20rem;
+    transform: translateX(0);
+  }
+  
+  .sidebar-desktop-closed {
+    width: 0;
+    transform: translateX(0);
+    overflow: hidden;
+  }
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Sidebar specific styles */
+.sidebar-container {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Ensure main content takes full width when sidebar is closed */
+.main-content-full {
+  width: 100%;
+  margin-left: 0;
+}
+
+.main-content-with-sidebar {
+  margin-left: 0;
+  width: calc(100% - 20rem);
+}
+
+/* Fix for flexbox layout issues */
+.flex-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.flex-sidebar-item {
+  flex-shrink: 0;
+}
+
+.flex-main-item {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mobile sidebar fixes */
+@media (max-width: 1023px) {
+  .sidebar-mobile-closed {
+    width: 0 !important;
+    transform: translateX(-100%) !important;
+  }
+}
+
+/* Desktop sidebar fixes */
+@media (min-width: 1024px) {
+  .sidebar-desktop-closed {
+    width: 0 !important;
+    overflow: hidden !important;
+  }
+}
