@@ -25,8 +25,8 @@ const ProfileAvatar = ({ profilePictureUrl, initials, rating, className }) => {
         )}
       </div>
       {rating !== undefined && (
-        <div className="flex absolute -right-2 -bottom-2 items-center px-2 py-1 text-white bg-gradient-to-r from-green-400 to-teal-400 rounded-full shadow-lg">
-          <Star className="mr-1 w-4 h-4" />
+        <div className="absolute flex items-center px-2 py-1 text-white rounded-full shadow-lg -right-2 -bottom-2 bg-gradient-to-r from-green-400 to-teal-400">
+          <Star className="w-4 h-4 mr-1" />
           <span className="text-lg font-bold">{rating.toFixed(1)}</span>
         </div>
       )}

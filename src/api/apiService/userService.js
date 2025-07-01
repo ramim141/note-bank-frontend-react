@@ -164,7 +164,10 @@ export const registerUser = async (userData) => {
 export const getUserProfile = () => api.get('/api/users/profile/');
 export const updateUserProfile = (userData) => api.patch('/api/users/profile/', userData);
 
-// Removed getDepartments from here as it's in departmentService.js
+// --- Moved getDepartments here from departmentService.js ---
+export const getDepartments = async () => {
+  return api.get('/api/notes/departments/');
+};
 
 export const getCourses = async (departmentId = null) => {
   let url = '/api/notes/courses/';

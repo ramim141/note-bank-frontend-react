@@ -1,197 +1,456 @@
 // src/components/Profile/ProfilePage.jsx
-import React, { useState } from 'react';
-import { cn } from '../../utils/cn';
-import ProfileDetails from "../../components/Profile/ProfileDetails";
-import ProfileEditForm from "../../components/Profile/ProfileEditForm";
-import ProfileSection from "../../components/Profile/ProfileSection";
-import Button from "../../components/ui/Button";
-import { FaBookmark } from 'react-icons/fa';
 
-// Import icons for sections
-import { User, Mail, Phone, GraduationCap, Building, Book, Calendar, MapPin, Award, BookOpen } from 'lucide-react';
+"use client"
+import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from "react";
 
-// Assuming your apiService is available
-import { getUserProfile } from '/src/api/apiService/userService.js';
+// --- CORRECTED IMPORTS ---
+import { getUserProfile } from "/src/api/apiService/userService.js";
+// Assuming departments are not directly needed here in ProfilePage, but if they were, import them.
+// import { departmentService } from '/src/api/apiService/departmentService.js';
+import { AuthContext, useAuth } from '../../context/AuthContext'; // Adjust path if needed
+
+// --- IMPORT UI COMPONENTS ---
+import Spinner from '../../components/ui/Spinner';
+import Button from '../../components/ui/Button';
+// import Dropdown from '../../components/ui/Dropdown'; // Not used in this page
+import { Card } from '../../components/Profile/Card'; // Assuming Card is a named export
+// import { Badge } from '../../components/Profile/badge'; // Not used in this page
+import { User, Mail, Phone, GraduationCap, Building, Book, Calendar, Award, BookOpen, Bookmark } from "lucide-react"; // Using lucide-react
 
 const ProfilePage = () => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState(null); // To pass down to EditForm
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState(null);
+  const navigate = useNavigate();
+  // Get authentication state and functions from AuthContext
+  const { user: authUser, token, isAuthenticated, fetchUserProfile, loading: authLoading } = useAuth(); // Destructure auth loading state
 
-  React.useEffect(() => {
+  // State management for profile data, loading, error, and editing mode
+  const [profileData, setProfileData] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true); // Renamed to avoid confusion with AuthContext loading
+  const [error, setError] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [departments, setDepartments] = useState([]); // If needed for edit form, but currently not used in view mode
+
+  // Effect hook to fetch profile data
+  useEffect(() => {
+    // --- IMPORTANT ---
+    // Only proceed if auth state is not loading, and user is authenticated
+    if (authLoading) {
+      console.log("ProfilePage: Waiting for auth loading to finish.");
+      return; // Wait for AuthContext to initialize
+    }
+
+    if (!isAuthenticated || !token) {
+      // If not authenticated after auth context is ready
+      setError("Please log in to view your profile.");
+      setPageLoading(false); // Stop page loading
+      // Optionally navigate to login immediately:
+      // navigate('/login'); 
+      return;
+    }
+
+    // --- Fetch Profile Data ---
     const fetchProfile = async () => {
-      setLoading(true);
+      setPageLoading(true); // Start page loading
       setError(null);
       try {
-        const profile = await getUserProfile();
-        setProfileData(profile);
+        const response = await getUserProfile();
+        setProfileData(response.data);
       } catch (err) {
         console.error("Error fetching profile for page:", err);
         setError("Failed to load profile data.");
       } finally {
-        setLoading(false);
+        setPageLoading(false); // Stop page loading
       }
     };
 
     fetchProfile();
-  }, []);
 
+  }, [isAuthenticated, token, fetchUserProfile, navigate, authLoading]); // Dependencies for the effect
+
+  // Handler to switch to editing mode
   const handleEditClick = () => {
     setIsEditing(true);
   };
 
+  // Handler to close the editing form and return to view mode
   const handleCloseEdit = () => {
     setIsEditing(false);
-    // Optionally refetch profile data after editing
-    // fetchProfile();
+    // Optionally refetch profile data after closing edit form
+    // fetchUserProfile();
   };
 
-  // --- Function to render different sections ---
-  const renderContactInfo = () => (
-    <>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-green-400 to-teal-400 rounded-lg">
-        <Mail className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Email</span>
-          <span className="text-lg font-bold">{profileData?.email || 'Not set'}</span>
-        </div>
+  // Render loading state if page data is still loading OR auth state is loading
+  if (pageLoading || authLoading) { // Check both loading states
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
+        <div className="w-16 h-16 border-4 border-white rounded-full animate-spin border-t-transparent"></div>
       </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg">
-        <Phone className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Mobile</span>
-          <span className="text-lg font-bold">{profileData?.mobile_number || 'Not set'}</span>
-        </div>
-      </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-yellow-500 to-orange-500 rounded-lg">
-        <User className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Username</span>
-          <span className="text-lg font-bold">@{profileData?.username || 'Not set'}</span>
-        </div>
-      </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-pink-500 to-red-500 rounded-lg">
-        <User className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Name</span>
-          <span className="text-lg font-bold">{profileData?.first_name || ''} {profileData?.last_name || ''}</span>
-        </div>
-      </div>
-    </>
-  );
+    );
+  }
 
-  const renderEducationInfo = () => (
-    <>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-blue-400 to-cyan-500 rounded-lg">
-        <GraduationCap className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">University</span>
-          <span className="text-lg font-bold">{profileData?.university || 'Not set'}</span>
+  // Render error state if any occurred during data loading or auth
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
+        <div className="animate-bounce">
+          <p className="text-xl text-red-500">{error}</p>
+          {!isAuthenticated && ( // Show login button only if not authenticated
+             <Button onClick={() => navigate('/login')} className="mt-4">Go to Login</Button>
+          )}
         </div>
       </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-purple-400 to-pink-500 rounded-lg">
-        <Building className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Department</span>
-          <span className="text-lg font-bold">{profileData?.department_name || 'Not set'}</span>
-        </div>
-      </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-lg">
-        <Calendar className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Student ID</span>
-          <span className="text-lg font-bold">{profileData?.student_id || 'Not set'}</span>
-        </div>
-      </div>
-      <div className="flex items-center p-3 text-white bg-gradient-to-r from-green-500 to-lime-500 rounded-lg">
-        <User className="mr-3 w-6 h-6" />
-        <div className="flex flex-col">
-          <span className="text-sm font-medium">Batch(Section)</span>
-          <span className="text-lg font-bold">{profileData?.batch || ''}({profileData?.section || ''})</span>
-        </div>
-      </div>
-    </>
-  );
-
-  const renderAcademicActivity = () => (
-    <>
-      <ProfileSection title="Skills">
-        {profileData?.skills && profileData.skills.length > 0 ? (
-          profileData.skills.map((skill, index) => (
-            <div key={index} className="flex items-center p-3 text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
-              <Award className="mr-3 w-6 h-6" />
-              <span className="text-lg font-bold capitalize">{skill}</span>
-            </div>
-          ))
-        ) : (
-          <div className="p-3 italic text-white/80">No skills added yet.</div>
-        )}
-      </ProfileSection>
-
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="flex flex-col items-center p-4 space-y-2 text-center rounded-lg backdrop-blur-sm bg-white/20">
-          <BookOpen className="w-8 h-8 text-purple-400" />
-          <div className="text-3xl font-bold text-white">{profileData?.total_notes_uploaded ?? 0}</div>
-          <div className="text-sm font-medium text-purple-200">Notes Uploaded</div>
-        </div>
-        <div className="flex flex-col items-center p-4 space-y-2 text-center rounded-lg backdrop-blur-sm bg-white/20">
-          <FaBookmark className="w-8 h-8 text-purple-400" />
-          <div className="text-3xl font-bold text-white">{profileData?.total_bookmarked_notes_by_user ?? 0}</div>
-          <div className="text-sm font-medium text-purple-200">Bookmarks</div>
-        </div>
-        <div className="flex flex-col items-center p-4 space-y-2 text-center rounded-lg backdrop-blur-sm bg-white/20">
-          <Award className="w-8 h-8 text-purple-400" />
-          <div className="text-3xl font-bold text-white">{profileData?.total_notes_liked_by_others ?? 0}</div>
-          <div className="text-sm font-medium text-purple-200">Total Likes</div>
-        </div>
-        {/* Add other stats like Total Reviews, Avg Rating if available */}
-      </div>
-    </>
-  );
+    );
+  }
 
   // --- Main Page Layout ---
   return (
-    <div className="p-8 min-h-screen bg-gradient-to-br from-purple-900 to-blue-900">
-      <div className="mx-auto max-w-6xl">
-        {/* Header Section */}
-        <div className="p-6 mb-8 bg-gradient-to-br rounded-xl border backdrop-blur-xl from-purple-700/50 to-blue-700/50 border-purple-600/40">
-          <h2 className="mb-2 text-4xl font-extrabold text-white">Profile Dashboard</h2>
-          <p className="text-xl text-purple-200">Welcome back, <span className="font-bold text-purple-400">{profileData?.first_name || 'User'}!</span></p>
+    <div className="min-h-screen p-6 pt-32 bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300 animate-gradient-x">
+      <div className="mx-auto max-w-7xl">
+        {/* Header Section with Animation */}
+        <div className="mb-8 animate-fade-in-down">
+          <h1 className="mb-2 text-5xl font-bold text-purple-800 animate-pulse">Profile Dashboard</h1>
+          <div className="w-32 h-1 mb-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 animate-expand"></div>
+          <p className="text-2xl text-gray-700 delay-300 animate-fade-in-up">
+            Welcome back,{" "}
+            <span className="inline-block font-bold text-blue-600 animate-bounce">
+              {profileData?.first_name || authUser?.first_name || "User"}!
+            </span>
+          </p>
         </div>
 
-        {/* Content Area */}
+        {/* Content Area - Toggle between Profile View and Edit Form */}
         {!isEditing ? (
+          // Profile View Mode - Using a Grid Layout
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Left Sidebar - User Details */}
-            <div className="lg:col-span-1">
-              <ProfileDetails />
-              <div className="flex justify-center mt-8">
-                <Button onClick={handleEditClick} className="px-8 py-3 text-lg">
-                  Edit Profile
-                </Button>
-              </div>
+            <div className="space-y-6 lg:col-span-1 animate-slide-in-left">
+              {/* Profile Details Card */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl hover:bg-white/30 group">
+                <div className="relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 animate-pulse"></div>
+                  <div className="relative z-10 flex flex-col items-center p-6 text-center">
+                    <div className="relative mb-4 group">
+                      <div className="flex items-center justify-center w-32 h-32 transition-all duration-700 transform rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:scale-110 hover:rotate-12 animate-float">
+                        {profileData?.profile_picture_url ? (
+                          <img
+                            src={profileData.profile_picture_url || "/placeholder.svg"}
+                            alt="Profile"
+                            className="object-cover w-full h-full transition-all duration-500 rounded-full group-hover:brightness-110"
+                          />
+                        ) : (
+                          <span className="text-4xl font-bold text-white transition-all duration-500 group-hover:scale-125">
+                            {profileData?.first_name?.[0] || authUser?.first_name?.[0] || "R"}
+                            {profileData?.last_name?.[0] || authUser?.last_name?.[0] || "A"}
+                          </span>
+                        )}
+                      </div>
+                      {/* Rating Badge */}
+                      <div className="absolute flex items-center px-1 py-1 text-sm font-bold text-white transition-all duration-500 transform bg-green-500 rounded-full -bottom-2 -right-2 hover:scale-125 hover:bg-green-400 animate-bounce-slow">
+                        <span className="mx-auto animate-spin-slow">⭐</span>
+                        {(profileData?.total_notes_liked_by_others || 0).toFixed(1)}
+                      </div>
+                    </div>
+
+                    <h2 className="mb-1 text-2xl font-bold text-gray-800 transition-all duration-300 group-hover:text-purple-700">
+                      {profileData?.first_name} {profileData?.last_name}
+                    </h2>
+                    <p className="mb-4 text-gray-600 transition-all duration-300 group-hover:text-gray-700">
+                      @{profileData?.username}
+                    </p>
+
+                    {/* Stats */}
+                    <div className="flex gap-4">
+                      <div className="px-4 py-2 text-center transition-all duration-500 transform bg-blue-100 cursor-pointer rounded-xl hover:scale-110 hover:bg-blue-200 hover:shadow-lg">
+                        <div className="text-2xl font-bold text-blue-600 animate-count-up">
+                          {profileData?.total_notes_uploaded || 0}
+                        </div>
+                        <div className="text-sm text-blue-800">Notes</div>
+                      </div>
+                      <div className="px-4 py-2 text-center transition-all duration-500 transform bg-purple-100 cursor-pointer rounded-xl hover:scale-110 hover:bg-purple-200 hover:shadow-lg">
+                        <div className="text-2xl font-bold text-purple-600 animate-count-up">
+                          {profileData?.total_bookmarked_notes_by_user || 0}
+                        </div>
+                        <div className="text-sm text-purple-800">Bookmarks</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Edit Button */}
+                <div className="flex justify-center px-6 pb-6 mt-6">
+                  <Button
+                    onClick={handleEditClick}
+                    className="px-8 py-3 text-lg text-white transition-all duration-300 transform bg-purple-600 hover:bg-purple-700 rounded-xl hover:scale-105 hover:shadow-lg active:scale-95 group animate-pulse"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Edit Profile
+                  </Button>
+                </div>
+              </Card>
+
+              {/* Education Section */}
+              <Card className="transition-all duration-500 delay-200 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-left">
+                <div className="flex items-center mb-4 group">
+                  <GraduationCap className="w-6 h-6 mr-3 text-blue-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                  <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-blue-700">
+                    Education
+                  </h3>
+                </div>
+                <div className="space-y-3">
+                  {[
+                    {
+                      icon: GraduationCap,
+                      label: "University",
+                      value: profileData?.university || "Not set",
+                      color: "from-blue-500 to-blue-600",
+                    },
+                    {
+                      icon: Building,
+                      label: "Department",
+                      value: profileData?.department_name || "Not set",
+                      color: "from-purple-500 to-purple-600",
+                    },
+                    {
+                      icon: Calendar,
+                      label: "Student ID",
+                      value: profileData?.student_id || "Not set",
+                      color: "from-pink-500 to-pink-600",
+                    },
+                    {
+                      icon: User,
+                      label: "Batch(Section)",
+                      value: `${profileData?.batch || ""}(${profileData?.section || ""})`,
+                      color: "from-teal-500 to-teal-600",
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center p-3 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-right`}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <item.icon className="w-5 h-5 mr-3 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium opacity-90">{item.label}</span>
+                        <span className="text-lg font-bold">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Skills Section */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-400">
+                <div className="flex items-center mb-4 group">
+                  <Award className="w-6 h-6 mr-3 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                  <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-purple-700">
+                    Skills
+                  </h3>
+                </div>
+                <div className="text-gray-600">
+                  {profileData?.skills && profileData.skills.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {profileData.skills.map((skill, index) => (
+                        <span
+                          key={index}
+                          className="px-3 py-1 text-sm font-medium text-purple-800 transition-all duration-300 transform bg-purple-100 rounded-full hover:scale-110 hover:bg-purple-200 animate-fade-in"
+                          style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="animate-pulse">No skills added yet.</p>
+                  )}
+                </div>
+              </Card>
+
+              {/* Action Buttons */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-600">
+                <div className="space-y-3">
+                  <Button className="flex items-center justify-center w-full px-4 py-3 font-bold text-white transition-all duration-300 transform bg-purple-600 hover:bg-purple-700 rounded-xl hover:scale-105 hover:shadow-lg active:scale-95 group">
+                    <BookOpen className="w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-12" />
+                    My Notes
+                  </Button>
+                  <Button className="flex items-center justify-center w-full px-4 py-3 font-bold text-white transition-all duration-300 transform bg-purple-600 hover:bg-purple-700 rounded-xl hover:scale-105 hover:shadow-lg active:scale-95 group">
+                    <Bookmark className="w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-12" />
+                    My Bookmarks
+                  </Button>
+                </div>
+              </Card>
             </div>
 
             {/* Right Content - Information Sections */}
-            <div className="lg:col-span-2">
-              <ProfileSection title="Contact Information" icon={Mail}>
-                {renderContactInfo()}
-              </ProfileSection>
+            <div className="space-y-6 lg:col-span-2 animate-slide-in-right">
+              {/* Profile Header with Edit Button */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl">
+                <div className="flex items-center justify-between">
+                  <div className="animate-fade-in-left">
+                    <h2 className="text-3xl font-bold text-gray-800 transition-all duration-300 hover:text-purple-700">
+                      {profileData?.first_name} {profileData?.last_name}
+                    </h2>
+                    <p className="text-gray-600 transition-all duration-300 hover:text-gray-700">Student Profile</p>
+                  </div>
+                  <Button
+                    onClick={handleEditClick}
+                    className="flex items-center px-6 py-2 text-white transition-all duration-300 transform bg-purple-600 hover:bg-purple-700 rounded-xl hover:scale-105 hover:shadow-lg active:scale-95 group animate-fade-in-right"
+                  >
+                    <User className="w-4 h-4 mr-2 transition-all duration-300 group-hover:rotate-12" />
+                    Edit Profile
+                  </Button>
+                </div>
+              </Card>
 
-              <ProfileSection title="Education" icon={GraduationCap}>
-                {renderEducationInfo()}
-              </ProfileSection>
+              {/* Contact Information */}
+              <Card className="transition-all duration-500 delay-200 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-right">
+                <div className="flex items-center mb-6 group">
+                  <Mail className="w-6 h-6 mr-3 text-green-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                  <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-green-700">
+                    Contact Information
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {[
+                    {
+                      icon: Mail,
+                      label: "Email",
+                      value: profileData?.email || "Not set",
+                      color: "from-blue-500 to-blue-600",
+                    },
+                    {
+                      icon: Phone,
+                      label: "Mobile",
+                      value: profileData?.mobile_number || "Not set",
+                      color: "from-green-500 to-green-600",
+                    },
+                    {
+                      icon: User,
+                      label: "Website",
+                      value: profileData?.website || "Not set",
+                      color: "from-purple-500 to-purple-600",
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center p-4 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-up`}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <item.icon className="w-6 h-6 mr-3 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium opacity-90">{item.label}</span>
+                        <span className="text-lg font-bold">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
 
-              <ProfileSection title="Academic Activity" icon={Book}>
-                {renderAcademicActivity()}
-              </ProfileSection>
+              {/* Basic Information */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-400">
+                <div className="flex items-center mb-6 group">
+                  <User className="w-6 h-6 mr-3 text-orange-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                  <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-orange-700">
+                    Basic Information
+                  </h3>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {[
+                    {
+                      icon: User,
+                      label: "Gender",
+                      value: profileData?.gender || "Not set",
+                      color: "from-pink-500 to-pink-600",
+                    },
+                    {
+                      icon: Calendar,
+                      label: "Birthday",
+                      value: profileData?.birthday || "Not set",
+                      color: "from-yellow-500 to-orange-500",
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className={`flex items-center p-4 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-up`}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <item.icon className="w-6 h-6 mr-3 animate-pulse" />
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium opacity-90">{item.label}</span>
+                        <span className="text-lg font-bold">{item.value}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+
+              {/* Academic Activity */}
+              <Card className="transition-all duration-500 transform shadow-xl bg-white/20 backdrop-blur-lg border-white/30 rounded-3xl hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-600">
+                <div className="flex items-center mb-6 group">
+                  <Book className="w-6 h-6 mr-3 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                  <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-purple-700">
+                    Academic Activity
+                  </h3>
+                </div>
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
+                  {[
+                    {
+                      icon: BookOpen,
+                      value: profileData?.total_notes_uploaded ?? 0,
+                      label: "Notes Uploaded",
+                      color: "bg-blue-100",
+                      textColor: "text-blue-600",
+                    },
+                    {
+                      icon: Bookmark,
+                      value: profileData?.total_bookmarked_notes_by_user ?? 0,
+                      label: "Bookmarks",
+                      color: "bg-purple-100",
+                      textColor: "text-purple-600",
+                    },
+                    {
+                      icon: Award,
+                      value: profileData?.total_notes_liked_by_others ?? 0,
+                      label: "Total Likes",
+                      color: "bg-red-100",
+                      textColor: "text-red-600",
+                    },
+                    {
+                      icon: Award, // Placeholder icon
+                      value: 0,
+                      label: "Total Reviews",
+                      color: "bg-orange-100",
+                      textColor: "text-orange-600",
+                    },
+                    {
+                      icon: Award, // Placeholder icon
+                      value: "0.0",
+                      label: "Avg. Rating",
+                      color: "bg-green-100",
+                      textColor: "text-green-600",
+                    },
+                  ].map((item, index) => (
+                    <div
+                      key={index}
+                      className={`flex flex-col items-center p-4 space-y-2 text-center rounded-xl ${item.color} transform transition-all duration-500 hover:scale-110 hover:shadow-lg cursor-pointer animate-bounce-in`}
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      <item.icon className={`w-8 h-8 ${item.textColor} transition-all duration-300 hover:scale-125`} />
+                      <div className={`text-3xl font-bold ${item.textColor} animate-count-up`}>{item.value}</div>
+                      <div className={`text-sm font-medium ${item.textColor.replace("600", "800")}`}>{item.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
             </div>
           </div>
         ) : (
-          // Edit Form View
-          <div className="mx-auto max-w-3xl">
-            <ProfileEditForm initialData={profileData} onClose={handleCloseEdit} />
+          // Edit Form View with Animation
+          <div className="max-w-3xl mx-auto animate-fade-in">
+            <ProfileEditForm
+              initialData={profileData} // Pass fetched profile data
+              departments={departments} // Pass formatted departments list
+              onClose={handleCloseEdit} // Handler to close the form
+            />
           </div>
         )}
       </div>
