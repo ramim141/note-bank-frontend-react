@@ -1,3 +1,5 @@
+// src/pages/Profile/EditProfilePage.jsx
+
 "use client"
 
 import React, { useState, useEffect } from "react"
@@ -5,7 +7,7 @@ import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Info } from "lucide-react"
 import ProfileEditForm from "../../components/Profile/ProfileEditForm"
 import { useAuth } from "../../context/AuthContext"
-import Card from "../../components/ui/card"
+import { getUserProfile, getDepartments } from "../../api/apiService/userService"
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -39,7 +41,7 @@ Button.displayName = "Button"
 
 const EditProfilePage = () => {
   const navigate = useNavigate()
-  const { user: authUser, api } = useAuth()
+  const { fetchUserProfile: refreshGlobalProfile } = useAuth()
   const [initialData, setInitialData] = useState(null)
   const [departments, setDepartments] = useState([])
   const [loading, setLoading] = useState(true)
@@ -48,101 +50,50 @@ const EditProfilePage = () => {
 
   useEffect(() => {
     setAnimate(true)
-    fetchUserProfile()
-    fetchDepartments()
+    const loadPageData = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        // Fetch both profile and departments concurrently for better performance
+        const [profileResponse, departmentsResponse] = await Promise.all([
+          getUserProfile(),
+          getDepartments(),
+        ])
+
+        const profileData = profileResponse.data
+        // Ensure birthday is correctly formatted (YYYY-MM-DD)
+        const formattedBirthday = profileData.birthday ? profileData.birthday.split("T")[0] : ""
+        setInitialData({ ...profileData, birthday: formattedBirthday })
+
+        const departmentsData = departmentsResponse.data
+        // Format departments for the Select component
+        const formattedDepartments = departmentsData.map((dept) => ({
+          value: dept.id, // API provides 'id'
+          label: dept.name, // API provides 'name'
+        }))
+        setDepartments(formattedDepartments)
+
+      } catch (err) {
+        console.error("Error loading page data:", err)
+        const errorMessage = err.response?.data?.detail || "Failed to load profile data. Please try again."
+        setError(errorMessage)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    loadPageData()
   }, [])
-
-  const fetchUserProfile = async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const response = await new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve({
-              data: {
-                username: "johndoe",
-                email: "john.doe@example.com",
-                first_name: "John",
-                last_name: "Doe",
-                bio: "I'm a passionate developer building amazing things with Next.js and Vercel.",
-                mobile_number: "123-456-7890",
-                website: "https://johndoe.com",
-                birthday: "1990-05-15T00:00:00Z",
-                gender: "Male",
-                university: "State University",
-                department: "CS",
-                batch: "2018",
-                section: "A",
-                profile_picture_url: "/placeholder.svg?height=128&width=128",
-                skills: ["React", "Next.js", "Tailwind CSS"],
-              },
-            }),
-          500,
-        ),
-      )
-
-      const profileData = response.data
-      const formattedBirthday = profileData.birthday ? profileData.birthday.substring(0, 10) : ""
-
-      setInitialData({
-        ...profileData,
-        birthday: formattedBirthday,
-      })
-    } catch (err) {
-      console.error("Error fetching user profile:", err)
-      let errorMessage = "Failed to load profile data."
-      if (err.response?.data) {
-        errorMessage = Object.entries(err.response.data)
-          .map(([key, value]) => `${key.replace(/_/g, " ")}: ${Array.isArray(value) ? value.join(", ") : value}`)
-          .join(" | ")
-      }
-      setError(errorMessage)
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const fetchDepartments = async () => {
-    try {
-      const response = await new Promise((resolve) =>
-        setTimeout(
-          () =>
-            resolve({
-              data: [
-                { id: "CS", name: "Computer Science" },
-                { id: "EE", name: "Electrical Engineering" },
-                { id: "ME", name: "Mechanical Engineering" },
-              ],
-            }),
-          500,
-        ),
-      )
-
-      const departmentsData = response.data
-      const formattedDepartments = departmentsData.map((dept) => ({
-        value: dept.id,
-        label: dept.name,
-      }))
-      setDepartments(formattedDepartments)
-    } catch (err) {
-      console.error("Error fetching departments:", err)
-      let errorMessage = "Failed to fetch departments."
-      if (err.response?.data) {
-        errorMessage = Object.entries(err.response.data)
-          .map(([key, value]) => `${key.replace(/_/g, " ")}: ${Array.isArray(value) ? value.join(", ") : value}`)
-          .join(" | ")
-      }
-      setError(errorMessage)
-    }
-  }
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-gradient-to-br via-blue-50 to-indigo-100 from-slate-50">
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full border-4 border-indigo-200 shadow-lg animate-spin border-t-indigo-600"></div>
-          <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent animate-ping border-t-indigo-400"></div>
+        <div className="flex flex-col gap-4 items-center">
+          <div className="relative">
+            <div className="w-20 h-20 rounded-full border-4 border-indigo-200 shadow-lg animate-spin border-t-indigo-600"></div>
+            <div className="absolute inset-0 w-20 h-20 rounded-full border-4 border-transparent animate-ping border-t-indigo-400"></div>
+          </div>
+          <p className="text-lg font-semibold text-indigo-700">Loading Profile Editor...</p>
         </div>
       </div>
     )
@@ -150,63 +101,62 @@ const EditProfilePage = () => {
 
   return (
     <div
-      className={`bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 transition-opacity duration-700 ease-in-out ${animate ? "opacity-100" : "opacity-0"}   mx-auto pt-32`}
+      className={`bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 min-h-screen py-8 px-4 sm:px-6 lg:px-8 transition-opacity duration-700 ease-in-out ${animate ? "opacity-100" : "opacity-0"} mx-auto pt-32`}
     >
       <div className="mx-auto max-w-7xl">
-        {/* Enhanced header */}
-      <div className="overflow-hidden relative px-8 py-20 mx-auto max-w-7xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute -top-20 -right-20 w-40 h-40 bg-white rounded-full opacity-30 animate-pulse"></div>
-          <div className="absolute left-10 top-20 w-20 h-20 bg-white rounded-full opacity-20 animate-bounce"></div>
-          <div className="absolute right-10 bottom-10 w-32 h-32 bg-white rounded-full animate-pulse opacity-15"></div>
-          <div
-            className="absolute top-1/2 left-1/2 w-60 h-60 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 animate-spin"
-            style={{ animationDuration: "20s" }}
-          ></div>
+        <div className="overflow-hidden relative px-8 py-20 mx-auto max-w-7xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-white rounded-full opacity-30 animate-pulse"></div>
+            <div className="absolute left-10 top-20 w-20 h-20 bg-white rounded-full opacity-20 animate-bounce"></div>
+            <div className="absolute right-10 bottom-10 w-32 h-32 bg-white rounded-full animate-pulse opacity-15"></div>
+            <div
+              className="absolute top-1/2 left-1/2 w-60 h-60 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full opacity-10 animate-spin"
+              style={{ animationDuration: "20s" }}
+            ></div>
+          </div>
+          <div className="flex relative z-10 flex-col justify-between items-center md:flex-row">
+            <div className="text-center md:text-left">
+              <h1 className="mb-4 text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-white to-blue-100">
+                Edit Your Profile
+              </h1>
+              <p className="text-xl font-medium text-blue-100 opacity-90">
+                Update your personal information and showcase your skills
+              </p>
+            </div>
+            <Button
+              onClick={() => navigate("/profile")}
+              variant="outline"
+              size="lg"
+              className="flex items-center mt-6 md:mt-0"
+            >
+              <ArrowLeft className="mr-2 w-5 h-5" />
+              Back to Profile
+            </Button>
+          </div>
         </div>
 
-        <div className="flex relative z-10 flex-col justify-between items-center md:flex-row">
-          <div className="text-center md:text-left">
-            <h1 className="mb-4 text-5xl font-bold text-white bg-clip-text bg-gradient-to-r from-white to-blue-100">
-              Edit Your Profile
-            </h1>
-            <p className="text-xl font-medium text-blue-100 opacity-90">
-              Update your personal information and showcase your skills
-            </p>
-          </div>
-          <Button
-            onClick={() => navigate("/profile")}
-            variant="outline"
-            size="lg"
-            className="flex items-center mt-6 md:mt-0"
-          >
-            <ArrowLeft className="mr-2 w-5 h-5" />
-            Back to Profile
-          </Button>
+        <div className="max-w-7xl mx-auto mt-[-4rem] relative z-20">
+          {error && (
+            <div className="p-8 mb-8 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-l-4 border-red-500 shadow-xl">
+              <p className="flex items-center text-lg font-semibold text-red-700">
+                <Info className="mr-3 w-6 h-6" />
+                <span>Error: {error}</span>
+              </p>
+            </div>
+          )}
+
+          {initialData && (
+            <ProfileEditForm
+              initialData={initialData}
+              departments={departments}
+              onCancel={() => navigate("/profile")}
+              onProfileUpdate={(updatedData) => {
+                refreshGlobalProfile() // Refresh global user state from context
+                navigate("/profile")
+              }}
+            />
+          )}
         </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto mt-[-4rem] relative z-20">
-        {error && (
-          <div className="p-8 mb-8 bg-gradient-to-r from-red-50 to-pink-50 rounded-2xl border-l-4 border-red-500 shadow-xl">
-            <p className="flex items-center text-lg font-semibold text-red-700">
-              <Info className="mr-3 w-6 h-6" />
-              <span>Error: {error}</span>
-            </p>
-          </div>
-        )}
-
-        <ProfileEditForm
-          initialData={initialData}
-          departments={departments}
-          onCancel={() => navigate("/profile")}
-          onProfileUpdate={(updatedData) => {
-            fetchUserProfile()
-            navigate("/profile")
-          }}
-        />
-      </div>
       </div>
     </div>
   )
