@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Bookmark, Download, FileText, Star, FileImage, File, Presentation, User, Building, Tag, Edit, CloudUpload, CheckCircle } from 'lucide-react'; // Icons from lucide-react
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate if needed for navigation
-import { useAuth } from '../../context/AuthContext'; // Import useAuth hook
+import { useAuth } from '../../context/useAuth'; // Import useAuth hook
 
 // --- Constants for Styling ---
 const ICON_SIZE = 20; // Icon size in pixels

@@ -14,8 +14,8 @@ import { fetchWrapper } from '../../utils/fetchWrapper'; // Fixed import path
  */
 export const createNoteRequest = async (requestData) => {
   try {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://edumetro.onrender.com";
-    const response = await fetchWrapper.post(`${API_BASE_URL}/api/notes/note-requests/`, requestData);
+    // Let fetchWrapper handle the base URL construction
+    const response = await fetchWrapper.post('/api/notes/note-requests/', requestData);
     return response; // fetchWrapper already returns the parsed JSON
   } catch (error) {
     console.error('Error creating note request:', error);
@@ -34,12 +34,12 @@ export const createNoteRequest = async (requestData) => {
  */
 export const getUserNoteRequests = async (params = {}) => {
   try {
-    const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://edumetro.onrender.com";
     const queryParams = new URLSearchParams({
       page: 1, // Default to page 1 if not provided
       ...params,
     });
-    const response = await fetchWrapper.get(`${API_BASE_URL}/api/notes/note-requests/?${queryParams}`);
+    // Let fetchWrapper handle the base URL construction
+    const response = await fetchWrapper.get(`/api/notes/note-requests/?${queryParams}`);
     return response; // fetchWrapper already returns the parsed JSON
   } catch (error) {
     console.error('Error fetching user note requests:', error);

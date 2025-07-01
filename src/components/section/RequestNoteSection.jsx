@@ -16,7 +16,7 @@ import {
 import { toast } from "react-hot-toast";
 // import { createNoteRequest } from "../../utils/api"; // <-- REMOVE THIS OLD IMPORT
 import { createNoteRequest } from "../../api/apiService/requestNoteService"; // <-- IMPORT FROM THE NEW SERVICE FILE
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 const RequestNoteSection = () => {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
@@ -76,10 +76,12 @@ const RequestNoteSection = () => {
     } catch (error) {
       console.error("Request submission failed:", error);
       // Extracting error message more robustly
-      const errorMessage = error.response?.data?.detail ||
-                           error.response?.data?.message || // Common for other backends
-                           error.message || // Fallback for network errors
-                           "Failed to submit request. Please try again.";
+      const errorMessage = error.isNetworkError 
+                           ? error.message // Use the custom network error message
+                           : error.response?.data?.detail ||
+                             error.response?.data?.message || // Common for other backends
+                             error.message || // Fallback for network errors
+                             "Failed to submit request. Please try again.";
       toast.error(errorMessage);
       setIsSubmitting(false);
     }

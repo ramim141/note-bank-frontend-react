@@ -3,7 +3,7 @@
 // src/pages/Notes/AllNotesPage.jsx
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "../../context/AuthContext"
+import { useAuth } from "../../context/useAuth"
 import ProtectedRoute from "../../routes/ProtectedRoute"
 import NoteCard from "../../components/notes/NoteCard"
 import FilterSidebar from "../../components/notes/FilterSidebar"

@@ -8,7 +8,7 @@ import { departmentService } from '../../api/apiService/departmentService';
 import { categoryService } from '../../api/apiService/categoryService';
 import { courseService } from '../../api/apiService/courseService';
 import { noteService } from '../../api/apiService/noteService'; // Import noteService
-import { useAuth } from '../../context/AuthContext'; // To get user token for API calls
+import { useAuth } from '../../context/useAuth'; // To get user token for API calls
 import { facultyService } from '../../api/apiService/facultyService';
 
 // --- Icons ---

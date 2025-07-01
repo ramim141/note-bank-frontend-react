@@ -1,7 +1,7 @@
 // src/pages/Notes/MyNotesPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext'; // Import useAuth
+import { useAuth } from '../../context/useAuth'; // Import useAuth
 import ProtectedRoute from '../../routes/ProtectedRoute'; // Import ProtectedRoute
 import NoteCard from '../../components/notes/NoteCard'; // Fixed import path
 import { noteService } from '../../api/apiService/noteService'; // Fixed import path

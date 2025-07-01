@@ -16,12 +16,13 @@ import NotFoundPage from '../pages/NotFound/NotFoundPage';
 import AllNotesPage from '../pages/Notes/AllNotesPage';
 import MyNotesPage from '../pages/Notes/MyNotesPage';
 import UploadNotePage from '../pages/Notes/UploadNotePage';
-
+import EditProfilePage from '../pages/Profile/EditProfilePage';
 // Contributors page
 import ContributorsPage from '../pages/Contributions/ContributorsPage';
 
 // About page
 import AboutPage from '../pages/About/AboutPage';
+import ProfilePage from '../pages/Profile/ProfilePage';
 
 const AppRoutes = () => {
     return (
@@ -41,6 +42,8 @@ const AppRoutes = () => {
             {/* --- Protected Routes --- */}
             <Route path="/upload-note" element={<ProtectedRoute><UploadNotePage /></ProtectedRoute>} />
             <Route path="/my-notes" element={<ProtectedRoute><MyNotesPage /></ProtectedRoute>} />
+            <Route path="/profile"  element={<ProtectedRoute><ProfilePage  /></ProtectedRoute>} />
+            <Route path="/profile/edit" element={<ProtectedRoute><EditProfilePage   /></ProtectedRoute>} />
 
             {/* 404 Not Found Route - should be last */}
             <Route path="*" element={<NotFoundPage />} />

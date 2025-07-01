@@ -1,7 +1,6 @@
 // src/api/apiService/statsService.js
 
-// আপনার fetchWrapper ইম্পোর্ট করুন
-import { fetchWrapper } from '../../utils/fetchWrapper'; 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://edumetro.onrender.com";
 
 /**
  * সাইটের সামগ্রিক পরিসংখ্যান (মোট ব্যবহারকারী, নোট, কোর্স, বিভাগ) ফেচ করে।
@@ -11,11 +10,20 @@ import { fetchWrapper } from '../../utils/fetchWrapper';
  */
 export const getSiteStats = async () => {
     try {
-        // '/api/users/site-stats/' এন্ডপয়েন্টে GET রিকোয়েস্ট পাঠানো হচ্ছে।
-        const response = await fetchWrapper.get('/api/users/site-stats/');
-        
-        // API রেসপন্স ডেটা রিটার্ন করা হচ্ছে।
-        return response; 
+        // Create a simple fetch request without authentication for public stats
+        const response = await fetch(`${API_BASE_URL}/api/users/site-stats/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
 
     } catch (error) {
         console.error('সাইটের পরিসংখ্যান ফেচ করতে সমস্যা হয়েছে:', error);

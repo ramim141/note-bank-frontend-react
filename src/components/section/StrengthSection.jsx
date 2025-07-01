@@ -1,10 +1,8 @@
-// src/components/StrengthSection.jsx
 
-"use client"
 
 import React, { useState, useEffect } from "react";
 import { FaUsers, FaBookOpen, FaGraduationCap, FaUniversity } from "react-icons/fa"; 
-import { getSiteStats } from "../../api/apiService/statsService"; // Correct service import
+import { getSiteStats } from "../../api/apiService/statsService"; 
 
 const StrengthSection = () => {
   const [stats, setStats] = useState({
@@ -35,11 +33,11 @@ const StrengthSection = () => {
         console.error("Failed to fetch site stats:", error);
         console.error("Error details:", {
           message: error.message,
-          status: error.status,
-          response: error.response
+          status: error.response?.status,
+          response: error.response?.data
         });
         // Fallback to default values if API fails
-        setStats({ users: '100+', notes: '1000+', courses: '45+', departments: '10+' });
+        setStats({ users: '0', notes: '0', courses: '0', departments: '0' });
       } finally {
         setLoading(false);
       }

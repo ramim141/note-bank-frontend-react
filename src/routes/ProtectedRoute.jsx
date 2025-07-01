@@ -1,7 +1,7 @@
 // src/routes/ProtectedRoute.jsx
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // AuthContext থেকে hook ইম্পোর্ট করুন
+import { useAuth } from '../context/useAuth'; // AuthContext থেকে hook ইম্পোর্ট করুন
 
 // ProtectedRoute কম্পোনেন্টটি চিলড্রেন (children) Props গ্রহণ করবে, যা একটি নির্দিষ্ট রুট।
 const ProtectedRoute = ({ children }) => {

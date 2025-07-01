@@ -60,7 +60,7 @@ const Footer = () => {
   };
 
   return (
-    <footer id="animated-footer" className="overflow-hidden relative mt-20 font-sans text-white bg-gradient-to-br via-blue-900 from-slate-900 to-slate-900">
+    <footer id="animated-footer" className="overflow-hidden relative font-sans text-white bg-gradient-to-br via-blue-900 from-slate-900 to-slate-900">
       <div className="overflow-hidden absolute inset-0">
         <div className="absolute -top-40 -left-40 w-80 h-80 rounded-full blur-3xl animate-pulse bg-blue-500/10"></div>
         <div className="absolute -right-40 -bottom-40 w-80 h-80 rounded-full blur-3xl delay-1000 animate-pulse bg-purple-500/10"></div>
@@ -133,7 +133,7 @@ const Footer = () => {
         </div>
       </div>
 
-      <div className="relative px-6 pt-16 pb-8 lg:px-32">
+      <div className="relative px-6 pt-8 pb-8 lg:px-32">
         <div className="px-4 mx-auto max-w-7xl md:px-8 lg:px-12">
           <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4 lg:gap-8">
             <div className={`transition-all duration-1000 delay-200 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}>
