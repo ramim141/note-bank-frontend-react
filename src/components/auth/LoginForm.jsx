@@ -44,33 +44,12 @@ const LoginForm = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/users/login/`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          toast.error(data.detail || "Invalid credentials.")
-          setErrors({ non_field_errors: data.detail || "Invalid credentials." })
-        } else {
-          toast.error("Login failed. Please check your input.")
-          setErrors(data)
-        }
-      } else {
-        login(data.user, data.access, data.refresh)
-        toast.success("Login successful!")
-        navigate("/")
-      }
+      await login(formData)
+      toast.success("Login successful!")
+      navigate("/")
     } catch (error) {
-      console.error("Login error:", error)
-      toast.error("An unexpected error occurred. Please try again later.")
-      setErrors({ non_field_errors: "An unexpected error occurred. Please try again later." })
+      toast.error("Login failed. Please check your credentials.")
+      setErrors({ non_field_errors: "Login failed. Please check your credentials." })
     } finally {
       setIsLoading(false)
     }
