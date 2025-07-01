@@ -43,7 +43,8 @@ const AppRoutes = () => {
             <Route path="/upload-note" element={<ProtectedRoute><UploadNotePage /></ProtectedRoute>} />
             <Route path="/my-notes" element={<ProtectedRoute><MyNotesPage /></ProtectedRoute>} />
             <Route path="/profile"  element={<ProtectedRoute><ProfilePage  /></ProtectedRoute>} />
-            <Route path="/profile/edit" element={<ProtectedRoute><EditProfilePage   /></ProtectedRoute>} />
+            {/* Edit Profile is a separate page, not nested under /profile */}
+            <Route path="/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
 
             {/* 404 Not Found Route - should be last */}
             <Route path="*" element={<NotFoundPage />} />

@@ -2,7 +2,7 @@
 
 "use client"
 import { useNavigate } from "react-router-dom";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 
 // --- CORRECTED IMPORTS ---
 import { getUserProfile } from "/src/api/apiService/userService.js";
@@ -17,7 +17,6 @@ import Button from '../../components/ui/Button';
 import { Card } from '../../components/Profile/Card'; // Assuming Card is a named export
 // import { Badge } from '../../components/Profile/badge'; // Not used in this page
 import { User, Mail, Phone, GraduationCap, Building, Book, Calendar, Award, BookOpen, Bookmark } from "lucide-react"; // Using lucide-react
-import ProfileEditForm from '../../components/Profile/ProfileEditForm';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -29,7 +28,7 @@ const ProfilePage = () => {
   const [pageLoading, setPageLoading] = useState(true); // Renamed to avoid confusion with AuthContext loading
   const [error, setError] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  const [departments, setDepartments] = useState([]); // If needed for edit form, but currently not used in view mode
+  const [departments] = useState([]); // If needed for edit form, but currently not used in view mode
 
   // Effect hook to fetch profile data
   useEffect(() => {
@@ -67,11 +66,6 @@ const ProfilePage = () => {
     fetchProfile();
 
   }, [isAuthenticated, token, fetchUserProfile, navigate, authLoading]); // Dependencies for the effect
-
-  // Handler to switch to editing mode
-  const handleEditClick = () => {
-    setIsEditing(true);
-  };
 
   // Handler to close the editing form and return to view mode
   const handleCloseEdit = () => {
@@ -180,7 +174,7 @@ const ProfilePage = () => {
                 {/* Edit Button */}
                 <div className="flex justify-center px-6 pb-6 mt-6">
                   <Button
-                    onClick={handleEditClick}
+                    onClick={() => navigate('/edit-profile')}
                     className="px-8 py-3 text-lg text-white bg-purple-600 rounded-xl transition-all duration-300 animate-pulse transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group"
                   >
                     <User className="mr-2 w-4 h-4" />
@@ -293,7 +287,7 @@ const ProfilePage = () => {
                     <p className="text-gray-600 transition-all duration-300 hover:text-gray-700">Student Profile</p>
                   </div>
                   <Button
-                    onClick={handleEditClick}
+                    onClick={() => navigate('/edit-profile')}
                     className="flex items-center px-6 py-2 text-white bg-purple-600 rounded-xl transition-all duration-300 transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group animate-fade-in-right"
                   >
                     <User className="mr-2 w-4 h-4 transition-all duration-300 group-hover:rotate-12" />
@@ -447,11 +441,7 @@ const ProfilePage = () => {
         ) : (
           // Edit Form View with Animation
           <div className="mx-auto max-w-3xl animate-fade-in">
-            <ProfileEditForm
-              initialData={profileData} // Pass fetched profile data
-              departments={departments} // Pass formatted departments list
-              onClose={handleCloseEdit} // Handler to close the form
-            />
+            {/* Placeholder for the removed ProfileEditForm */}
           </div>
         )}
       </div>
