@@ -210,7 +210,7 @@ const LoginForm = () => {
                   />
                   <label htmlFor="remember-me" className="text-gray-600">Remember me</label>
                 </div>
-                <a href="/forgot-password" className="text-gray-600 transition-colors hover:text-gray-800">
+                <a href="/reset-password" className="text-gray-600 transition-colors hover:text-gray-800">
                   Forgot your password?
                 </a>
               </div>
@@ -356,7 +356,7 @@ const LoginForm = () => {
                 />
                 <label htmlFor="remember-me-mobile" className="text-gray-600">Remember me</label>
               </div>
-              <a href="/forgot-password" className="transition-colors hover:text-gray-800">
+              <a href="/reset-password" className="transition-colors hover:text-gray-800">
                 Forgot your password?
               </a>
             </div>

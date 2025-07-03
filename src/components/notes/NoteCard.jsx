@@ -4,18 +4,21 @@
 import React, { useState, useEffect } from 'react';
 import { Heart, Bookmark, Download, FileText, Star, FileImage, File, Presentation, User, Building, Tag, Edit, CloudUpload, CheckCircle } from 'lucide-react'; // Icons from lucide-react
 import { Link, useNavigate } from 'react-router-dom'; // Import useNavigate if needed for navigation
-import { useAuth } from '../../context/useAuth'; // Import useAuth hook
+import { toast } from "react-toastify";
+import { getSecureDownloadUrl, downloadNoteFile } from "../../api/apiService/downloadService";
+import { useAuth } from "../../context/useAuth";
 
 // --- Constants for Styling ---
 const ICON_SIZE = 20; // Icon size in pixels
 const ICON_CLASS = `w-${ICON_SIZE / 4} h-${ICON_SIZE / 4}`; // Tailwind units (4px per unit)
 
-const NoteCard = ({ note, onClick }) => {
+const NoteCard = ({ note }) => {
   // Initialize state based on the incoming 'note' prop's boolean flags
   const [isLiked, setIsLiked] = useState(note?.is_liked_by_current_user || false);
   const [isBookmarked, setIsBookmarked] = useState(note?.is_bookmarked_by_current_user || false);
 
   const navigate = useNavigate(); // For navigation
+  const { token: accessToken } = useAuth();  // আপনার AuthContext থেকে accessToken নিন
 
   // Effect to update local state if the incoming 'note' prop changes
   useEffect(() => {
@@ -43,7 +46,6 @@ const NoteCard = ({ note, onClick }) => {
     note?.uploader_first_name && note?.uploader_last_name
       ? `${note.uploader_first_name} ${note.uploader_last_name}`
       : note?.uploader_username || "Anonymous";
-  const uploaderInitial = uploaderName.charAt(0).toUpperCase() || 'U'; // Use the combined name for initial
 
   // Determine file icon, background, border, and text based on file extension
   const getFileDisplay = (fileName) => {
@@ -78,7 +80,6 @@ const NoteCard = ({ note, onClick }) => {
   // Safely get displayable values from note prop
   const courseName = getStringValue(note?.course_name || note?.course);
   const departmentName = getStringValue(note?.department_name || note?.uploader_department);
-  const categoryName = getStringValue(note?.category_name || note?.category);
   const semesterName = getStringValue(note?.semester);
   const fileName = note?.file || note?.file_name || note?.original_filename || note?.filename; // Safely get filename for icon
 
@@ -99,18 +100,45 @@ const NoteCard = ({ note, onClick }) => {
     // TODO: Call API to bookmark/unbookmark the note
   };
 
-  const handleDownload = (e) => {
-    e.stopPropagation(); // Prevent card click event
-    if (note?.file_url) {
-      // Open download URL in a new tab
-      window.open(note.file_url, "_blank");
-    } else {
-      console.warn(`No file_url available for download for note ${note?.id}`);
-      toast.warn("Download link not available.");
+  const handleDownload = async (e) => {
+    e.stopPropagation();
+    console.log("--- Download process started ---");
+    console.log("Note ID:", note?.id);
+    console.log("Is Access Token available?", !!accessToken); // true or false দেখাবে
+
+    if (!note?.id) {
+      toast.warn('Download link is not available.');
+      console.log("--- Download process STOPPED: No Note ID ---");
+      return;
     }
-    console.log(`Initiating download for note ${note?.id}`);
+    
+    if (!accessToken) {
+        toast.error("Please log in to download files.");
+        console.log("--- Download process STOPPED: No Access Token ---");
+        return;
+    }
+
+    const downloadToastId = toast.loading("Preparing download...");
+
+    try {
+      console.log("Step 1: Getting secure download URL...");
+      const secureUrl = await getSecureDownloadUrl(note.id, accessToken);
+      console.log("Step 1 SUCCESS: Secure URL received ->", secureUrl);
+
+      console.log("Step 2: Downloading file from the secure URL...");
+      await downloadNoteFile(secureUrl, accessToken);
+      console.log("Step 2 SUCCESS: File download function executed.");
+
+      toast.success("Download started!", { id: downloadToastId });
+
+    } catch (error) {
+      console.error("--- Download process FAILED ---");
+      console.error("The error object is:", error); // সম্পূর্ণ error অবজেক্টটি দেখুন
+      toast.error(error.message || "Could not download the file.", { id: downloadToastId });
+    }
   };
 
+  
   const handleCardClick = () => {
     if (note?.id) {
       navigate(`/notes/${note.id}`); // Navigate to note details page

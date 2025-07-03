@@ -150,9 +150,9 @@ const EditProfilePage = () => {
               initialData={initialData}
               departments={departments}
               onCancel={() => navigate("/profile")}
-              onProfileUpdate={(updatedData) => {
-                refreshGlobalProfile() // Refresh global user state from context
-                navigate("/profile")
+              onProfileUpdate={async (updatedData) => {
+                await refreshGlobalProfile();
+                navigate("/profile");
               }}
             />
           )}

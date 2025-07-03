@@ -37,6 +37,8 @@ const ProfilePage = () => {
     );
   }
 
+  console.log("User object in ProfilePage:", user);
+
   // --- Main Page Layout ---
   return (
     <div className="p-6 pt-32 min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300 animate-gradient-x">
@@ -66,7 +68,7 @@ const ProfilePage = () => {
                     <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg transition-all duration-700 transform hover:scale-110 hover:rotate-12 animate-float">
                       {user?.profile_picture_url ? (
                         <img
-                          src={user.profile_picture_url || "/placeholder.svg"}
+                          src={user.profile_picture_url + '?t=' + Date.now()}
                           alt="Profile"
                           className="object-cover w-full h-full rounded-full transition-all duration-500 group-hover:brightness-110"
                         />
@@ -112,11 +114,11 @@ const ProfilePage = () => {
               {/* Edit Button */}
               <div className="flex justify-center px-6 pb-6 mt-6">
                 <Button
-                  onClick={() => navigate('/edit-profile')}
+                  onClick={() => navigate('/change-password')}
                   className="px-8 py-3 text-lg text-white bg-purple-600 rounded-xl transition-all duration-300 animate-pulse transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group"
                 >
                   <User className="mr-2 w-4 h-4" />
-                  Edit Profile
+                 Change Password
                 </Button>
               </div>
             </Card>

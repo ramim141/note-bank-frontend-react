@@ -12,6 +12,9 @@ import LoginPage from '../pages/Auth/LoginPage';
 import RegisterPage from '../pages/Auth/RegisterPage';
 import NotFoundPage from '../pages/NotFound/NotFoundPage';
 
+import PasswordResetConfirmPage from "../pages/Password/PasswordResetConfirmPage";
+import PasswordResetPages from "../pages/Password/PasswordResetPages";
+
 // Notes related pages
 import AllNotesPage from '../pages/Notes/AllNotesPage';
 import MyNotesPage from '../pages/Notes/MyNotesPage';
@@ -23,6 +26,8 @@ import ContributorsPage from '../pages/Contributions/ContributorsPage';
 // About page
 import AboutPage from '../pages/About/AboutPage';
 import ProfilePage from '../pages/Profile/ProfilePage';
+import PassrowdChangePages from '../pages/Password/PassrowdChangePages';
+import BookmarksPages from '../pages/Bookmarks/BookmarksPages';
 
 const AppRoutes = () => {
     return (
@@ -31,6 +36,8 @@ const AppRoutes = () => {
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/reset-password" element={<PasswordResetPages />} />
+            <Route path="/reset-password/:uidb64/:token" element={<PasswordResetConfirmPage />} />
             <Route path="/about" element={<AboutPage />} />
             
             {/* Notes related public pages */}
@@ -45,6 +52,8 @@ const AppRoutes = () => {
             <Route path="/profile"  element={<ProtectedRoute><ProfilePage  /></ProtectedRoute>} />
             {/* Edit Profile is a separate page, not nested under /profile */}
             <Route path="/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
+            <Route path="/change-password" element={<ProtectedRoute><PassrowdChangePages /></ProtectedRoute>} />
+            <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPages /></ProtectedRoute>} />
 
             {/* 404 Not Found Route - should be last */}
             <Route path="*" element={<NotFoundPage />} />
