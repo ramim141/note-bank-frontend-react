@@ -1,86 +1,252 @@
-import { useEffect, useState } from "react";
-import bookmarkService from "../../api/apiService/bookmarkService";
-import CategoryBar from "../notes/CategoryBar";
-import NoteCard from "../notes/NoteCard";
+"use client"
+
+import { useEffect, useState } from "react"
+import bookmarkService from "../../api/apiService/bookmarkService"
+import CategoryBar from "../notes/CategoryBar"
+import NoteCard from "../notes/NoteCard"
+import { Search, Bookmark, Heart, ChevronLeft, ChevronRight, Filter } from "lucide-react"
 
 const Bookmarks = () => {
-  const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [page, setPage] = useState(1);
-  const [count, setCount] = useState(0);
-  const [next, setNext] = useState(null);
-  const [prev, setPrev] = useState(null);
-  const [category, setCategory] = useState("");
+  const [notes, setNotes] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
+  const [page, setPage] = useState(1)
+  const [count, setCount] = useState(0)
+  const [next, setNext] = useState(null)
+  const [prev, setPrev] = useState(null)
+  const [category, setCategory] = useState("")
+  const [searchQuery, setSearchQuery] = useState("")
 
   const fetchNotes = async (pageNum = 1, categoryName = "") => {
-    setLoading(true);
-    setError("");
+    setLoading(true)
+    setError("")
     try {
-      const res = await bookmarkService.getBookmarkedNotes({ category_name: categoryName, page: pageNum });
+      const res = await bookmarkService.getBookmarkedNotes({ category_name: categoryName, page: pageNum })
       if (Array.isArray(res)) {
-        setNotes(res);
-        setCount(res.length);
-        setNext(null);
-        setPrev(null);
+        setNotes(res)
+        setCount(res.length)
+        setNext(null)
+        setPrev(null)
       } else {
-        setNotes(res.results || []);
-        setCount(res.count || 0);
-        setNext(res.next);
-        setPrev(res.previous);
+        setNotes(res.results || [])
+        setCount(res.count || 0)
+        setNext(res.next)
+        setPrev(res.previous)
       }
-      setPage(pageNum);
+      setPage(pageNum)
     } catch (err) {
-      setError(err?.detail || "Failed to load bookmarks.");
+      setError(err?.detail || "Failed to load bookmarks.")
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchNotes(1, category);
+    fetchNotes(1, category)
     // eslint-disable-next-line
-  }, [category]);
+  }, [category])
+
+  // Filter notes based on search query
+  const filteredNotes = notes.filter((note) => {
+    if (!searchQuery) return true
+    const query = searchQuery.toLowerCase()
+    return (
+      note.title?.toLowerCase().includes(query) ||
+      note.description?.toLowerCase().includes(query) ||
+      note.subject?.toLowerCase().includes(query) ||
+      note.category?.name?.toLowerCase().includes(query)
+    )
+  })
+
+  const LoadingSpinner = () => (
+    <div className="flex flex-col justify-center items-center py-16">
+      <div className="relative mb-4">
+        <div className="w-12 h-12 rounded-full border-4 border-purple-200 animate-spin"></div>
+        <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-transparent animate-spin border-t-purple-600"></div>
+      </div>
+      <p className="text-lg font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
+        Loading your bookmarks...
+      </p>
+    </div>
+  )
 
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <h1 className="text-2xl font-bold mb-6">Bookmarked Notes</h1>
-      <div className="mb-6">
-        <CategoryBar onCategorySelect={setCategory} selectedCategory={category} />
-      </div>
-      {loading ? (
-        <div className="text-center py-10">Loading...</div>
-      ) : error ? (
-        <div className="text-center text-red-500 py-10">{error}</div>
-      ) : notes.length === 0 ? (
-        <div className="text-center py-10 text-gray-500">No bookmarks found.</div>
-      ) : (
-        <div className="grid gap-6">
-          {notes.map(note => (
-            <NoteCard key={note.id} note={note} />
-          ))}
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
+      {/* Header Section */}
+      <div className="sticky top-0 z-20 border-b shadow-sm backdrop-blur-xl border-purple-100/50">
+        <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            {/* Title and Stats */}
+            <div className="flex gap-4 items-center">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-lg">
+                <Bookmark className="w-8 h-8 text-white" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
+                  My Bookmarks
+                </h1>
+                <p className="flex gap-2 items-center font-medium text-gray-600">
+                  <Heart className="w-4 h-4 text-pink-500" />
+                  {count} saved notes
+                  {category && (
+                    <>
+                      <span className="text-gray-400">•</span>
+                      <span className="text-purple-600">in {category}</span>
+                    </>
+                  )}
+                </p>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative w-full max-w-md lg:max-w-sm">
+              <Search className="absolute left-4 top-1/2 w-5 h-5 text-gray-400 transform -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search bookmarks..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="py-3 pr-4 pl-12 w-full placeholder-gray-500 text-gray-700 rounded-xl border backdrop-blur-sm transition-all duration-300 bg-white/70 border-purple-200/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 p-1 rounded-full transition-colors duration-200 transform -translate-y-1/2 hover:bg-gray-200"
+                >
+                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-      {/* Pagination */}
-      <div className="flex justify-center gap-4 mt-8">
-        <button
-          onClick={() => fetchNotes(page - 1, category)}
-          disabled={!prev || loading || page === 1}
-          className="px-4 py-2 rounded bg-gray-200 disabled:opacity-50"
-        >
-          Previous
-        </button>
-        <span className="px-2 py-2">Page {page}</span>
-        <button
-          onClick={() => fetchNotes(page + 1, category)}
-          disabled={!next || loading}
-          className="px-4 py-2 rounded bg-gray-200 disabled:opacity-50"
-        >
-          Next
-        </button>
+      </div>
+
+      {/* Main Content */}
+      <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
+        {/* Category Filter */}
+        <div className="mb-8">
+          <div className="flex gap-3 items-center mb-4">
+            <Filter className="w-5 h-5 text-purple-600" />
+            <h2 className="text-lg font-semibold text-gray-800">Filter by Category</h2>
+          </div>
+          <CategoryBar onCategorySelect={setCategory} selectedCategory={category} />
+        </div>
+
+        {/* Content Area */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : error ? (
+          <div className="py-16 text-center">
+            <div className="inline-block p-8 bg-gradient-to-br from-red-50 to-pink-50 rounded-3xl border border-red-100">
+              <div className="flex justify-center items-center mx-auto mb-4 w-16 h-16 bg-red-100 rounded-full">
+                <Bookmark className="w-8 h-8 text-red-500" />
+              </div>
+              <h3 className="mb-2 text-xl font-semibold text-red-700">Oops! Something went wrong</h3>
+              <p className="text-red-600">{error}</p>
+            </div>
+          </div>
+        ) : filteredNotes.length === 0 ? (
+          <div className="py-16 text-center">
+            <div className="inline-block p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl border border-purple-100">
+              <div className="flex justify-center items-center mx-auto mb-6 w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full">
+                <Bookmark className="w-12 h-12 text-purple-500" />
+              </div>
+              <h3 className="mb-3 text-2xl font-bold text-gray-800">
+                {searchQuery ? "No matching bookmarks found" : "No bookmarks yet!"}
+              </h3>
+              <p className="mx-auto mb-6 max-w-md text-gray-600">
+                {searchQuery
+                  ? "Try adjusting your search terms or browse all categories."
+                  : "Start bookmarking your favorite notes to see them here."}
+              </p>
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg transition-all duration-300 transform hover:shadow-xl hover:scale-105"
+                >
+                  Clear Search
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Results Info */}
+            <div className="flex justify-between items-center mb-6">
+              <p className="text-gray-600">
+                Showing {filteredNotes.length} of {count} bookmarks
+                {searchQuery && (
+                  <span className="px-3 py-1 ml-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">
+                    "{searchQuery}"
+                  </span>
+                )}
+              </p>
+            </div>
+
+            {/* Notes Grid */}
+            <div className="grid gap-6 mb-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {filteredNotes.map((note, index) => (
+                <div
+                  key={note.id}
+                  className="transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  style={{
+                    animationDelay: `${index * 100}ms`,
+                    animation: "fadeInUp 0.6s ease-out forwards",
+                  }}
+                >
+                  <NoteCard note={note} />
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Pagination */}
+        {!searchQuery && (prev || next) && (
+          <div className="flex gap-4 justify-center items-center mt-12">
+            <button
+              onClick={() => fetchNotes(page - 1, category)}
+              disabled={!prev || loading || page === 1}
+              className="flex gap-2 items-center px-6 py-3 font-semibold text-gray-700 rounded-xl border shadow-sm backdrop-blur-sm transition-all duration-300 transform group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
+            >
+              <ChevronLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
+              Previous
+            </button>
+
+            <div className="flex gap-2 items-center px-4 py-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border border-purple-200/50">
+              <span className="text-sm font-medium text-gray-600">Page</span>
+              <span className="px-3 py-1 font-bold text-purple-600 bg-white rounded-lg shadow-sm">{page}</span>
+            </div>
+
+            <button
+              onClick={() => fetchNotes(page + 1, category)}
+              disabled={!next || loading}
+              className="flex gap-2 items-center px-6 py-3 font-semibold text-gray-700 rounded-xl border shadow-sm backdrop-blur-sm transition-all duration-300 transform group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
+            >
+              Next
+              <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </button>
+          </div>
+        )}
+
+        {/* Custom CSS for animations */}
+        <style jsx>{`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(30px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}</style>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Bookmarks; 
+export default Bookmarks

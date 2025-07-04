@@ -1,10 +1,10 @@
 "use client"
 
-import React, { useState, useEffect, useCallback } from 'react'
-import { Tag, LoaderPinwheelIcon as Spinner, ChevronLeft, ChevronRight, X } from 'lucide-react'
-import { categoryService } from '../../api/apiService/categoryService'
+import { useState, useEffect, useCallback } from "react"
+import { Tag, ChevronLeft, ChevronRight, X, Sparkles } from "lucide-react"
+import { categoryService } from "../../api/apiService/categoryService"
 
-const CategoryBar = ({ onCategorySelect, selectedCategory = '' }) => {
+const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -12,11 +12,15 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = '' }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const savedCategories = localStorage.getItem('categories')
+        const savedCategories = localStorage.getItem("categories")
         if (savedCategories) {
           try {
             const parsedCategories = JSON.parse(savedCategories)
-            if (parsedCategories.data && Array.isArray(parsedCategories.data) && (Date.now() - parsedCategories.timestamp < 300000)) {
+            if (
+              parsedCategories.data &&
+              Array.isArray(parsedCategories.data) &&
+              Date.now() - parsedCategories.timestamp < 300000
+            ) {
               setCategories(parsedCategories.data)
               setLoading(false)
               return
@@ -24,14 +28,14 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = '' }) => {
               throw new Error("Cached data expired or invalid.")
             }
           } catch {
-            localStorage.removeItem('categories')
+            localStorage.removeItem("categories")
           }
         }
 
         const data = await categoryService.getAllCategories()
-        const categoriesArray = Array.isArray(data) ? data : (data.results || [])
+        const categoriesArray = Array.isArray(data) ? data : data.results || []
         setCategories(categoriesArray)
-        localStorage.setItem('categories', JSON.stringify({ data: categoriesArray, timestamp: Date.now() }))
+        localStorage.setItem("categories", JSON.stringify({ data: categoriesArray, timestamp: Date.now() }))
         setLoading(false)
       } catch (err) {
         setError("Failed to load categories.")
@@ -42,128 +46,130 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = '' }) => {
     fetchCategories()
   }, [])
 
-  const handleCategoryClick = useCallback((categoryName) => {
-    const newCategory = selectedCategory === categoryName ? '' : categoryName
-    onCategorySelect(newCategory)
-  }, [selectedCategory, onCategorySelect])
+  const handleCategoryClick = useCallback(
+    (categoryName) => {
+      const newCategory = selectedCategory === categoryName ? "" : categoryName
+      onCategorySelect(newCategory)
+    },
+    [selectedCategory, onCategorySelect],
+  )
 
   const scrollLeft = useCallback(() => {
-    document.getElementById('category-container')?.scrollBy({ left: -300, behavior: 'smooth' })
+    document.getElementById("category-container")?.scrollBy({ left: -300, behavior: "smooth" })
   }, [])
 
   const scrollRight = useCallback(() => {
-    document.getElementById('category-container')?.scrollBy({ left: 300, behavior: 'smooth' })
+    document.getElementById("category-container")?.scrollBy({ left: 300, behavior: "smooth" })
   }, [])
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-4 rounded-xl border shadow-lg backdrop-blur-sm sm:p-6 sm:rounded-2xl bg-white/80 border-white/20">
-        <Spinner className="mr-2 w-4 h-4 text-blue-500 animate-spin sm:w-5 sm:h-5 sm:mr-3" />
-        <span className="text-sm text-gray-500 sm:text-base">Loading categories...</span>
+      <div className="flex justify-center items-center p-6 rounded-2xl border shadow-lg backdrop-blur-sm bg-white/60 border-purple-100/50">
+        <div className="relative mr-3">
+          <div className="w-5 h-5 rounded-full border-2 border-purple-200 animate-spin"></div>
+          <div className="absolute top-0 left-0 w-5 h-5 rounded-full border-2 border-transparent animate-spin border-t-purple-600"></div>
+        </div>
+        <span className="font-medium text-gray-600">Loading categories...</span>
       </div>
     )
   }
 
   if (error) {
     return (
-      <div className="p-4 text-center text-red-500 rounded-xl border shadow-lg backdrop-blur-sm sm:p-6 sm:rounded-2xl bg-white/80 border-white/20">
-        <p className="text-sm sm:text-base">{error}</p>
+      <div className="p-6 text-center bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl border border-red-100 shadow-lg">
+        <div className="flex justify-center items-center mx-auto mb-3 w-12 h-12 bg-red-100 rounded-full">
+          <X className="w-6 h-6 text-red-500" />
+        </div>
+        <p className="font-medium text-red-600">{error}</p>
       </div>
     )
   }
 
   return (
-    <div className="p-4 rounded-xl border shadow-lg backdrop-blur-sm sm:p-6 sm:rounded-2xl bg-white/80 border-white/20">
-      <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <div className="flex items-center text-base font-bold text-gray-800 sm:text-lg">
-          <Tag className="mr-2 w-4 h-4 text-pink-500 sm:w-5 sm:h-5 sm:mr-3" />
-          Categories
-          {selectedCategory && (
-            <span className="px-2 py-1 ml-2 text-xs text-purple-700 bg-purple-100 rounded-full">
-              {categories.some(cat => cat.name === selectedCategory) ? 'Active' : 'Custom'}
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Arrows - Mobile Only */}
-      <div className="relative h-0 sm:hidden">
+    <div className="p-4 rounded-2xl border shadow-lg backdrop-blur-sm bg-white/60 border-purple-100/50 sm:p-6">
+      {/* Mobile scroll buttons */}
+      <div className="relative mb-4 sm:hidden">
         <button
           onClick={scrollLeft}
-          className="absolute -left-3 top-1/2 z-10 p-2 text-gray-600 bg-white rounded-full shadow-md transition -translate-y-1/2 hover:bg-gray-200"
+          className="absolute left-0 top-1/2 z-10 p-2 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 transform -translate-y-1/2 bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-5 h-5" />
+          <ChevronLeft className="w-4 h-4 text-purple-600" />
         </button>
         <button
           onClick={scrollRight}
-          className="absolute -right-3 top-1/2 z-10 p-2 text-gray-600 bg-white rounded-full shadow-md transition -translate-y-1/2 hover:bg-gray-200"
+          className="absolute right-0 top-1/2 z-10 p-2 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 transform -translate-y-1/2 bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-5 h-5" />
+          <ChevronRight className="w-4 h-4 text-purple-600" />
         </button>
       </div>
 
       <div className="relative">
         <div
           id="category-container"
-          className="flex overflow-x-auto gap-2 items-center pb-2 sm:gap-3 sm:pb-3 scrollbar-hide snap-x scroll-smooth"
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          className="flex overflow-x-auto gap-3 items-center px-8 pb-2 scrollbar-hide snap-x scroll-smooth sm:px-0"
+          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {/* "All" Button */}
           <button
-            onClick={() => handleCategoryClick('')}
-            className={`flex-shrink-0 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap text-sm sm:text-base snap-start ${
-              selectedCategory === ''
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-500 text-white shadow-lg ring-2 ring-blue-200'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
+            onClick={() => handleCategoryClick("")}
+            className={`group flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 whitespace-nowrap snap-start shadow-sm hover:shadow-md ${
+              selectedCategory === ""
+                ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg ring-2 ring-purple-200/50"
+                : "bg-white/80 text-gray-700 hover:bg-white border border-purple-100/50"
             }`}
           >
-            <div className="flex items-center">
-              <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full mr-1 sm:mr-2 ${selectedCategory === '' ? 'bg-white/80' : 'bg-blue-500'}`} />
-              All Categories
-            </div>
+            <Sparkles
+              className={`w-4 h-4 ${selectedCategory === "" ? "text-white" : "text-purple-500"} group-hover:rotate-12 transition-transform duration-300`}
+            />
+            All Categories
+            {selectedCategory === "" && <div className="w-2 h-2 rounded-full animate-pulse bg-white/80" />}
           </button>
 
-          {/* Dynamic Buttons */}
+          {/* Dynamic Category Buttons */}
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => handleCategoryClick(cat.name)}
-              className={`flex-shrink-0 px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium transition-all duration-300 transform hover:scale-105 whitespace-nowrap text-sm sm:text-base snap-start ${
+              className={`group flex-shrink-0 flex items-center gap-2 px-5 py-3 rounded-full font-semibold transition-all duration-300 transform hover:scale-105 whitespace-nowrap snap-start shadow-sm hover:shadow-md ${
                 selectedCategory === cat.name
-                  ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg ring-2 ring-purple-200'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:shadow-md'
+                  ? "bg-gradient-to-r from-indigo-500 to-purple-500 text-white shadow-lg ring-2 ring-indigo-200/50"
+                  : "bg-white/80 text-gray-700 hover:bg-white border border-purple-100/50"
               }`}
             >
-              <div className="flex items-center">
-                <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full mr-1 sm:mr-2 ${selectedCategory === cat.name ? 'bg-white/80' : 'bg-purple-500'}`} />
-                {cat.name}
-              </div>
+              <Tag
+                className={`w-4 h-4 ${selectedCategory === cat.name ? "text-white" : "text-indigo-500"} group-hover:rotate-12 transition-transform duration-300`}
+              />
+              {cat.name}
+              {selectedCategory === cat.name && <div className="w-2 h-2 rounded-full animate-pulse bg-white/80" />}
             </button>
           ))}
         </div>
 
-        {/* Edge Fade - optional */}
-        <div className="absolute top-0 bottom-0 left-0 w-6 bg-gradient-to-r to-transparent pointer-events-none from-white/80 sm:hidden" />
-        <div className="absolute top-0 right-0 bottom-0 w-6 bg-gradient-to-l to-transparent pointer-events-none from-white/80 sm:hidden" />
+        {/* Edge fade effects for mobile */}
+        <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r to-transparent pointer-events-none from-white/60 sm:hidden" />
+        <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l to-transparent pointer-events-none from-white/60 sm:hidden" />
       </div>
 
       {/* Selected Category Display */}
       {selectedCategory && (
-        <div className="p-3 mt-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200 sm:p-4 sm:mt-4 sm:rounded-xl">
+        <div className="p-4 mt-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border shadow-sm border-purple-200/50">
           <div className="flex justify-between items-center">
-            <div className="flex items-center">
-              <Tag className="mr-2 w-3 h-3 text-purple-500 sm:w-4 sm:h-4" />
-              <span className="text-xs font-medium text-purple-700 sm:text-sm">
-                Filtering by: <span className="font-bold">{selectedCategory}</span>
+            <div className="flex gap-2 items-center">
+              <div className="p-1.5 rounded-lg bg-purple-100">
+                <Tag className="w-3 h-3 text-purple-600" />
+              </div>
+              <span className="text-sm font-semibold text-purple-700">
+                Filtering by: <span className="text-purple-800">{selectedCategory}</span>
               </span>
             </div>
             <button
-              onClick={() => handleCategoryClick('')}
-              className="flex items-center text-xs font-medium text-purple-500 transition hover:text-purple-700 hover:scale-105 sm:text-sm"
+              onClick={() => handleCategoryClick("")}
+              className="group flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-purple-600 hover:text-purple-700 bg-white/60 hover:bg-white rounded-lg border border-purple-200/50 transition-all duration-300 hover:shadow-sm"
             >
-              <X className="mr-1 w-3 h-3" /> Clear
+              <X className="w-3 h-3 transition-transform duration-300 group-hover:rotate-90" />
+              Clear
             </button>
           </div>
         </div>

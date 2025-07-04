@@ -28,6 +28,7 @@ import AboutPage from '../pages/About/AboutPage';
 import ProfilePage from '../pages/Profile/ProfilePage';
 import PassrowdChangePages from '../pages/Password/PassrowdChangePages';
 import BookmarksPages from '../pages/Bookmarks/BookmarksPages';
+import FacultyPage from '../pages/Faculty/FacultyPage';
 
 const AppRoutes = () => {
     return (
@@ -42,6 +43,7 @@ const AppRoutes = () => {
             
             {/* Notes related public pages */}
             <Route path="/notes" element={<AllNotesPage />} />
+            <Route path="/faculty" element={<FacultyPage />} />
             
             {/* Contributors page */}
             <Route path="/contributors" element={<ContributorsPage />} />

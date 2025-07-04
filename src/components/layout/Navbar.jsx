@@ -186,6 +186,20 @@ const Navbar = () => {
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300 group-hover:w-full"></span>
               </span>
             </Link>
+            <Link
+              to="/faculty"
+              className={`flex items-center px-6 py-3 space-x-2 font-semibold rounded-2xl transition-all duration-300 hover:scale-105 transform hover:-translate-y-1 group ${
+                isScrolled
+                  ? "text-gray-700 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50 hover:text-violet-700 hover:shadow-md"
+                  : "backdrop-blur-sm text-white/90 hover:bg-white/10 hover:text-white hover:shadow-lg"
+              }`}
+            >
+              <FaUserCircle className="mr-2 transition-transform duration-300 group-hover:rotate-12" />
+              <span className="relative">
+                Faculty
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-yellow-400 to-orange-500 transition-all duration-300 group-hover:w-full"></span>
+              </span>
+            </Link>
           </div>
 
           {/* Enhanced Auth Section */}
