@@ -9,26 +9,45 @@ export const noteService = {
 };
 
 
-async function getNotes(token, url) { // Accept URL as parameter
-    const response = await fetch(url, { // Use the provided URL
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Include token if needed for all notes
-        },
-    });
-
-    if (!response.ok) {
-        let errorData = { message: `HTTP error! status: ${response.status}` };
-        try {
-            const jsonResponse = await response.json();
-            errorData = jsonResponse;
-        } catch {
-            errorData.message = await response.text();
-        }
-        throw errorData;
+async function getNotes(params = {}, token = null) {
+  // Create a new URLSearchParams object and remove any empty values
+  const validParams = Object.entries(params).reduce((acc, [key, value]) => {
+    if (value) {
+      acc[key] = value;
     }
-    return await response.json();
+    return acc;
+  }, {});
+
+  const query = new URLSearchParams(validParams).toString();
+  const url = `${API_BASE_URL}/api/notes/?${query}`;
+
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: headers,
+  });
+
+  if (!response.ok) {
+    let errorData = { message: `HTTP error! status: ${response.status}` };
+    try {
+      // Try to parse the error response as JSON
+      errorData = await response.json();
+    } catch {
+      // Fallback to text if it's not JSON
+      errorData.message = await response.text();
+    }
+    throw errorData;
+  }
+  
+  // Return the parsed JSON response
+  return await response.json();
 }
 
 async function getMyNotes(token) {

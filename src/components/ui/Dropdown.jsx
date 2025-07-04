@@ -1,128 +1,103 @@
-// src/components/ui/Dropdown.jsx
-import React, { useState, useEffect, useRef } from 'react';
-import { cn } from '../../utils/cn';
-// Import the specific icons you need, or use a general import if you prefer
-// import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+// components/ui/Dropdown.jsx
+"use client"
 
-const Dropdown = ({
-  options,
-  value,
-  onChange,
-  placeholder = "Select an option",
-  className = "",
-  icon: IconComponent, // Allow passing an icon component as a prop
-  id,
-  name,
-  required = false,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState(value || '');
-  const dropdownRef = useRef(null);
+import { useState, useRef, useEffect } from "react"
+import { ChevronDown, Check } from 'lucide-react'
 
-  useEffect(() => {
-    setSelectedValue(value || '');
-  }, [value]);
+const Dropdown = ({ options, value, onChange, placeholder, id, name, className = "" }) => {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
-  const handleToggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
+  const selectedOption = options.find((option) => option.value === value)
 
-  const handleSelectOption = (optionValue) => {
-    setSelectedValue(optionValue);
-    if (onChange) {
-      // Mimic native event structure for onChange handler
-      onChange({
-        target: {
-          name: name,
-          value: optionValue,
-        },
-      });
-    }
-    setIsOpen(false);
-  };
-
-  // Close dropdown if clicked outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
+        setIsOpen(false)
       }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
+    }
 
-  const selectedOption = options.find(option => option.value === selectedValue);
-  const displayValue = selectedOption ? selectedOption.label : placeholder;
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
+
+  const handleSelect = (optionValue) => {
+    onChange({ target: { name, value: optionValue } })
+    setIsOpen(false)
+  }
 
   return (
-    <div className={cn('relative', className)} ref={dropdownRef}>
+    <div className={`relative ${className}`} ref={dropdownRef}>
       <button
         type="button"
-        onClick={handleToggleDropdown}
-        className={cn(
-          'flex justify-between items-center px-4 py-2 w-full text-left rounded-lg border shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500',
-          'transition-all duration-300',
-          'bg-white border-gray-300',
-          'placeholder-gray-400',
-          selectedValue ? 'text-gray-800' : 'text-gray-400',
-          IconComponent ? 'pl-10' : 'pl-4'
-        )}
-        required={required}
-        aria-haspopup="listbox"
-        aria-expanded={isOpen}
+        id={id}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`
+          w-full px-4 py-2.5 text-left bg-white border-2 rounded-xl
+          transition-all duration-200 ease-in-out
+          ${
+            isOpen
+              ? "border-purple-400 ring-2 ring-purple-100 shadow-lg"
+              : "border-gray-200 hover:border-gray-300 hover:shadow-md"
+          }
+          focus:outline-none focus:ring-2 focus:ring-purple-400 focus:border-purple-400
+          flex items-center justify-between
+        `}
       >
-        {IconComponent && (
-          // --- FIX APPLIED HERE ---
-          // Ensure IconComponent is a valid React element before rendering
-          // If IconComponent is passed as a JSX element (like <FaBuilding />), it should render directly.
-          // The error suggests it might be interpreted incorrectly.
-          // Passing the component itself (e.g. FaBuilding) and rendering it inside the div is safer.
-          // Let's try to render it directly as it's expected to be a component.
-          <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
-            {IconComponent} {/* Render the passed component directly */}
-          </div>
-        )}
-        {displayValue}
-        <span className="ml-2">
-          {isOpen ? <FaChevronUp className="w-3 h-3" /> : <FaChevronDown className="w-3 h-3" />}
+        <span className={selectedOption ? "text-gray-900" : "text-gray-500"}>
+          {selectedOption ? selectedOption.label : placeholder}
         </span>
+        <ChevronDown
+          className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {isOpen && (
-        <ul
-          className="overflow-auto absolute z-10 py-1 mt-1 w-full max-h-60 text-base bg-white rounded-lg border border-gray-300 ring-1 ring-black ring-opacity-5 shadow-lg focus:outline-none sm:text-sm"
-          role="listbox"
-          aria-labelledby={`label-${id}`}
-        >
-          {options.map((option) => (
-            <li
-              key={option.value}
-              onClick={() => handleSelectOption(option.value)}
-              className="relative py-2 pr-9 pl-3 text-gray-800 cursor-pointer select-none hover:bg-blue-500 hover:text-white"
-              role="option"
-              aria-selected={selectedValue === option.value}
+        <div className="absolute z-[9999] w-full mt-2 bg-white border border-gray-200 rounded-xl shadow-xl max-h-60 overflow-auto">
+          <div className="py-2">
+            {/* Clear selection option */}
+            <button
+              type="button"
+              onClick={() => handleSelect("")}
+              className={`
+                w-full px-4 py-2.5 text-left text-sm transition-all duration-150
+                hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50
+                hover:text-purple-700 hover:border-l-4 hover:border-purple-400
+                ${!value ? "bg-purple-50 text-purple-700 border-l-4 border-purple-400" : "text-gray-700"}
+                flex items-center justify-between
+              `}
             >
-              <span className={`block truncate ${selectedValue === option.value ? 'font-semibold' : ''}`}>
-                {option.label}
-              </span>
-              {selectedValue === option.value && (
-                <span className="flex absolute inset-y-0 right-0 items-center pr-4 text-blue-600 pointer-events-none group-hover:text-white">
-                  {/* Using FaCheck icon for selected item */}
-                  <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M16.707 4.293a1 1 0 010 1.414l-7 7a1 1 0 01-1.414 0l-3-3a1 1 0 011.414-1.414L9 10.586l6.293-6.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
+              <span className="font-medium">{placeholder}</span>
+              {!value && <Check className="w-4 h-4 text-purple-600" />}
+            </button>
+
+            {options.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => handleSelect(option.value)}
+                className={`
+                  w-full px-4 py-2.5 text-left text-sm transition-all duration-150
+                  hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50
+                  hover:text-blue-700 hover:border-l-4 hover:border-blue-400
+                  hover:shadow-sm
+                  ${
+                    value === option.value
+                      ? "bg-blue-50 text-blue-700 border-l-4 border-blue-400 font-medium"
+                      : "text-gray-700 hover:font-medium"
+                  }
+                  flex items-center justify-between
+                `}
+              >
+                <span>{option.label}</span>
+                {value === option.value && <Check className="w-4 h-4 text-blue-600" />}
+              </button>
+            ))}
+          </div>
+        </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Dropdown;
+export default Dropdown

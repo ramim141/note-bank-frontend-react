@@ -57,18 +57,16 @@ const NoteForm = () => {
     const fetchDropdownData = async () => {
       try {
         // Fetch Departments
-        try {
-          const savedDepartments = localStorage.getItem('departments');
-          if (savedDepartments) {
-            setDepartments(JSON.parse(savedDepartments));
-          } else {
-            const data = await departmentService.getAllDepartments();
-            setDepartments(data);
-            localStorage.setItem('departments', JSON.stringify(data));
-          }
-        } catch (error) {
-          console.error("Error fetching departments:", error);
-          setDepartments([]);
+        const savedDepartments = localStorage.getItem('departments');
+        if (savedDepartments) {
+          const parsed = JSON.parse(savedDepartments);
+          const departmentsArray = Array.isArray(parsed) ? parsed : parsed.data || [];
+          setDepartments(departmentsArray);
+        } else {
+          const data = await departmentService.getAllDepartments();
+          const departmentsArray = Array.isArray(data) ? data : data.data || [];
+          setDepartments(departmentsArray);
+          localStorage.setItem('departments', JSON.stringify(departmentsArray));
         }
         setDepartmentsLoading(false);
 
@@ -247,29 +245,29 @@ const NoteForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50 py-8 px-4 mt-16">
-      <div className="max-w-4xl mx-auto">
+    <div className="px-4 py-8 mt-16 min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
+      <div className="mx-auto max-w-4xl">
         {/* Header Section */}
-        <div className="text-center mb-8">
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500 rounded-full blur opacity-75 animate-pulse"></div>
-            <div className="relative w-20 h-20 bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl mx-auto mb-4">
-              <FaCloudUploadAlt className="text-white text-3xl" />
+        <div className="mb-8 text-center">
+          <div className="inline-block relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500 rounded-full opacity-75 blur animate-pulse"></div>
+            <div className="flex relative justify-center items-center mx-auto mb-4 w-20 h-20 bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600 rounded-full shadow-2xl">
+              <FaCloudUploadAlt className="text-3xl text-white" />
             </div>
           </div>
-          <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+          <h1 className="mb-4 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 md:text-5xl">
             Upload Your Note
           </h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mx-auto max-w-2xl text-lg text-gray-600">
             Share your knowledge with fellow students. Upload your notes and help build our learning community.
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-          <div className="bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600 p-6">
-            <div className="flex items-center justify-center space-x-3">
-              <FaEdit className="text-white text-2xl" />
+        <div className="overflow-hidden rounded-3xl border shadow-2xl backdrop-blur-xl bg-white/80 border-white/20">
+          <div className="p-6 bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600">
+            <div className="flex justify-center items-center space-x-3">
+              <FaEdit className="text-2xl text-white" />
               <h2 className="text-2xl font-bold text-white">Note Details</h2>
             </div>
           </div>
@@ -277,9 +275,9 @@ const NoteForm = () => {
           <form onSubmit={handleSubmit} className="p-8 space-y-6">
             {/* Title */}
             <div className="group">
-              <label htmlFor="title" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="title" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                 <FaFileAlt className="mr-2 text-violet-500" />
-                Title <span className="text-red-500 ml-1">*</span>
+                Title <span className="ml-1 text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -288,17 +286,17 @@ const NoteForm = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-violet-500/20 focus:border-violet-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-violet-300"
+                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-violet-500/20 focus:border-violet-500 bg-white/50 hover:shadow-lg group-hover:border-violet-300"
                   placeholder="Enter note title..."
                 />
-                <FaFileAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-violet-500 transition-colors duration-300" />
+                <FaFileAlt className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-violet-500" />
               </div>
-              {errors.title && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.title[0]}</span>}
+              {errors.title && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.title[0]}</span>}
             </div>
 
             {/* Description */}
             <div className="group">
-              <label htmlFor="description" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="description" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                 <FaEdit className="mr-2 text-purple-500" />
                 Description
               </label>
@@ -309,22 +307,22 @@ const NoteForm = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-purple-300 resize-none"
+                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 resize-none focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 bg-white/50 hover:shadow-lg group-hover:border-purple-300"
                   placeholder="Describe your note content..."
                 />
-                <FaEdit className="absolute left-4 top-4 text-gray-400 group-focus-within:text-purple-500 transition-colors duration-300" />
+                <FaEdit className="absolute top-4 left-4 text-gray-400 transition-colors duration-300 group-focus-within:text-purple-500" />
               </div>
-              {errors.description && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.description[0]}</span>}
+              {errors.description && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.description[0]}</span>}
             </div>
 
             {/* File Upload */}
             <div className="group">
-              <label className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+              <label className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                 <FaUpload className="mr-2 text-indigo-500" />
-                Upload File <span className="text-red-500 ml-1">*</span>
+                Upload File <span className="ml-1 text-red-500">*</span>
               </label>
               <div
-                className={`relative border-2 rounded-2xl p-8 transition-all duration-300 ${dragActive ? "border-indigo-500 bg-indigo-50" : "border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/50"} ${formData.file ? "border-green-500 bg-green-50" : ""}`}
+                className={`relative border-2 rounded-2xl p-8 transition-all duration-300 ${dragActive ? "bg-indigo-50 border-indigo-500" : "border-gray-300 hover:border-indigo-400 hover:bg-indigo-50/50"} ${formData.file ? "border-green-500 bg-green-50" : ""}`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
@@ -339,8 +337,8 @@ const NoteForm = () => {
                 />
                 <div className="text-center">
                   {formData.file ? (
-                    <div className="flex items-center justify-center space-x-3">
-                      <FaCheckCircle className="text-green-500 text-3xl" />
+                    <div className="flex justify-center items-center space-x-3">
+                      <FaCheckCircle className="text-3xl text-green-500" />
                       <div>
                         <p className="text-lg font-semibold text-green-700">{formData.file.name}</p>
                         <p className="text-sm text-green-600">File selected successfully</p>
@@ -348,8 +346,8 @@ const NoteForm = () => {
                     </div>
                   ) : (
                     <div>
-                      <FaCloudUploadAlt className="mx-auto text-4xl text-gray-400 mb-4" />
-                      <p className="text-lg font-semibold text-gray-700 mb-2">
+                      <FaCloudUploadAlt className="mx-auto mb-4 text-4xl text-gray-400" />
+                      <p className="mb-2 text-lg font-semibold text-gray-700">
                         Drag and drop your file here, or click to browse
                       </p>
                       <p className="text-sm text-gray-500">Supports PDF, DOC, DOCX, PPT, PPTX files</p>
@@ -357,20 +355,20 @@ const NoteForm = () => {
                   )}
                 </div>
               </div>
-              {errors.file && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.file[0]}</span>}
+              {errors.file && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.file[0]}</span>}
             </div>
 
             {/* Form Grid for Dropdowns */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {/* Category */}
               <div className="group">
-                <label htmlFor="category" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="category" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                   <FaTag className="mr-2 text-pink-500" />
-                  Category <span className="text-red-500 ml-1">*</span>
+                  Category <span className="ml-1 text-red-500">*</span>
                 </label>
                 {categoriesLoading ? (
-                  <div className="flex items-center justify-center py-3 px-4 border-2 border-gray-200 rounded-2xl bg-white/50">
-                    <FaSpinner className="animate-spin text-pink-500 mr-2" />
+                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                    <FaSpinner className="mr-2 text-pink-500 animate-spin" />
                     <span className="text-gray-500">Loading categories...</span>
                   </div>
                 ) : categories.length > 0 ? (
@@ -380,7 +378,7 @@ const NoteForm = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-pink-300 appearance-none cursor-pointer"
+                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 bg-white/50 hover:shadow-lg group-hover:border-pink-300"
                     >
                       <option value="">-- Select Category --</option>
                       {categories.map((cat) => (
@@ -389,23 +387,23 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaTag className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-pink-500 transition-colors duration-300 pointer-events-none" />
+                    <FaTag className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-pink-500" />
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 py-3">No categories available.</p>
+                  <p className="py-3 text-sm text-gray-500">No categories available.</p>
                 )}
-                {errors.category && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.category[0]}</span>}
+                {errors.category && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.category[0]}</span>}
               </div>
 
               {/* Course */}
               <div className="group">
-                <label htmlFor="course" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="course" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                   <FaGraduationCap className="mr-2 text-blue-500" />
                   Course
                 </label>
                 {coursesLoading ? (
-                  <div className="flex items-center justify-center py-3 px-4 border-2 border-gray-200 rounded-2xl bg-white/50">
-                    <FaSpinner className="animate-spin text-blue-500 mr-2" />
+                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                    <FaSpinner className="mr-2 text-blue-500 animate-spin" />
                     <span className="text-gray-500">Loading courses...</span>
                   </div>
                 ) : courses.length > 0 ? (
@@ -415,7 +413,7 @@ const NoteForm = () => {
                       name="course"
                       value={formData.course}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-blue-300 appearance-none cursor-pointer"
+                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white/50 hover:shadow-lg group-hover:border-blue-300"
                     >
                       <option value="">-- Select Course --</option>
                       {courses.map((course) => (
@@ -424,23 +422,23 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaGraduationCap className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors duration-300 pointer-events-none" />
+                    <FaGraduationCap className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-blue-500" />
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 py-3">No courses available.</p>
+                  <p className="py-3 text-sm text-gray-500">No courses available.</p>
                 )}
-                {errors.course && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.course[0]}</span>}
+                {errors.course && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.course[0]}</span>}
               </div>
 
               {/* Department */}
               <div className="group">
-                <label htmlFor="department" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="department" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                   <FaBuilding className="mr-2 text-green-500" />
                   Department
                 </label>
                 {departmentsLoading ? (
-                  <div className="flex items-center justify-center py-3 px-4 border-2 border-gray-200 rounded-2xl bg-white/50">
-                    <FaSpinner className="animate-spin text-green-500 mr-2" />
+                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                    <FaSpinner className="mr-2 text-green-500 animate-spin" />
                     <span className="text-gray-500">Loading departments...</span>
                   </div>
                 ) : departments.length > 0 ? (
@@ -450,7 +448,7 @@ const NoteForm = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-green-300 appearance-none cursor-pointer"
+                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 bg-white/50 hover:shadow-lg group-hover:border-green-300"
                     >
                       <option value="">-- Select Department --</option>
                       {departments.map((dept) => (
@@ -459,22 +457,22 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaBuilding className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-green-500 transition-colors duration-300 pointer-events-none" />
+                    <FaBuilding className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-green-500" />
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 py-3">No departments available.</p>
+                  <p className="py-3 text-sm text-gray-500">No departments available.</p>
                 )}
-                {errors.department && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.department[0]}</span>}
+                {errors.department && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.department[0]}</span>}
               </div>
 
               <div className="group">
-                <label htmlFor="faculty" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="faculty" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                   <FaUserTie className="mr-2 text-blue-600" /> {/* Added Faculty Icon */}
                   Faculty
                 </label>
                 {facultiesLoading ? (
-                  <div className="flex items-center justify-center py-3 px-4 border-2 border-gray-200 rounded-2xl bg-white/50">
-                    <FaSpinner className="animate-spin text-blue-600 mr-2" />
+                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                    <FaSpinner className="mr-2 text-blue-600 animate-spin" />
                     <span className="text-gray-500">Loading faculties...</span>
                   </div>
                 ) : faculties.length > 0 ? (
@@ -484,7 +482,7 @@ const NoteForm = () => {
                       name="faculty"
                       value={formData.faculty}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-blue-600/20 focus:border-blue-600 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-blue-400 appearance-none cursor-pointer"
+                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-600/20 focus:border-blue-600 bg-white/50 hover:shadow-lg group-hover:border-blue-400"
                     >
                       <option value="">-- Select Faculty --</option>
                       {faculties.map((faculty) => (
@@ -493,18 +491,18 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaUserTie className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-blue-600 transition-colors duration-300 pointer-events-none" />
+                    <FaUserTie className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-blue-600" />
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500 py-3">No faculties available.</p>
+                  <p className="py-3 text-sm text-gray-500">No faculties available.</p>
                 )}
-                {errors.faculty && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.faculty[0]}</span>}
+                {errors.faculty && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.faculty[0]}</span>}
               </div>
 
              <div>
                {/* Semester */}
                <div className="group">
-                <label htmlFor="semester" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="semester" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                   <FaCalendarAlt className="mr-2 text-orange-500" />
                   Semester
                 </label>
@@ -515,18 +513,18 @@ const NoteForm = () => {
                     name="semester"
                     value={formData.semester}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-orange-300"
+                    className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 bg-white/50 hover:shadow-lg group-hover:border-orange-300"
                     placeholder="e.g., Fall 2024"
                   />
-                  <FaCalendarAlt className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-orange-500 transition-colors duration-300" />
+                  <FaCalendarAlt className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-orange-500" />
                 </div>
-                {errors.semester && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.semester[0]}</span>}
+                {errors.semester && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.semester[0]}</span>}
               </div>
             </div>
 
             {/* Tags */}
             <div className="group">
-              <label htmlFor="tags" className="flex items-center text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="tags" className="flex items-center mb-2 text-sm font-semibold text-gray-700">
                 <FaTag className="mr-2 text-cyan-500" />
                 Tags
               </label>
@@ -537,19 +535,19 @@ const NoteForm = () => {
                   name="tags"
                   value={formData.tags.join(", ")}
                   onChange={handleTagsChange}
-                  className="w-full px-4 py-3 pl-12 border-2 border-gray-200 rounded-2xl shadow-sm focus:outline-none focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 transition-all duration-300 bg-white/50 backdrop-blur-sm hover:shadow-lg group-hover:border-cyan-300"
+                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white/50 hover:shadow-lg group-hover:border-cyan-300"
                   placeholder="math, calculus, derivatives..."
                 />
-                <FaTag className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 group-focus-within:text-cyan-500 transition-colors duration-300" />
+                <FaTag className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-cyan-500" />
               </div>
-              <p className="text-xs text-gray-500 mt-1">Separate tags with commas</p>
-              {errors.tags && <span className="text-sm text-red-500 mt-1 flex items-center"><span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>{errors.tags[0]}</span>}
+              <p className="mt-1 text-xs text-gray-500">Separate tags with commas</p>
+              {errors.tags && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.tags[0]}</span>}
             </div>
              </div>
 
             {/* General Error Message */}
             {errors.non_field_errors && (
-              <div className="p-4 text-sm text-center text-red-700 bg-red-100 border border-red-300 rounded-2xl">
+              <div className="p-4 text-sm text-center text-red-700 bg-red-100 rounded-2xl border border-red-300">
                 {errors.non_field_errors}
               </div>
             )}
@@ -558,17 +556,17 @@ const NoteForm = () => {
             <div className="pt-6">
               <button
                 type="submit"
-                className="w-full py-4 px-6 bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 text-white font-bold rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center space-x-3"
+                className="flex justify-center items-center px-6 py-4 space-x-3 w-full font-bold text-white bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 rounded-2xl shadow-lg transition-all duration-300 transform hover:shadow-xl hover:scale-105 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 disabled={isLoading || categoriesLoading || coursesLoading || departmentsLoading}
               >
                 {isLoading ? (
                   <>
-                    <FaSpinner className="animate-spin text-xl" />
+                    <FaSpinner className="text-xl animate-spin" />
                     <span>Uploading...</span>
                   </>
                 ) : categoriesLoading || coursesLoading || departmentsLoading ? (
                   <>
-                    <FaSpinner className="animate-spin text-xl" />
+                    <FaSpinner className="text-xl animate-spin" />
                     <span>Preparing...</span>
                   </>
                 ) : (

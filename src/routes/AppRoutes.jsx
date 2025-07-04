@@ -29,6 +29,7 @@ import ProfilePage from '../pages/Profile/ProfilePage';
 import PassrowdChangePages from '../pages/Password/PassrowdChangePages';
 import BookmarksPages from '../pages/Bookmarks/BookmarksPages';
 import FacultyPage from '../pages/Faculty/FacultyPage';
+import DashboardPage from '../pages/Dashboard/DashboardPage';
 
 const AppRoutes = () => {
     return (
@@ -56,6 +57,9 @@ const AppRoutes = () => {
             <Route path="/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />
             <Route path="/change-password" element={<ProtectedRoute><PassrowdChangePages /></ProtectedRoute>} />
             <Route path="/bookmarks" element={<ProtectedRoute><BookmarksPages /></ProtectedRoute>} />
+
+            {/* Dashboard protected route */}
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
 
             {/* 404 Not Found Route - should be last */}
             <Route path="*" element={<NotFoundPage />} />

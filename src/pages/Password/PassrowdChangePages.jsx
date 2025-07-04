@@ -3,7 +3,7 @@ import PasswordChange from "../../components/Password/PasswordChange";
 
 const PasswordChangePages = () => {
   return (
-    <div className="flex justify-center items-center p-4 min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100">
+    <div className="flex justify-center items-center p-4 pt-32 pb-32 min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-100">
       <PasswordChange />
     </div>
   );
