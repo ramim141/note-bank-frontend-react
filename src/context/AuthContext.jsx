@@ -3,8 +3,9 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 // Assuming API functions are imported correctly from userService
 import { loginUser, registerUser, getUserProfile, updateUserProfile } from '../api/apiService/userService'; // Adjust path if needed
-import { toast } from 'react-hot-toast';
+import { toast } from 'react-toastify';
 
+// and use userService.getProfile() where needed
 // Create AuthContext
 export const AuthContext = createContext();
 

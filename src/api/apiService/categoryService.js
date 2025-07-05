@@ -7,7 +7,7 @@ export const categoryService = {
 };
 
 async function getAllCategories() {
-    const response = await fetch(`${API_BASE_URL}/api/notes/categories/`, {
+    const response = await fetch(`${API_BASE_URL}/api/categories/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

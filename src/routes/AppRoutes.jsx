@@ -19,6 +19,7 @@ import PasswordResetPages from "../pages/Password/PasswordResetPages";
 import AllNotesPage from '../pages/Notes/AllNotesPage';
 import MyNotesPage from '../pages/Notes/MyNotesPage';
 import UploadNotePage from '../pages/Notes/UploadNotePage';
+import NoteDetailsPage from '../pages/Notes/NoteDetailsPage';
 import EditProfilePage from '../pages/Profile/EditProfilePage';
 // Contributors page
 import ContributorsPage from '../pages/Contributions/ContributorsPage';
@@ -45,6 +46,7 @@ const AppRoutes = () => {
             {/* Notes related public pages */}
             <Route path="/notes" element={<AllNotesPage />} />
             <Route path="/faculty" element={<FacultyPage />} />
+            <Route path="/:noteId" element={<NoteDetailsPage />} />
             
             {/* Contributors page */}
             <Route path="/contributors" element={<ContributorsPage />} />

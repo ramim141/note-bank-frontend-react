@@ -1,7 +1,7 @@
 // src/utils/fetchWrapper.js
 
 // API_BASE_URL environment variable থেকে বা ডিফল্ট URL ব্যবহার করে
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://edumetro.onrender.com";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 
 // Internal request handler function
 async function request(url, options) {

@@ -19,8 +19,8 @@ const ProfilePage = () => {
   // --- Loading State ---
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
-        <div className="w-16 h-16 rounded-full border-4 border-white animate-spin border-t-transparent"></div>
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
+        <div className="w-16 h-16 border-4 border-white rounded-full animate-spin border-t-transparent"></div>
       </div>
     );
   }
@@ -28,7 +28,7 @@ const ProfilePage = () => {
   // --- Not Authenticated State ---
   if (!isAuthenticated || !user) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300">
         <div className="animate-bounce">
           <p className="text-xl text-red-500">Please log in to view your profile.</p>
           <Button onClick={() => navigate('/login')} className="mt-4">Go to Login</Button>
@@ -41,12 +41,12 @@ const ProfilePage = () => {
 
   // --- Main Page Layout ---
   return (
-    <div className="p-6 pt-32 min-h-screen bg-gradient-to-br from-purple-400 via-pink-300 to-blue-300 animate-gradient-x">
+    <div className="min-h-screen p-6 pt-32 bg-white animate-gradient-x">
       <div className="mx-auto max-w-7xl">
         {/* Header Section with Animation */}
         <div className="mb-8 animate-fade-in-down">
           <h1 className="mb-2 text-5xl font-bold text-purple-800 animate-pulse">Profile Dashboard</h1>
-          <div className="mb-4 w-32 h-1 bg-gradient-to-r from-purple-600 to-pink-500 rounded-full animate-expand"></div>
+          <div className="w-32 h-1 mb-4 rounded-full bg-gradient-to-r from-purple-600 to-pink-500 animate-expand"></div>
           <p className="text-2xl text-gray-700 delay-300 animate-fade-in-up">
             Welcome back,{" "}
             <span className="inline-block font-bold text-blue-600 animate-bounce">
@@ -60,17 +60,17 @@ const ProfilePage = () => {
           {/* Left Sidebar - User Details */}
           <div className="space-y-6 lg:col-span-1 animate-slide-in-left">
             {/* Profile Details Card */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl hover:bg-white/30 group">
-              <div className="overflow-hidden relative">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl hover:bg-white/30 group">
+              <div className="relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-r animate-pulse from-purple-400/20 to-pink-400/20"></div>
-                <div className="flex relative z-10 flex-col items-center p-6 text-center">
+                <div className="relative z-10 flex flex-col items-center p-6 text-center">
                   <div className="relative mb-4 group">
-                    <div className="flex justify-center items-center w-32 h-32 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full shadow-lg transition-all duration-700 transform hover:scale-110 hover:rotate-12 animate-float">
+                    <div className="flex items-center justify-center w-32 h-32 transition-all duration-700 transform rounded-full shadow-lg bg-gradient-to-r from-purple-500 to-pink-500 hover:scale-110 hover:rotate-12">
                       {user?.profile_picture_url ? (
                         <img
                           src={user.profile_picture_url + '?t=' + Date.now()}
                           alt="Profile"
-                          className="object-cover w-full h-full rounded-full transition-all duration-500 group-hover:brightness-110"
+                          className="object-cover w-full h-full transition-all duration-500 rounded-full group-hover:brightness-110"
                         />
                       ) : (
                         <span className="text-4xl font-bold text-white transition-all duration-500 group-hover:scale-125">
@@ -80,7 +80,7 @@ const ProfilePage = () => {
                       )}
                     </div>
                     {/* Rating Badge */}
-                    <div className="flex absolute -right-2 -bottom-2 items-center px-1 py-1 text-sm font-bold text-white bg-green-500 rounded-full transition-all duration-500 transform hover:scale-125 hover:bg-green-400 animate-bounce-slow">
+                    <div className="absolute flex items-center px-1 py-1 text-sm font-bold text-white transition-all duration-500 transform bg-green-500 rounded-full -right-2 -bottom-2 hover:scale-125 hover:bg-green-400 animate-bounce-slow">
                       <span className="mx-auto animate-spin-slow">⭐</span>
                       {(user?.total_notes_liked_by_others || 0).toFixed(1)}
                     </div>
@@ -95,13 +95,13 @@ const ProfilePage = () => {
 
                   {/* Stats */}
                   <div className="flex gap-4">
-                    <div className="px-4 py-2 text-center bg-blue-100 rounded-xl transition-all duration-500 transform cursor-pointer hover:scale-110 hover:bg-blue-200 hover:shadow-lg">
+                    <div className="px-4 py-2 text-center transition-all duration-500 transform bg-blue-100 cursor-pointer rounded-xl hover:scale-110 hover:bg-blue-200 hover:shadow-lg">
                       <div className="text-2xl font-bold text-blue-600 animate-count-up">
                         {user?.total_notes_uploaded || 0}
                       </div>
                       <div className="text-sm text-blue-800">Notes</div>
                     </div>
-                    <div className="px-4 py-2 text-center bg-purple-100 rounded-xl transition-all duration-500 transform cursor-pointer hover:scale-110 hover:bg-purple-200 hover:shadow-lg">
+                    <div className="px-4 py-2 text-center transition-all duration-500 transform bg-purple-100 cursor-pointer rounded-xl hover:scale-110 hover:bg-purple-200 hover:shadow-lg">
                       <div className="text-2xl font-bold text-purple-600 animate-count-up">
                         {user?.total_bookmarked_notes_by_user || 0}
                       </div>
@@ -115,18 +115,18 @@ const ProfilePage = () => {
               <div className="flex justify-center px-6 pb-6 mt-6">
                 <Button
                   onClick={() => navigate('/change-password')}
-                  className="px-8 py-3 text-lg text-white bg-purple-600 rounded-xl transition-all duration-300 animate-pulse transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group"
+                  className="px-8 py-3 text-lg text-white transition-all duration-300 transform bg-purple-600 rounded-xl animate-pulse hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group"
                 >
-                  <User className="mr-2 w-4 h-4" />
+                  <User className="w-4 h-4 mr-2" />
                  Change Password
                 </Button>
               </div>
             </Card>
 
             {/* Education Section */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 delay-200 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left">
+            <Card className="transition-all duration-500 delay-200 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left">
               <div className="flex items-center mb-4 group">
-                <GraduationCap className="mr-3 w-6 h-6 text-blue-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <GraduationCap className="w-6 h-6 mr-3 text-blue-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
                 <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-blue-700">
                   Education
                 </h3>
@@ -163,7 +163,7 @@ const ProfilePage = () => {
                     className={`flex items-center p-3 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-right`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <item.icon className="mr-3 w-5 h-5 animate-pulse" />
+                    <item.icon className="w-5 h-5 mr-3 animate-pulse" />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium opacity-90">{item.label}</span>
                       <span className="text-lg font-bold">{item.value}</span>
@@ -174,9 +174,9 @@ const ProfilePage = () => {
             </Card>
 
             {/* Skills Section */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-400">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-400">
               <div className="flex items-center mb-4 group">
-                <Award className="mr-3 w-6 h-6 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <Award className="w-6 h-6 mr-3 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
                 <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-purple-700">
                   Skills
                 </h3>
@@ -187,7 +187,7 @@ const ProfilePage = () => {
                     {user.skills.map((skill, index) => (
                       <span
                         key={index}
-                        className="px-3 py-1 text-sm font-medium text-purple-800 bg-purple-100 rounded-full transition-all duration-300 transform hover:scale-110 hover:bg-purple-200 animate-fade-in"
+                        className="px-3 py-1 text-sm font-medium text-purple-800 transition-all duration-300 transform bg-purple-100 rounded-full hover:scale-110 hover:bg-purple-200 animate-fade-in"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         {skill}
@@ -201,14 +201,14 @@ const ProfilePage = () => {
             </Card>
 
             {/* Action Buttons */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-600">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-left delay-600">
               <div className="space-y-3">
-                <Button className="flex justify-center items-center px-4 py-3 w-full font-bold text-white bg-purple-600 rounded-xl transition-all duration-300 transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group">
-                  <BookOpen className="mr-2 w-5 h-5 transition-all duration-300 group-hover:rotate-12" />
+                <Button className="flex items-center justify-center w-full px-4 py-3 font-bold text-white transition-all duration-300 transform bg-purple-600 rounded-xl hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group">
+                  <BookOpen className="w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-12" />
                   My Notes
                 </Button>
-                <Button className="flex justify-center items-center px-4 py-3 w-full font-bold text-white bg-purple-600 rounded-xl transition-all duration-300 transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group">
-                  <Bookmark className="mr-2 w-5 h-5 transition-all duration-300 group-hover:rotate-12" />
+                <Button className="flex items-center justify-center w-full px-4 py-3 font-bold text-white transition-all duration-300 transform bg-purple-600 rounded-xl hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group">
+                  <Bookmark className="w-5 h-5 mr-2 transition-all duration-300 group-hover:rotate-12" />
                   My Bookmarks
                 </Button>
               </div>
@@ -218,8 +218,8 @@ const ProfilePage = () => {
           {/* Right Content - Information Sections */}
           <div className="space-y-6 lg:col-span-2 animate-slide-in-right">
             {/* Profile Header with Edit Button */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl">
-              <div className="flex justify-between items-center">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl">
+              <div className="flex items-center justify-between">
                 <div className="animate-fade-in-left">
                   <h2 className="text-3xl font-bold text-gray-800 transition-all duration-300 hover:text-purple-700">
                     {user?.first_name} {user?.last_name}
@@ -228,18 +228,18 @@ const ProfilePage = () => {
                 </div>
                 <Button
                   onClick={() => navigate('/edit-profile')}
-                  className="flex items-center px-6 py-2 text-white bg-purple-600 rounded-xl transition-all duration-300 transform hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group animate-fade-in-right"
+                  className="flex items-center px-6 py-2 text-white transition-all duration-300 transform bg-purple-600 rounded-xl hover:bg-purple-700 hover:scale-105 hover:shadow-lg active:scale-95 group animate-fade-in-right"
                 >
-                  <User className="mr-2 w-4 h-4 transition-all duration-300 group-hover:rotate-12" />
+                  <User className="w-4 h-4 mr-2 transition-all duration-300 group-hover:rotate-12" />
                   Edit Profile
                 </Button>
               </div>
             </Card>
 
             {/* Contact Information */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 delay-200 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right">
+            <Card className="transition-all duration-500 delay-200 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right">
               <div className="flex items-center mb-6 group">
-                <Mail className="mr-3 w-6 h-6 text-green-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <Mail className="w-6 h-6 mr-3 text-green-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
                 <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-green-700">
                   Contact Information
                 </h3>
@@ -270,7 +270,7 @@ const ProfilePage = () => {
                     className={`flex items-center p-4 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-up`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <item.icon className="mr-3 w-6 h-6 animate-pulse" />
+                    <item.icon className="w-6 h-6 mr-3 animate-pulse" />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium opacity-90">{item.label}</span>
                       <span className="text-lg font-bold">{item.value}</span>
@@ -281,9 +281,9 @@ const ProfilePage = () => {
             </Card>
 
             {/* Basic Information */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-400">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-400">
               <div className="flex items-center mb-6 group">
-                <User className="mr-3 w-6 h-6 text-orange-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <User className="w-6 h-6 mr-3 text-orange-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
                 <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-orange-700">
                   Basic Information
                 </h3>
@@ -308,7 +308,7 @@ const ProfilePage = () => {
                     className={`flex items-center p-4 text-white bg-gradient-to-r ${item.color} rounded-xl transform transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer animate-slide-in-up`}
                     style={{ animationDelay: `${index * 100}ms` }}
                   >
-                    <item.icon className="mr-3 w-6 h-6 animate-pulse" />
+                    <item.icon className="w-6 h-6 mr-3 animate-pulse" />
                     <div className="flex flex-col">
                       <span className="text-sm font-medium opacity-90">{item.label}</span>
                       <span className="text-lg font-bold">{item.value}</span>
@@ -319,9 +319,9 @@ const ProfilePage = () => {
             </Card>
 
             {/* Academic Activity */}
-            <Card className="rounded-3xl shadow-xl backdrop-blur-lg transition-all duration-500 transform bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-600">
+            <Card className="transition-all duration-500 transform shadow-xl rounded-3xl backdrop-blur-lg bg-white/20 border-white/30 hover:scale-105 hover:shadow-2xl animate-slide-in-right delay-600">
               <div className="flex items-center mb-6 group">
-                <Book className="mr-3 w-6 h-6 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
+                <Book className="w-6 h-6 mr-3 text-purple-600 transition-all duration-300 group-hover:scale-125 group-hover:rotate-12" />
                 <h3 className="text-xl font-bold text-gray-800 transition-all duration-300 group-hover:text-purple-700">
                   Academic Activity
                 </h3>

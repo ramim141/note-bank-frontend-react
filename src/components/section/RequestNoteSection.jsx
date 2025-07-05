@@ -13,7 +13,7 @@ import {
   FaLinkedin,
   FaSpinner,
 } from "react-icons/fa";
-import { toast } from "react-hot-toast";
+import { toast } from "react-toastify";
 // import { createNoteRequest } from "../../utils/api"; // <-- REMOVE THIS OLD IMPORT
 import { createNoteRequest } from "../../api/apiService/requestNoteService"; // <-- IMPORT FROM THE NEW SERVICE FILE
 import { useAuth } from "../../context/useAuth";
@@ -100,24 +100,24 @@ const RequestNoteSection = () => {
   }
 
   return (
-    <section className="overflow-hidden relative py-20 lg:py-32">
+    <section className="relative py-20 overflow-hidden lg:py-32">
       <div className="absolute inset-0 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl animate-pulse from-purple-400/20 to-pink-400/20"></div>
-        <div className="absolute right-0 bottom-0 w-96 h-96 bg-gradient-to-br rounded-full blur-3xl animate-pulse from-blue-400/20 to-indigo-400/20 animation-delay-2000"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-gradient-to-br rounded-full blur-2xl animate-pulse transform -translate-x-1/2 -translate-y-1/2 from-green-400/10 to-emerald-400/10 animation-delay-4000"></div>
+        <div className="absolute top-0 left-0 rounded-full w-96 h-96 bg-gradient-to-br blur-3xl animate-pulse from-purple-400/20 to-pink-400/20"></div>
+        <div className="absolute bottom-0 right-0 rounded-full w-96 h-96 bg-gradient-to-br blur-3xl animate-pulse from-blue-400/20 to-indigo-400/20 animation-delay-2000"></div>
+        <div className="absolute w-64 h-64 transform -translate-x-1/2 -translate-y-1/2 rounded-full top-1/2 left-1/2 bg-gradient-to-br blur-2xl animate-pulse from-green-400/10 to-emerald-400/10 animation-delay-4000"></div>
       </div>
 
       <div className="relative z-10 px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 items-start lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-start grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-16">
           {/* Left Column: Form */}
           <div className="relative">
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 p-8 lg:p-12 transform hover:scale-[1.02] transition-all duration-500">
-              <div className="absolute -top-4 -left-4 w-8 h-8 bg-gradient-to-br from-pink-400 to-rose-500 rounded-full opacity-60"></div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full opacity-60"></div>
-              <div className="absolute -bottom-2 -left-2 w-4 h-4 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full opacity-60"></div>
+              <div className="absolute w-8 h-8 rounded-full -top-4 -left-4 bg-gradient-to-br from-pink-400 to-rose-500 opacity-60"></div>
+              <div className="absolute w-6 h-6 rounded-full -top-2 -right-2 bg-gradient-to-br from-purple-400 to-indigo-500 opacity-60"></div>
+              <div className="absolute w-4 h-4 rounded-full -bottom-2 -left-2 bg-gradient-to-br from-blue-400 to-cyan-500 opacity-60"></div>
 
               <div className="mb-10 text-center">
-                <div className="inline-flex gap-3 items-center px-6 py-3 mb-6 bg-gradient-to-r from-pink-100 to-rose-100 rounded-full">
+                <div className="inline-flex items-center gap-3 px-6 py-3 mb-6 rounded-full bg-gradient-to-r from-pink-100 to-rose-100">
                   <FaPaperPlane className="text-sm text-pink-600 animate-bounce" />
                   <span className="text-sm font-bold tracking-wider text-pink-700 uppercase">Request Form</span>
                 </div>
@@ -139,7 +139,7 @@ const RequestNoteSection = () => {
                       name="name"
                       value={authLoading ? "Loading..." : `${user?.first_name || ''} ${user?.last_name || ''}`.trim() || user?.username || 'Guest'}
                       readOnly
-                      className="px-4 py-4 w-full placeholder-gray-500 text-gray-900 rounded-2xl border-2 border-gray-200 transition-all duration-300 cursor-not-allowed bg-gray-100/70 focus:outline-none"
+                      className="w-full px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border-2 border-gray-200 cursor-not-allowed rounded-2xl bg-gray-100/70 focus:outline-none"
                     />
                   </div>
                   <div className="group">
@@ -149,7 +149,7 @@ const RequestNoteSection = () => {
                       name="studentId"
                       value={authLoading ? "Loading..." : user?.student_id || 'N/A'}
                       readOnly
-                      className="px-4 py-4 w-full placeholder-gray-500 text-gray-900 rounded-2xl border-2 border-gray-200 transition-all duration-300 cursor-not-allowed bg-gray-100/70 focus:outline-none"
+                      className="w-full px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border-2 border-gray-200 cursor-not-allowed rounded-2xl bg-gray-100/70 focus:outline-none"
                     />
                   </div>
                 </div>
@@ -164,7 +164,7 @@ const RequestNoteSection = () => {
                       onChange={handleInputChange}
                       placeholder="Enter course name"
                       required
-                      className="px-4 py-4 w-full placeholder-gray-500 text-gray-900 rounded-2xl border-2 border-gray-200 transition-all duration-300 bg-white/70 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 group-hover:border-purple-300"
+                      className="w-full px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border-2 border-gray-200 rounded-2xl bg-white/70 focus:border-purple-500 focus:ring-4 focus:ring-purple-500/20 group-hover:border-purple-300"
                     />
                   </div>
                   <div className="group">
@@ -176,7 +176,7 @@ const RequestNoteSection = () => {
                       onChange={handleInputChange}
                       placeholder="Enter department name"
                       required
-                      className="px-4 py-4 w-full placeholder-gray-500 text-gray-900 rounded-2xl border-2 border-gray-200 transition-all duration-300 bg-white/70 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 group-hover:border-emerald-300"
+                      className="w-full px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border-2 border-gray-200 rounded-2xl bg-white/70 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/20 group-hover:border-emerald-300"
                     />
                   </div>
                 </div>
@@ -190,7 +190,7 @@ const RequestNoteSection = () => {
                     placeholder="Describe the specific notes you need..."
                     rows={5}
                     required
-                    className="px-4 py-4 w-full placeholder-gray-500 text-gray-900 rounded-2xl border-2 border-gray-200 transition-all duration-300 resize-none bg-white/70 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 group-hover:border-orange-300"
+                    className="w-full px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border-2 border-gray-200 resize-none rounded-2xl bg-white/70 focus:border-orange-500 focus:ring-4 focus:ring-orange-500/20 group-hover:border-orange-300"
                   />
                 </div>
 
@@ -205,10 +205,10 @@ const RequestNoteSection = () => {
                         : "bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white hover:from-blue-700 hover:via-purple-700 hover:to-pink-700 hover:scale-105 hover:shadow-3xl"
                   }`}
                 >
-                  <span className="flex gap-3 justify-center items-center">
+                  <span className="flex items-center justify-center gap-3">
                     {isSubmitted ? (
                       <>
-                        <span className="flex justify-center items-center w-6 h-6 bg-white rounded-full">
+                        <span className="flex items-center justify-center w-6 h-6 bg-white rounded-full">
                           <span className="text-sm text-green-600">✓</span>
                         </span>
                         Request Submitted!
@@ -233,11 +233,11 @@ const RequestNoteSection = () => {
           {/* Right Column: Contact Information */}
           <div className="relative">
             <div className="bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 rounded-3xl shadow-2xl p-8 lg:pb-20 lg:p-12 text-white transform hover:scale-[1.02] transition-all duration-500">
-              <div className="absolute -top-4 -right-4 w-8 h-8 rounded-full bg-white/20"></div>
-              <div className="absolute -right-2 -bottom-2 w-6 h-6 rounded-full bg-white/30"></div>
-              <div className="absolute -left-2 top-1/2 w-4 h-4 rounded-full bg-white/20"></div>
+              <div className="absolute w-8 h-8 rounded-full -top-4 -right-4 bg-white/20"></div>
+              <div className="absolute w-6 h-6 rounded-full -right-2 -bottom-2 bg-white/30"></div>
+              <div className="absolute w-4 h-4 rounded-full -left-2 top-1/2 bg-white/20"></div>
               <div className="mb-12 text-center">
-                <div className="inline-flex gap-2 items-center px-6 py-3 rounded-full backdrop-blur-sm bg-white/20">
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-sm bg-white/20">
                   <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
                   <span className="text-sm font-bold tracking-wider uppercase">Get In Touch</span>
                 </div>
@@ -248,44 +248,44 @@ const RequestNoteSection = () => {
               </div>
               <div className="space-y-8">
                 {/* Email */}
-                <div className="flex gap-6 items-center p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group bg-white/10 hover:bg-white/20 hover:scale-105">
-                  <div className="flex justify-center items-center w-16 h-16 bg-red-500 rounded-2xl shadow-xl transition-transform duration-300 group-hover:scale-110">
+                <div className="flex items-center gap-6 p-6 transition-all duration-300 transform rounded-2xl backdrop-blur-sm group bg-white/10 hover:bg-white/20 hover:scale-105">
+                  <div className="flex items-center justify-center w-16 h-16 transition-transform duration-300 bg-red-500 shadow-xl rounded-2xl group-hover:scale-110">
                     <FaEnvelope className="text-2xl text-white" />
                   </div>
                   <div>
                     <h4 className="mb-1 text-xl font-bold">Our Email</h4>
-                    <p className="text-emerald-100 transition-colors duration-300 group-hover:text-white">
+                    <p className="transition-colors duration-300 text-emerald-100 group-hover:text-white">
                       support@example.com
                     </p>
                   </div>
                 </div>
                 {/* WhatsApp */}
-                <div className="flex gap-6 items-center p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group bg-white/10 hover:bg-white/20 hover:scale-105">
-                  <div className="flex justify-center items-center w-16 h-16 bg-green-500 rounded-2xl shadow-xl transition-transform duration-300 group-hover:scale-110">
+                <div className="flex items-center gap-6 p-6 transition-all duration-300 transform rounded-2xl backdrop-blur-sm group bg-white/10 hover:bg-white/20 hover:scale-105">
+                  <div className="flex items-center justify-center w-16 h-16 transition-transform duration-300 bg-green-500 shadow-xl rounded-2xl group-hover:scale-110">
                     <FaWhatsapp className="text-2xl text-white" />
                   </div>
                   <div>
                     <h4 className="mb-1 text-xl font-bold">Send Message</h4>
-                    <p className="text-emerald-100 transition-colors duration-300 group-hover:text-white">
+                    <p className="transition-colors duration-300 text-emerald-100 group-hover:text-white">
                       +8801768628911
                     </p>
                   </div>
                 </div>
                 {/* LinkedIn */}
-                <div className="flex gap-6 items-center p-6 rounded-2xl backdrop-blur-sm transition-all duration-300 transform group bg-white/10 hover:bg-white/20 hover:scale-105">
-                  <div className="flex justify-center items-center w-16 h-16 bg-blue-600 rounded-2xl shadow-xl transition-transform duration-300 group-hover:scale-110">
+                <div className="flex items-center gap-6 p-6 transition-all duration-300 transform rounded-2xl backdrop-blur-sm group bg-white/10 hover:bg-white/20 hover:scale-105">
+                  <div className="flex items-center justify-center w-16 h-16 transition-transform duration-300 bg-blue-600 shadow-xl rounded-2xl group-hover:scale-110">
                     <FaLinkedin className="text-2xl text-white" />
                   </div>
                   <div>
                     <h4 className="mb-1 text-xl font-bold">Follow Our</h4>
-                    <p className="text-emerald-100 transition-colors duration-300 group-hover:text-white">
+                    <p className="transition-colors duration-300 text-emerald-100 group-hover:text-white">
                       @ramim-ahmed
                     </p>
                   </div>
                 </div>
               </div>
               <div className="mt-12 text-center">
-                <div className="inline-flex gap-2 items-center px-6 py-3 rounded-full backdrop-blur-sm bg-white/20">
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full backdrop-blur-sm bg-white/20">
                   <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
                   <span className="text-sm font-medium">We respond within 24 hours</span>
                 </div>

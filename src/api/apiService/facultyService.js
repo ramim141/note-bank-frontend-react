@@ -7,7 +7,7 @@ export const facultyService = {
 };
 
 async function getAllFaculties() {
-    const response = await fetch(`${API_BASE_URL}/api/notes/faculties/`, {
+    const response = await fetch(`${API_BASE_URL}/api/faculties/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

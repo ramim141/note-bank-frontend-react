@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import { toast } from "react-hot-toast"
+import { toast } from "react-toastify"
 import { updateUserProfile } from "../../api/apiService/userService"
 
 // Import icons from lucide-react

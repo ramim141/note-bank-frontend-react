@@ -39,6 +39,8 @@ const NoteForm = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [uploadedNote, setUploadedNote] = useState(null);
 
   // --- Data for Dropdowns ---
   const [categories, setCategories] = useState([]);

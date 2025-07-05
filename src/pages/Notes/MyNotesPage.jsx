@@ -86,6 +86,17 @@ const MyNotesPage = () => {
   const approvedCount = notes.filter((note) => note.is_approved).length
   const pendingCount = notes.filter((note) => !note.is_approved).length
 
+  // Callback to update a specific note in the notes array
+  const updateNoteInList = (noteId, updatedData) => {
+    setNotes(prevNotes => 
+      prevNotes.map(note => 
+        note.id === noteId 
+          ? { ...note, ...updatedData }
+          : note
+      )
+    )
+  }
+
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center h-64">
       <div className="relative">
@@ -214,7 +225,11 @@ const MyNotesPage = () => {
                       animation: "fadeInUp 0.6s ease-out forwards",
                     }}
                   >
-                    <NoteCard note={note} onClick={() => console.log("Note clicked:", note.id)} />
+                    <NoteCard 
+                      note={note} 
+                      onNoteUpdate={updateNoteInList}
+                      onClick={() => console.log("Note clicked:", note.id)} 
+                    />
                   </div>
                 ))}
               </div>

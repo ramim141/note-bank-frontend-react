@@ -63,12 +63,12 @@ const HeroSection = () => {
               className="overflow-hidden relative px-8 py-4 font-bold text-indigo-600 bg-white rounded-2xl shadow-2xl transition-all duration-300 transform group hover:shadow-3xl hover:scale-105"
             >
               <span className="flex relative z-10 gap-2 justify-center items-center">
-                Browse All Notes
+                Browse Approved Notes
                 <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
               <span className="flex absolute inset-0 z-10 gap-2 justify-center items-center font-bold text-white opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                Browse All Notes
+                Browse Approved Notes
                 <FaArrowRight className="transition-transform duration-300 group-hover:translate-x-1" />
               </span>
             </Link>

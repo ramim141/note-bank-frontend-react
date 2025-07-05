@@ -7,7 +7,7 @@ export const courseService = {
 };
 
 async function getAllCourses() {
-    const response = await fetch(`${API_BASE_URL}/api/notes/courses/`, {
+    const response = await fetch(`${API_BASE_URL}/api/courses/`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',

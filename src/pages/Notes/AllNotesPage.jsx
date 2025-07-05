@@ -2,31 +2,25 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-
 import { useSearchParams } from "react-router-dom"
 import { Search, Loader, ServerCrash, Frown, Filter, X } from 'lucide-react'
-import { useAuth } from "../../context/useAuth"
+import { useAuth } from "../../context/AuthContext" // আপনার useAuth হুকের সঠিক পাথ
 import { noteService } from "../../api/apiService/noteService"
-import { departmentService } from "../../api/apiService/departmentService"
-import { courseService } from "../../api/apiService/courseService"
+import { getDepartments, getCourses } from "../../api/apiService/userService" // userService থেকে ইম্পোর্ট করুন
 
 import CategoryBar from "../../components/Notes/CategoryBar"
-import NoteCard from "../../components/Notes/NoteCard"
+import NoteCard from "../../components/notes/NoteCard"
 import Dropdown from "../../components/ui/Dropdown"
 
-
-const getCacheKey = (params) => `notes-cache-${JSON.stringify(params)}`
-
 const AllNotesPage = () => {
-
   const [searchParams, setSearchParams] = useSearchParams()
+  const { token } = useAuth()
 
   // State Management
   const [notes, setNotes] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-
-
+  
   const [filters, setFilters] = useState({
     search: searchParams.get("search") || "",
     department: searchParams.get("department") || "",
@@ -35,26 +29,24 @@ const AllNotesPage = () => {
     category: searchParams.get("category") || "",
   })
 
-  // Mobile filter toggle
-  const [showMobileFilters, setShowMobileFilters] = useState(false)
-
-  // Pagination States
-  const [page, setPage] = useState(parseInt(searchParams.get("page") || "1", 10))
+  // Pagination and Infinite Scroll
+  const [page, setPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(false)
-
-  const { token } = useAuth()
   const observer = useRef()
+  const activeRequestController = useRef(null) // Request cancellation-এর জন্য
 
+  // Dropdown data
   const [departments, setDepartments] = useState([])
   const [courses, setCourses] = useState([])
+  const [showMobileFilters, setShowMobileFilters] = useState(false)
 
   // Fetch dropdown data on mount
   useEffect(() => {
-    departmentService.getAllDepartments().then(setDepartments)
-    courseService.getAllCourses().then(setCourses)
+    getDepartments().then(response => setDepartments(response.data || [])).catch(console.error)
+    getCourses().then(response => setCourses(response.data || [])).catch(console.error)
   }, [])
 
-
+  // Update URL search params when filters or page change
   useEffect(() => {
     const newSearchParams = new URLSearchParams()
     if (filters.search) newSearchParams.set("search", filters.search)
@@ -63,120 +55,144 @@ const AllNotesPage = () => {
     if (filters.semester) newSearchParams.set("semester", filters.semester)
     if (filters.category) newSearchParams.set("category", filters.category)
     if (page > 1) newSearchParams.set("page", page)
-
-
     setSearchParams(newSearchParams, { replace: true })
   }, [filters, page, setSearchParams])
 
-
-  const fetchNotes = useCallback(async (currentPage, currentFilters) => {
-    const isFirstPageLoad = currentPage === 1
-    
-    // Construct params for API call and cache key
-    const apiParams = {
-      search: currentFilters.search,
-      department: currentFilters.department,
-      course: currentFilters.course,
-      semester: currentFilters.semester,
-      category__name: currentFilters.category,
-      page: currentPage,
+  // --- ডেটা ফেচ করার জন্য মূল useEffect ---
+  useEffect(() => {
+    // আগের রিকোয়েস্ট বাতিল করুন
+    if (activeRequestController.current) {
+      activeRequestController.current.abort()
     }
-    const cleanParams = Object.fromEntries(Object.entries(apiParams).filter(([_, v]) => v));
-    const cacheKey = getCacheKey(cleanParams)
-
-    // If it's the first page, check for cached data first
-    if (isFirstPageLoad) {
-      const cachedData = sessionStorage.getItem(cacheKey)
-      if (cachedData) {
-        const { notes: cachedNotes, hasNextPage: cachedHasNextPage } = JSON.parse(cachedData)
-        setNotes(cachedNotes)
-        setHasNextPage(cachedHasNextPage)
-        setLoading(false) 
-        return
-      }
-    }
-    
+    // নতুন রিকোয়েস্টের জন্য নতুন কন্ট্রোলার তৈরি করুন
+    const controller = new AbortController()
+    activeRequestController.current = controller
 
     setLoading(true)
+    setError(null)
 
-    try {
-      setError(null)
-      const data = await noteService.getNotes(cleanParams, token)
-      const newNotes = data.results || (Array.isArray(data) ? data : [])
-      const newHasNextPage = !!data.next
-
-      // Update state based on page number
-      if (isFirstPageLoad) {
-        setNotes(newNotes)
-      } else {
-        // Append new notes, preventing duplicates
-        setNotes((prev) => [...prev, ...newNotes.filter(n => !prev.some(p => p.id === n.id))])
-      }
-      setHasNextPage(newHasNextPage)
-
-
-      if (isFirstPageLoad && newNotes.length > 0) {
-        sessionStorage.setItem(cacheKey, JSON.stringify({ notes: newNotes, hasNextPage: newHasNextPage }))
-      }
-
-    } catch (err) {
-      setError("Could not fetch notes. Please try again later.")
-      console.error(err)
-    } finally {
-      setLoading(false)
+    const apiParams = {
+      search: filters.search,
+      department__id: filters.department,
+      course__id: filters.course,
+      semester: filters.semester,
+      category__name: filters.category,
+      is_approved: true, // Only show approved notes
+      page: page,
     }
-  }, [token]) 
+    const cleanParams = Object.fromEntries(Object.entries(apiParams).filter(([_, v]) => v))
+    
+    // Debug: Log the parameters being sent
+    console.log('API Parameters being sent:', cleanParams)
+    
+    noteService.getNotes(cleanParams, token, controller.signal)
+      .then(data => {
+        // Debug: Log the fetched notes data
+        console.log('Fetched notes data:', data)
+        console.log('First note sample:', data.results?.[0])
+        
+        // Debug: Log all note IDs
+        if (data.results && data.results.length > 0) {
+          console.log('Available note IDs:', data.results.map(note => ({
+            id: note.id,
+            title: note.title,
+            file_name: note.file_name
+          })))
+        } else {
+          console.log('No notes found in the response')
+        }
+        
+        const newNotes = data.results || []
+        const newHasNextPage = !!data.next
+
+        setNotes(prevNotes => {
+          // প্রথম পেইজ হলে, অ্যারে রিসেট করুন
+          if (page === 1) {
+            return newNotes
+          }
+          // পরের পেইজ হলে, শুধুমাত্র ইউনিক নোট যোগ করুন
+          const existingNoteIds = new Set(prevNotes.map(n => n.id))
+          const uniqueNewNotes = newNotes.filter(n => !existingNoteIds.has(n.id))
+          return [...prevNotes, ...uniqueNewNotes]
+        })
+        setHasNextPage(newHasNextPage)
+      })
+      .catch(err => {
+        if (err.name !== 'CanceledError') {
+          setError("Could not fetch notes. Please try again later.")
+          console.error(err)
+        }
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+
+    // Cleanup ফাংশন: কম্পোনেন্ট আনমাউন্ট হলে বা useEffect আবার রান করলে রিকোয়েস্ট বাতিল হবে
+    return () => {
+      controller.abort()
+    }
+  }, [page, filters, token]) // fetchNotes-কে আর useCallback বা dependency হিসেবে রাখার প্রয়োজন নেই
 
 
-  useEffect(() => {
-    fetchNotes(page, filters)
-  }, [page, filters, fetchNotes])
-
-
-
+  // --- ইনফিনিট স্ক্রোলের জন্য Intersection Observer ---
   const lastNoteElementRef = useCallback(
     (node) => {
       if (loading) return
       if (observer.current) observer.current.disconnect()
-
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasNextPage) {
-
           setPage((prevPage) => prevPage + 1)
         }
       })
-
       if (node) observer.current.observe(node)
     },
-    [loading, hasNextPage],
+    [loading, hasNextPage]
   )
-
-
-  const handleFilterChange = (newFilters) => {
-    setPage(1)
-    setNotes([]) 
-    setFilters(newFilters)
-  }
   
+  // --- ইভেন্ট হ্যান্ডলার ---
+  const handleFilterChange = (name, value) => {
+    console.log('handleFilterChange called:', { name, value })
+    // আগের নোটগুলো না দেখিয়ে নতুন করে লোড করার জন্য
+    setNotes([])
+    setPage(1) // ফিল্টার পরিবর্তনের সাথে সাথে পেইজ ১-এ ফিরে যান
+    setFilters(prevFilters => {
+      const newFilters = { ...prevFilters, [name]: value }
+      console.log('New filters state:', newFilters)
+      return newFilters
+    })
+  }
+
   const handleCategorySelect = (categoryName) => {
-    handleFilterChange({ ...filters, category: categoryName })
+    handleFilterChange('category', categoryName)
   }
 
   const handleInputChange = (e) => {
+    e.preventDefault()
     const { name, value } = e.target
-
-    handleFilterChange({ ...filters, [name]: value })
+    // Debounce a search input could be a good idea here
+    handleFilterChange(name, value)
+  }
+  
+  const clearAllFilters = () => {
+    setNotes([])
+    setPage(1)
+    setFilters({ search: "", department: "", course: "", semester: "", category: "" })
   }
 
-  const clearAllFilters = () => {
-    handleFilterChange({ search: "", department: "", course: "", semester: "", category: "" })
+  // Callback to update a specific note in the notes array
+  const updateNoteInList = (noteId, updatedData) => {
+    setNotes(prevNotes => 
+      prevNotes.map(note => 
+        note.id === noteId 
+          ? { ...note, ...updatedData }
+          : note
+      )
+    )
   }
 
   const hasActiveFilters = Object.values(filters).some(v => v !== "")
-
   const departmentOptions = departments.map((dept) => ({ value: dept.id, label: dept.name }))
   const courseOptions = courses.map((course) => ({ value: course.id, label: course.name }))
-
 
   return (
     <div className="min-h-screen pt-32 pb-32 bg-gradient-to-br from-gray-50 via-purple-50/30 to-pink-50/20">
@@ -184,18 +200,21 @@ const AllNotesPage = () => {
         {/* Page Header */}
         <header className="mb-8 text-center sm:mb-12">
           <h1 className="mb-2 text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 sm:text-5xl lg:text-6xl">
-            Explore All Notes
+            Explore Approved Notes
           </h1>
-          <p className="text-lg text-gray-600 sm:text-xl">Find the resources you need for your study.</p>
+          <p className="text-lg text-gray-600 sm:text-xl">Find the resources you need for your study. Only approved notes are shown.</p>
         </header>
 
         {/* Search and Filter Section */}
         <div className="relative z-10 p-4 mb-6 border shadow-lg rounded-2xl backdrop-blur-md bg-white/80 border-gray-200/50 sm:p-6 sm:mb-8">
-           {/* ... Mobile Filter Toggle ... */}
            <div className="flex items-center justify-between mb-4 sm:hidden">
             <h3 className="text-lg font-semibold text-gray-800">Search & Filter</h3>
             <button
-              onClick={() => setShowMobileFilters(!showMobileFilters)}
+              type="button"
+              onClick={(e) => {
+                e.preventDefault()
+                setShowMobileFilters(!showMobileFilters)
+              }}
               className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-purple-600 transition-colors rounded-lg bg-purple-50 hover:bg-purple-100"
             >
               <Filter className="w-4 h-4" />
@@ -203,64 +222,82 @@ const AllNotesPage = () => {
             </button>
           </div>
 
-          <div className="mb-4">
-            <label htmlFor="search" className="block mb-2 text-sm font-semibold text-gray-700">
-              Search by Title or Description
-            </label>
-            <div className="relative">
-              <Search className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+          <form onSubmit={(e) => e.preventDefault()}>
+            <div className="mb-4">
+              <label htmlFor="search" className="block mb-2 text-sm font-semibold text-gray-700">
+                Search by Title, Tags, etc.
+              </label>
+              <div className="relative">
+                <Search className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+                <input
+                  type="text"
+                  id="search"
+                  name="search"
+                  value={filters.search}
+                  onChange={(e) => {
+                    e.preventDefault()
+                    handleInputChange(e)
+                  }}
+                  placeholder="e.g., Data Structures, SVM, Final..."
+                  className="w-full py-3 pl-10 pr-4 text-base transition-all duration-300 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+                />
+              </div>
+            </div>
+            
+            <div
+              className={`grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3 ${showMobileFilters ? "grid" : "hidden sm:grid"} transition-all duration-300`}
+            >
+              <Dropdown
+                options={departmentOptions}
+                value={filters.department}
+                onChange={(e) => {
+                  console.log('Department selected:', e.target.value)
+                  handleFilterChange('department', e.target.value)
+                }}
+                placeholder="Select Department"
+                id="department"
+                name="department"
+              />
+              <Dropdown
+                options={courseOptions}
+                value={filters.course}
+                onChange={(e) => {
+                  console.log('Course selected:', e.target.value)
+                  handleFilterChange('course', e.target.value)
+                }}
+                placeholder="Select Course"
+                id="course"
+                name="course"
+              />
               <input
                 type="text"
-                id="search"
-                name="search"
-                value={filters.search}
-                onChange={handleInputChange}
-                placeholder="e.g., Data Structures, SVM, Final..."
-                className="w-full py-3 pl-10 pr-4 text-base transition-all duration-300 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+                id="semester"
+                name="semester"
+                value={filters.semester}
+                onChange={(e) => {
+                  e.preventDefault()
+                  handleInputChange(e)
+                }}
+                placeholder="e.g., 3rd Year 2nd Sem"
+                className="w-full px-4 py-3 text-base transition-all duration-300 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
               />
+              <div className="flex items-end">
+                {hasActiveFilters && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      clearAllFilters()
+                    }}
+                    className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-medium text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 hover:shadow-sm"
+                  >
+                    <X className="w-4 h-4" />
+                    Clear Filters
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-          
-          <div
-            className={`grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 lg:grid-cols-3 ${showMobileFilters ? "grid" : "hidden sm:grid"} transition-all duration-300`}
-          >
-            <Dropdown
-              options={departmentOptions}
-              value={filters.department}
-              onChange={handleInputChange}
-              placeholder="Select Department"
-              id="department"
-              name="department"
-            />
-            <Dropdown
-              options={courseOptions}
-              value={filters.course}
-              onChange={handleInputChange}
-              placeholder="Select Course"
-              id="course"
-              name="course"
-            />
-            <input
-              type="text"
-              id="semester"
-              name="semester"
-              value={filters.semester}
-              onChange={handleInputChange}
-              placeholder="e.g., 3rd Year 2nd Sem"
-              className="w-full px-4 py-3 text-base transition-all duration-300 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
-            />
-            <div className="flex items-end">
-              {hasActiveFilters && (
-                <button
-                  onClick={clearAllFilters}
-                  className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-medium text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 hover:shadow-sm"
-                >
-                  <X className="w-4 h-4" />
-                  Clear Filters
-                </button>
-              )}
-            </div>
-          </div>
+          </form>
         </div>
 
         {/* Category Bar */}
@@ -272,76 +309,59 @@ const AllNotesPage = () => {
         {hasActiveFilters && (
           <div className="flex flex-wrap items-center gap-2 p-4 mb-6 border bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border-blue-200/50">
             <span className="text-sm font-medium text-gray-700">Active filters:</span>
-            {filters.search && (
-              <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
-                Search: "{filters.search}"
-              </span>
-            )}
-            {filters.department && (
-              <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">
-                Dept: {departmentOptions.find(d => d.value === filters.department)?.label || filters.department}
-              </span>
-            )}
-            {filters.course && (
-              <span className="px-3 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">
-                Course: {courseOptions.find(c => c.value === filters.course)?.label || filters.course}
-              </span>
-            )}
-            {filters.semester && (
-              <span className="px-3 py-1 text-xs font-medium text-orange-700 bg-orange-100 rounded-full">
-                Semester: "{filters.semester}"
-              </span>
-            )}
-            {filters.category && (
-              <span className="px-3 py-1 text-xs font-medium text-pink-700 bg-pink-100 rounded-full">
-                Category: {filters.category}
-              </span>
-            )}
+            {filters.search && <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">Search: "{filters.search}"</span>}
+            {filters.department && <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">Dept: {departmentOptions.find(d => d.value.toString() === filters.department)?.label || filters.department}</span>}
+            {filters.course && <span className="px-3 py-1 text-xs font-medium text-purple-700 bg-purple-100 rounded-full">Course: {courseOptions.find(c => c.value.toString() === filters.course)?.label || filters.course}</span>}
+            {filters.semester && <span className="px-3 py-1 text-xs font-medium text-orange-700 bg-orange-100 rounded-full">Semester: "{filters.semester}"</span>}
+            {filters.category && <span className="px-3 py-1 text-xs font-medium text-pink-700 bg-pink-100 rounded-full">Category: {filters.category}</span>}
           </div>
         )}
         <main>
           {loading && notes.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center sm:py-20">
-              <div className="relative mb-4">
-                <Loader className="w-10 h-10 text-purple-500 animate-spin sm:w-12 sm:h-12" />
-                <div className="absolute inset-0 w-10 h-10 border-2 border-purple-200 rounded-full animate-pulse sm:w-12 sm:h-12"></div>
-              </div>
-              <p className="text-lg font-semibold text-gray-700 sm:text-xl">Loading Notes...</p>
-              <p className="mt-2 text-sm text-gray-500">Please wait while we fetch your content</p>
+              <Loader className="w-12 h-12 text-purple-500 animate-spin" />
+              <p className="mt-4 text-xl font-semibold text-gray-700">Loading Notes...</p>
             </div>
           ) : error ? (
             <div className="flex flex-col items-center justify-center py-16 text-center bg-red-50 rounded-2xl sm:py-20">
-              <ServerCrash className="w-10 h-10 mb-4 text-red-500 sm:w-12 sm:h-12" />
-              <p className="text-lg font-semibold text-red-700 sm:text-xl">{error}</p>
-              <button
-                onClick={() => fetchNotes(page, filters)}
-                className="px-6 py-2 mt-4 text-sm font-medium text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
-              >
-                Try Again
-              </button>
+              <ServerCrash className="w-12 h-12 mb-4 text-red-500" />
+              <p className="text-xl font-semibold text-red-700">{error}</p>
             </div>
           ) : notes.length > 0 ? (
-            <div className="grid grid-cols-1 sm:gap-8 md:grid-cols-2 lg:grid-cols-2 lg:gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:gap-8 md:grid-cols-2 lg:grid-cols-2 lg:gap-6">
               {notes.map((note, index) => {
                 if (notes.length === index + 1) {
                   return (
                     <div ref={lastNoteElementRef} key={note.id}>
-                      <NoteCard note={note} />
+                      <NoteCard 
+                        note={note} 
+                        onNoteUpdate={updateNoteInList}
+                      />
                     </div>
                   )
                 } else {
-                  return <NoteCard key={note.id} note={note} />
+                  return (
+                    <NoteCard 
+                      key={note.id} 
+                      note={note} 
+                      onNoteUpdate={updateNoteInList}
+                    />
+                  )
                 }
               })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-16 text-center bg-yellow-50 rounded-2xl sm:py-20">
-              <Frown className="w-10 h-10 mb-4 text-yellow-600 sm:w-12 sm:h-12" />
-              <p className="text-lg font-semibold text-yellow-800 sm:text-xl">No Notes Found</p>
-              <p className="mt-2 text-sm text-gray-600 sm:text-base">Try adjusting your filters or search term.</p>
+              <Frown className="w-12 h-12 mb-4 text-yellow-600" />
+              <p className="text-xl font-semibold text-yellow-800">No Notes Found</p>
+              <p className="mt-2 text-base text-gray-600">Try adjusting your filters or search term.</p>
               {hasActiveFilters && (
                 <button
-                  onClick={clearAllFilters}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    clearAllFilters()
+                  }}
                   className="px-6 py-2 mt-4 text-sm font-medium text-yellow-700 transition-colors bg-yellow-100 rounded-lg hover:bg-yellow-200"
                 >
                   Clear All Filters
@@ -350,24 +370,15 @@ const AllNotesPage = () => {
             </div>
           )}
 
-          {/* Loading indicator for pagination */}
           {loading && notes.length > 0 && (
-            <div className="flex justify-center py-6 sm:py-8">
-              <div className="relative">
-                <Loader className="w-6 h-6 text-purple-500 animate-spin sm:w-8 sm:h-8" />
-                <div className="absolute inset-0 w-6 h-6 border border-purple-200 rounded-full animate-pulse sm:w-8 sm:h-8"></div>
-              </div>
+            <div className="flex justify-center py-8">
+              <Loader className="w-8 h-8 text-purple-500 animate-spin" />
             </div>
           )}
 
-          {/* End of results message */}
           {!hasNextPage && !loading && notes.length > 0 && (
-            <div className="py-8 font-semibold text-center text-gray-500 sm:py-10">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
-                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                {"You've reached the end!"}
-                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-              </div>
+            <div className="py-10 font-semibold text-center text-gray-500">
+              <p>You've reached the end!</p>
             </div>
           )}
         </main>
