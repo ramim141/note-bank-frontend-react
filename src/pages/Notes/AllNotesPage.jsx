@@ -179,7 +179,7 @@ const AllNotesPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-pink-50/20">
+    <div className="min-h-screen pt-32 pb-32 bg-gradient-to-br from-gray-50 via-purple-50/30 to-pink-50/20">
       <div className="container px-3 py-6 mx-auto max-w-7xl sm:px-4 sm:py-8">
         {/* Page Header */}
         <header className="mb-8 text-center sm:mb-12">
@@ -190,13 +190,13 @@ const AllNotesPage = () => {
         </header>
 
         {/* Search and Filter Section */}
-        <div className="relative z-10 p-4 mb-6 rounded-2xl border shadow-lg backdrop-blur-md bg-white/80 border-gray-200/50 sm:p-6 sm:mb-8">
+        <div className="relative z-10 p-4 mb-6 border shadow-lg rounded-2xl backdrop-blur-md bg-white/80 border-gray-200/50 sm:p-6 sm:mb-8">
            {/* ... Mobile Filter Toggle ... */}
-           <div className="flex justify-between items-center mb-4 sm:hidden">
+           <div className="flex items-center justify-between mb-4 sm:hidden">
             <h3 className="text-lg font-semibold text-gray-800">Search & Filter</h3>
             <button
               onClick={() => setShowMobileFilters(!showMobileFilters)}
-              className="flex gap-2 items-center px-3 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-purple-600 transition-colors rounded-lg bg-purple-50 hover:bg-purple-100"
             >
               <Filter className="w-4 h-4" />
               {showMobileFilters ? "Hide Filters" : "Show Filters"}
@@ -208,7 +208,7 @@ const AllNotesPage = () => {
               Search by Title or Description
             </label>
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 w-5 h-5 text-gray-400 -translate-y-1/2" />
+              <Search className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
               <input
                 type="text"
                 id="search"
@@ -216,7 +216,7 @@ const AllNotesPage = () => {
                 value={filters.search}
                 onChange={handleInputChange}
                 placeholder="e.g., Data Structures, SVM, Final..."
-                className="py-3 pr-4 pl-10 w-full text-base rounded-xl border-2 border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+                className="w-full py-3 pl-10 pr-4 text-base transition-all duration-300 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
               />
             </div>
           </div>
@@ -247,13 +247,13 @@ const AllNotesPage = () => {
               value={filters.semester}
               onChange={handleInputChange}
               placeholder="e.g., 3rd Year 2nd Sem"
-              className="px-4 py-3 w-full text-base bg-white rounded-xl border-2 border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+              className="w-full px-4 py-3 text-base transition-all duration-300 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
             />
             <div className="flex items-end">
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="flex gap-2 justify-center items-center px-4 py-3 w-full text-sm font-medium text-red-600 bg-red-50 rounded-xl transition-all duration-300 hover:bg-red-100 hover:shadow-sm"
+                  className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-medium text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 hover:shadow-sm"
                 >
                   <X className="w-4 h-4" />
                   Clear Filters
@@ -264,13 +264,13 @@ const AllNotesPage = () => {
         </div>
 
         {/* Category Bar */}
-        <div className="mb-8 sm:mb-10">
+        <div className="mb-8 align-middle sm:mb-10">
           <CategoryBar onCategorySelect={handleCategorySelect} selectedCategory={filters.category} />
         </div>
               
      
         {hasActiveFilters && (
-          <div className="flex flex-wrap gap-2 items-center p-4 mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200/50">
+          <div className="flex flex-wrap items-center gap-2 p-4 mb-6 border bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border-blue-200/50">
             <span className="text-sm font-medium text-gray-700">Active filters:</span>
             {filters.search && (
               <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">
@@ -301,27 +301,27 @@ const AllNotesPage = () => {
         )}
         <main>
           {loading && notes.length === 0 ? (
-            <div className="flex flex-col justify-center items-center py-16 text-center sm:py-20">
+            <div className="flex flex-col items-center justify-center py-16 text-center sm:py-20">
               <div className="relative mb-4">
                 <Loader className="w-10 h-10 text-purple-500 animate-spin sm:w-12 sm:h-12" />
-                <div className="absolute inset-0 w-10 h-10 rounded-full border-2 border-purple-200 animate-pulse sm:w-12 sm:h-12"></div>
+                <div className="absolute inset-0 w-10 h-10 border-2 border-purple-200 rounded-full animate-pulse sm:w-12 sm:h-12"></div>
               </div>
               <p className="text-lg font-semibold text-gray-700 sm:text-xl">Loading Notes...</p>
               <p className="mt-2 text-sm text-gray-500">Please wait while we fetch your content</p>
             </div>
           ) : error ? (
-            <div className="flex flex-col justify-center items-center py-16 text-center bg-red-50 rounded-2xl sm:py-20">
-              <ServerCrash className="mb-4 w-10 h-10 text-red-500 sm:w-12 sm:h-12" />
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-red-50 rounded-2xl sm:py-20">
+              <ServerCrash className="w-10 h-10 mb-4 text-red-500 sm:w-12 sm:h-12" />
               <p className="text-lg font-semibold text-red-700 sm:text-xl">{error}</p>
               <button
                 onClick={() => fetchNotes(page, filters)}
-                className="px-6 py-2 mt-4 text-sm font-medium text-white bg-red-500 rounded-lg transition-colors hover:bg-red-600"
+                className="px-6 py-2 mt-4 text-sm font-medium text-white transition-colors bg-red-500 rounded-lg hover:bg-red-600"
               >
                 Try Again
               </button>
             </div>
           ) : notes.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-2">
+            <div className="grid grid-cols-1 sm:gap-8 md:grid-cols-2 lg:grid-cols-2 lg:gap-6">
               {notes.map((note, index) => {
                 if (notes.length === index + 1) {
                   return (
@@ -335,14 +335,14 @@ const AllNotesPage = () => {
               })}
             </div>
           ) : (
-            <div className="flex flex-col justify-center items-center py-16 text-center bg-yellow-50 rounded-2xl sm:py-20">
-              <Frown className="mb-4 w-10 h-10 text-yellow-600 sm:w-12 sm:h-12" />
+            <div className="flex flex-col items-center justify-center py-16 text-center bg-yellow-50 rounded-2xl sm:py-20">
+              <Frown className="w-10 h-10 mb-4 text-yellow-600 sm:w-12 sm:h-12" />
               <p className="text-lg font-semibold text-yellow-800 sm:text-xl">No Notes Found</p>
               <p className="mt-2 text-sm text-gray-600 sm:text-base">Try adjusting your filters or search term.</p>
               {hasActiveFilters && (
                 <button
                   onClick={clearAllFilters}
-                  className="px-6 py-2 mt-4 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200"
+                  className="px-6 py-2 mt-4 text-sm font-medium text-yellow-700 transition-colors bg-yellow-100 rounded-lg hover:bg-yellow-200"
                 >
                   Clear All Filters
                 </button>
@@ -355,7 +355,7 @@ const AllNotesPage = () => {
             <div className="flex justify-center py-6 sm:py-8">
               <div className="relative">
                 <Loader className="w-6 h-6 text-purple-500 animate-spin sm:w-8 sm:h-8" />
-                <div className="absolute inset-0 w-6 h-6 rounded-full border border-purple-200 animate-pulse sm:w-8 sm:h-8"></div>
+                <div className="absolute inset-0 w-6 h-6 border border-purple-200 rounded-full animate-pulse sm:w-8 sm:h-8"></div>
               </div>
             </div>
           )}
@@ -363,7 +363,7 @@ const AllNotesPage = () => {
           {/* End of results message */}
           {!hasNextPage && !loading && notes.length > 0 && (
             <div className="py-8 font-semibold text-center text-gray-500 sm:py-10">
-              <div className="inline-flex gap-2 items-center px-4 py-2 bg-gray-100 rounded-full">
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-full">
                 <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
                 {"You've reached the end!"}
                 <div className="w-2 h-2 bg-gray-400 rounded-full"></div>

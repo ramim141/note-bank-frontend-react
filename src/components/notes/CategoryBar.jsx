@@ -64,10 +64,10 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center p-6 rounded-2xl border shadow-lg backdrop-blur-sm bg-white/60 border-purple-100/50">
+      <div className="flex items-center justify-center p-6 border shadow-lg rounded-2xl backdrop-blur-sm bg-white/60 border-purple-100/50">
         <div className="relative mr-3">
-          <div className="w-5 h-5 rounded-full border-2 border-purple-200 animate-spin"></div>
-          <div className="absolute top-0 left-0 w-5 h-5 rounded-full border-2 border-transparent animate-spin border-t-purple-600"></div>
+          <div className="w-5 h-5 border-2 border-purple-200 rounded-full animate-spin"></div>
+          <div className="absolute top-0 left-0 w-5 h-5 border-2 border-transparent rounded-full animate-spin border-t-purple-600"></div>
         </div>
         <span className="font-medium text-gray-600">Loading categories...</span>
       </div>
@@ -76,8 +76,8 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
 
   if (error) {
     return (
-      <div className="p-6 text-center bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl border border-red-100 shadow-lg">
-        <div className="flex justify-center items-center mx-auto mb-3 w-12 h-12 bg-red-100 rounded-full">
+      <div className="p-6 text-center border border-red-100 shadow-lg bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl">
+        <div className="flex items-center justify-center w-12 h-12 mx-auto mb-3 bg-red-100 rounded-full">
           <X className="w-6 h-6 text-red-500" />
         </div>
         <p className="font-medium text-red-600">{error}</p>
@@ -86,19 +86,19 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
   }
 
   return (
-    <div className="p-4 rounded-2xl border shadow-lg backdrop-blur-sm bg-white/60 border-purple-100/50 sm:p-6">
+    <div className="p-4 border shadow-lg rounded-2xl backdrop-blur-sm bg-white/60 border-purple-100/50 sm:p-6">
       {/* Mobile scroll buttons */}
       <div className="relative mb-4 sm:hidden">
         <button
           onClick={scrollLeft}
-          className="absolute left-0 top-1/2 z-10 p-2 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 transform -translate-y-1/2 bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
+          className="absolute left-0 z-10 p-2 transition-all duration-300 transform -translate-y-1/2 border rounded-full shadow-md top-1/2 backdrop-blur-sm bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
           aria-label="Scroll left"
         >
           <ChevronLeft className="w-4 h-4 text-purple-600" />
         </button>
         <button
           onClick={scrollRight}
-          className="absolute right-0 top-1/2 z-10 p-2 rounded-full border shadow-md backdrop-blur-sm transition-all duration-300 transform -translate-y-1/2 bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
+          className="absolute right-0 z-10 p-2 transition-all duration-300 transform -translate-y-1/2 border rounded-full shadow-md top-1/2 backdrop-blur-sm bg-white/90 border-purple-100/50 hover:bg-white hover:shadow-lg"
           aria-label="Scroll right"
         >
           <ChevronRight className="w-4 h-4 text-purple-600" />
@@ -108,7 +108,7 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
       <div className="relative">
         <div
           id="category-container"
-          className="flex overflow-x-auto gap-3 items-center px-8 pb-2 scrollbar-hide snap-x scroll-smooth sm:px-0"
+          className="flex items-center gap-3 px-8 pb-2 overflow-x-auto scrollbar-hide snap-x scroll-smooth sm:px-0 sm:flex-wrap sm:justify-center"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {/* "All" Button */}
@@ -148,15 +148,15 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
         </div>
 
         {/* Edge fade effects for mobile */}
-        <div className="absolute top-0 bottom-0 left-0 w-8 bg-gradient-to-r to-transparent pointer-events-none from-white/60 sm:hidden" />
-        <div className="absolute top-0 right-0 bottom-0 w-8 bg-gradient-to-l to-transparent pointer-events-none from-white/60 sm:hidden" />
+        <div className="absolute top-0 bottom-0 left-0 w-8 pointer-events-none bg-gradient-to-r to-transparent from-white/60 sm:hidden" />
+        <div className="absolute top-0 bottom-0 right-0 w-8 pointer-events-none bg-gradient-to-l to-transparent from-white/60 sm:hidden" />
       </div>
 
       {/* Selected Category Display */}
       {selectedCategory && (
-        <div className="p-4 mt-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border shadow-sm border-purple-200/50">
-          <div className="flex justify-between items-center">
-            <div className="flex gap-2 items-center">
+        <div className="p-4 mt-4 border shadow-sm bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border-purple-200/50">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-purple-100">
                 <Tag className="w-3 h-3 text-purple-600" />
               </div>
@@ -174,6 +174,16 @@ const CategoryBar = ({ onCategorySelect, selectedCategory = "" }) => {
           </div>
         </div>
       )}
+
+      <style jsx>{`
+        #category-container::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   )
 }

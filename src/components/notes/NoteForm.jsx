@@ -245,28 +245,28 @@ const NoteForm = () => {
   };
 
   return (
-    <div className="px-4 py-8 mt-16 min-h-screen bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
-      <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen px-4 py-16 pb-32 mt-20 bg-gradient-to-br from-violet-50 via-purple-50 to-indigo-50">
+      <div className="max-w-4xl mx-auto">
         {/* Header Section */}
         <div className="mb-8 text-center">
-          <div className="inline-block relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500 rounded-full opacity-75 blur animate-pulse"></div>
-            <div className="flex relative justify-center items-center mx-auto mb-4 w-20 h-20 bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600 rounded-full shadow-2xl">
+          <div className="relative inline-block">
+            <div className="absolute inset-0 rounded-full opacity-75 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500 blur animate-pulse"></div>
+            <div className="relative flex items-center justify-center w-20 h-20 mx-auto mb-4 rounded-full shadow-2xl bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600">
               <FaCloudUploadAlt className="text-3xl text-white" />
             </div>
           </div>
           <h1 className="mb-4 text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 md:text-5xl">
             Upload Your Note
           </h1>
-          <p className="mx-auto max-w-2xl text-lg text-gray-600">
+          <p className="max-w-2xl mx-auto text-lg text-gray-600">
             Share your knowledge with fellow students. Upload your notes and help build our learning community.
           </p>
         </div>
 
         {/* Form Container */}
-        <div className="overflow-hidden rounded-3xl border shadow-2xl backdrop-blur-xl bg-white/80 border-white/20">
+        <div className="overflow-hidden border shadow-2xl rounded-3xl backdrop-blur-xl bg-white/80 border-white/20">
           <div className="p-6 bg-gradient-to-r from-violet-500 via-purple-600 to-indigo-600">
-            <div className="flex justify-center items-center space-x-3">
+            <div className="flex items-center justify-center space-x-3">
               <FaEdit className="text-2xl text-white" />
               <h2 className="text-2xl font-bold text-white">Note Details</h2>
             </div>
@@ -286,12 +286,12 @@ const NoteForm = () => {
                   name="title"
                   value={formData.title}
                   onChange={handleChange}
-                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-violet-500/20 focus:border-violet-500 bg-white/50 hover:shadow-lg group-hover:border-violet-300"
+                  className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-violet-500/20 focus:border-violet-500 bg-white/50 hover:shadow-lg group-hover:border-violet-300"
                   placeholder="Enter note title..."
                 />
-                <FaFileAlt className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-violet-500" />
+                <FaFileAlt className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 left-4 top-1/2 group-focus-within:text-violet-500" />
               </div>
-              {errors.title && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.title[0]}</span>}
+              {errors.title && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.title[0]}</span>}
             </div>
 
             {/* Description */}
@@ -307,12 +307,12 @@ const NoteForm = () => {
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
-                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 resize-none focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 bg-white/50 hover:shadow-lg group-hover:border-purple-300"
+                  className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm resize-none rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 bg-white/50 hover:shadow-lg group-hover:border-purple-300"
                   placeholder="Describe your note content..."
                 />
-                <FaEdit className="absolute top-4 left-4 text-gray-400 transition-colors duration-300 group-focus-within:text-purple-500" />
+                <FaEdit className="absolute text-gray-400 transition-colors duration-300 top-4 left-4 group-focus-within:text-purple-500" />
               </div>
-              {errors.description && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.description[0]}</span>}
+              {errors.description && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.description[0]}</span>}
             </div>
 
             {/* File Upload */}
@@ -337,7 +337,7 @@ const NoteForm = () => {
                 />
                 <div className="text-center">
                   {formData.file ? (
-                    <div className="flex justify-center items-center space-x-3">
+                    <div className="flex items-center justify-center space-x-3">
                       <FaCheckCircle className="text-3xl text-green-500" />
                       <div>
                         <p className="text-lg font-semibold text-green-700">{formData.file.name}</p>
@@ -355,7 +355,7 @@ const NoteForm = () => {
                   )}
                 </div>
               </div>
-              {errors.file && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.file[0]}</span>}
+              {errors.file && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.file[0]}</span>}
             </div>
 
             {/* Form Grid for Dropdowns */}
@@ -367,7 +367,7 @@ const NoteForm = () => {
                   Category <span className="ml-1 text-red-500">*</span>
                 </label>
                 {categoriesLoading ? (
-                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                  <div className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-2xl bg-white/50">
                     <FaSpinner className="mr-2 text-pink-500 animate-spin" />
                     <span className="text-gray-500">Loading categories...</span>
                   </div>
@@ -378,7 +378,7 @@ const NoteForm = () => {
                       name="category"
                       value={formData.category}
                       onChange={handleChange}
-                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 bg-white/50 hover:shadow-lg group-hover:border-pink-300"
+                      className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm appearance-none cursor-pointer rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-pink-500/20 focus:border-pink-500 bg-white/50 hover:shadow-lg group-hover:border-pink-300"
                     >
                       <option value="">-- Select Category --</option>
                       {categories.map((cat) => (
@@ -387,12 +387,12 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaTag className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-pink-500" />
+                    <FaTag className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none left-4 top-1/2 group-focus-within:text-pink-500" />
                   </div>
                 ) : (
                   <p className="py-3 text-sm text-gray-500">No categories available.</p>
                 )}
-                {errors.category && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.category[0]}</span>}
+                {errors.category && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.category[0]}</span>}
               </div>
 
               {/* Course */}
@@ -402,7 +402,7 @@ const NoteForm = () => {
                   Course
                 </label>
                 {coursesLoading ? (
-                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                  <div className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-2xl bg-white/50">
                     <FaSpinner className="mr-2 text-blue-500 animate-spin" />
                     <span className="text-gray-500">Loading courses...</span>
                   </div>
@@ -413,7 +413,7 @@ const NoteForm = () => {
                       name="course"
                       value={formData.course}
                       onChange={handleChange}
-                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white/50 hover:shadow-lg group-hover:border-blue-300"
+                      className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm appearance-none cursor-pointer rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 bg-white/50 hover:shadow-lg group-hover:border-blue-300"
                     >
                       <option value="">-- Select Course --</option>
                       {courses.map((course) => (
@@ -422,12 +422,12 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaGraduationCap className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-blue-500" />
+                    <FaGraduationCap className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none left-4 top-1/2 group-focus-within:text-blue-500" />
                   </div>
                 ) : (
                   <p className="py-3 text-sm text-gray-500">No courses available.</p>
                 )}
-                {errors.course && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.course[0]}</span>}
+                {errors.course && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.course[0]}</span>}
               </div>
 
               {/* Department */}
@@ -437,7 +437,7 @@ const NoteForm = () => {
                   Department
                 </label>
                 {departmentsLoading ? (
-                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                  <div className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-2xl bg-white/50">
                     <FaSpinner className="mr-2 text-green-500 animate-spin" />
                     <span className="text-gray-500">Loading departments...</span>
                   </div>
@@ -448,7 +448,7 @@ const NoteForm = () => {
                       name="department"
                       value={formData.department}
                       onChange={handleChange}
-                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 bg-white/50 hover:shadow-lg group-hover:border-green-300"
+                      className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm appearance-none cursor-pointer rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-green-500/20 focus:border-green-500 bg-white/50 hover:shadow-lg group-hover:border-green-300"
                     >
                       <option value="">-- Select Department --</option>
                       {departments.map((dept) => (
@@ -457,12 +457,12 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaBuilding className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-green-500" />
+                    <FaBuilding className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none left-4 top-1/2 group-focus-within:text-green-500" />
                   </div>
                 ) : (
                   <p className="py-3 text-sm text-gray-500">No departments available.</p>
                 )}
-                {errors.department && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.department[0]}</span>}
+                {errors.department && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.department[0]}</span>}
               </div>
 
               <div className="group">
@@ -471,7 +471,7 @@ const NoteForm = () => {
                   Faculty
                 </label>
                 {facultiesLoading ? (
-                  <div className="flex justify-center items-center px-4 py-3 rounded-2xl border-2 border-gray-200 bg-white/50">
+                  <div className="flex items-center justify-center px-4 py-3 border-2 border-gray-200 rounded-2xl bg-white/50">
                     <FaSpinner className="mr-2 text-blue-600 animate-spin" />
                     <span className="text-gray-500">Loading faculties...</span>
                   </div>
@@ -482,7 +482,7 @@ const NoteForm = () => {
                       name="faculty"
                       value={formData.faculty}
                       onChange={handleChange}
-                      className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 appearance-none cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-600/20 focus:border-blue-600 bg-white/50 hover:shadow-lg group-hover:border-blue-400"
+                      className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm appearance-none cursor-pointer rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-blue-600/20 focus:border-blue-600 bg-white/50 hover:shadow-lg group-hover:border-blue-400"
                     >
                       <option value="">-- Select Faculty --</option>
                       {faculties.map((faculty) => (
@@ -491,12 +491,12 @@ const NoteForm = () => {
                         </option>
                       ))}
                     </select>
-                    <FaUserTie className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none group-focus-within:text-blue-600" />
+                    <FaUserTie className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 pointer-events-none left-4 top-1/2 group-focus-within:text-blue-600" />
                   </div>
                 ) : (
                   <p className="py-3 text-sm text-gray-500">No faculties available.</p>
                 )}
-                {errors.faculty && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.faculty[0]}</span>}
+                {errors.faculty && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.faculty[0]}</span>}
               </div>
 
              <div>
@@ -513,12 +513,12 @@ const NoteForm = () => {
                     name="semester"
                     value={formData.semester}
                     onChange={handleChange}
-                    className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 bg-white/50 hover:shadow-lg group-hover:border-orange-300"
+                    className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-orange-500/20 focus:border-orange-500 bg-white/50 hover:shadow-lg group-hover:border-orange-300"
                     placeholder="e.g., Fall 2024"
                   />
-                  <FaCalendarAlt className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-orange-500" />
+                  <FaCalendarAlt className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 left-4 top-1/2 group-focus-within:text-orange-500" />
                 </div>
-                {errors.semester && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.semester[0]}</span>}
+                {errors.semester && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.semester[0]}</span>}
               </div>
             </div>
 
@@ -535,19 +535,19 @@ const NoteForm = () => {
                   name="tags"
                   value={formData.tags.join(", ")}
                   onChange={handleTagsChange}
-                  className="px-4 py-3 pl-12 w-full rounded-2xl border-2 border-gray-200 shadow-sm backdrop-blur-sm transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white/50 hover:shadow-lg group-hover:border-cyan-300"
+                  className="w-full px-4 py-3 pl-12 transition-all duration-300 border-2 border-gray-200 shadow-sm rounded-2xl backdrop-blur-sm focus:outline-none focus:ring-4 focus:ring-cyan-500/20 focus:border-cyan-500 bg-white/50 hover:shadow-lg group-hover:border-cyan-300"
                   placeholder="math, calculus, derivatives..."
                 />
-                <FaTag className="absolute left-4 top-1/2 text-gray-400 transition-colors duration-300 transform -translate-y-1/2 group-focus-within:text-cyan-500" />
+                <FaTag className="absolute text-gray-400 transition-colors duration-300 transform -translate-y-1/2 left-4 top-1/2 group-focus-within:text-cyan-500" />
               </div>
               <p className="mt-1 text-xs text-gray-500">Separate tags with commas</p>
-              {errors.tags && <span className="flex items-center mt-1 text-sm text-red-500"><span className="mr-2 w-1 h-1 bg-red-500 rounded-full"></span>{errors.tags[0]}</span>}
+              {errors.tags && <span className="flex items-center mt-1 text-sm text-red-500"><span className="w-1 h-1 mr-2 bg-red-500 rounded-full"></span>{errors.tags[0]}</span>}
             </div>
              </div>
 
             {/* General Error Message */}
             {errors.non_field_errors && (
-              <div className="p-4 text-sm text-center text-red-700 bg-red-100 rounded-2xl border border-red-300">
+              <div className="p-4 text-sm text-center text-red-700 bg-red-100 border border-red-300 rounded-2xl">
                 {errors.non_field_errors}
               </div>
             )}
@@ -556,7 +556,7 @@ const NoteForm = () => {
             <div className="pt-6">
               <button
                 type="submit"
-                className="flex justify-center items-center px-6 py-4 space-x-3 w-full font-bold text-white bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 rounded-2xl shadow-lg transition-all duration-300 transform hover:shadow-xl hover:scale-105 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                className="flex items-center justify-center w-full px-6 py-4 space-x-3 font-bold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-violet-600 via-purple-600 to-indigo-600 rounded-2xl hover:shadow-xl hover:scale-105 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-violet-500/50 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                 disabled={isLoading || categoriesLoading || coursesLoading || departmentsLoading}
               >
                 {isLoading ? (

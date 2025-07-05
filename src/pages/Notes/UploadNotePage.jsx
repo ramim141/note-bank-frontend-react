@@ -6,7 +6,7 @@ import ProtectedRoute from '../../routes/ProtectedRoute'; // Import ProtectedRou
 const UploadNotePage = () => {
   return (
     <ProtectedRoute> {/* Protect this page */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="mx-auto">
         <NoteForm />
       </div>
     </ProtectedRoute>
