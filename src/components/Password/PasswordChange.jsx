@@ -1,93 +1,74 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Eye, EyeOff, Lock, CheckCircle, AlertCircle, Key } from "lucide-react"
-import passwordChangeService from "../../api/apiService/passwordChangeService"
+import { useState, useRef, useCallback } from "react"; // Removed useEffect
+import { Eye, EyeOff, Lock, CheckCircle, AlertCircle, Key } from "lucide-react";
+import passwordChangeService from "../../api/apiService/passwordChangeService";
 
 const PasswordChange = () => {
   const [form, setForm] = useState({
     old_password: "",
     new_password: "",
     new_password2: "",
-  })
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState("")
-  const [errors, setErrors] = useState({})
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState("");
+  const [errors, setErrors] = useState({});
   const [show, setShow] = useState({
     old_password: false,
     new_password: false,
     new_password2: false,
-  })
+  });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-    setErrors({ ...errors, [e.target.name]: undefined })
-    setSuccess("")
-  }
+  const inputRefs = {
+    old_password: useRef(null),
+    new_password: useRef(null),
+    new_password2: useRef(null),
+  };
 
-  const toggleShow = (field) => {
-    setShow((prev) => ({ ...prev, [field]: !prev[field] }))
-  }
+  // Memoized handleChange
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+    setErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      delete newErrors[name];
+      return newErrors;
+    });
+    if (success) setSuccess("");
+  }, [success]);
+
+  // Memoized toggleShow with immediate focus
+  const toggleShow = useCallback((field) => {
+    setShow((prev) => ({ ...prev, [field]: !prev[field] }));
+    inputRefs[field].current?.focus(); // Removed setTimeout for immediate focus
+  }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setErrors({})
-    setSuccess("")
+    e.preventDefault();
+    setLoading(true);
+    setErrors({});
+    setSuccess("");
     try {
-      const res = await passwordChangeService.changePassword(form)
-      setSuccess(res.detail || "Password updated successfully")
-      setForm({ old_password: "", new_password: "", new_password2: "" })
+      const res = await passwordChangeService.changePassword(form);
+      setSuccess(res.detail || "Password updated successfully");
+      setForm({ old_password: "", new_password: "", new_password2: "" });
     } catch (err) {
       if (err && err.errors) {
-        setErrors(err.errors)
+        setErrors(err.errors);
+      } else if (err && err.detail) {
+        setErrors({ general: err.detail });
       } else {
-        setErrors({ general: "An error occurred. Please try again." })
+        setErrors({ general: "An error occurred. Please try again." });
       }
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-  const PasswordField = ({ name, label, placeholder, icon: Icon }) => (
-    <div className="mb-6">
-      <label className="block mb-3 text-sm font-semibold text-gray-700">{label}</label>
-      <div className="relative">
-        <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
-          <Icon className="w-5 h-5 text-gray-400" />
-        </div>
-        <input
-          type={show[name] ? "text" : "password"}
-          name={name}
-          value={form[name]}
-          onChange={handleChange}
-          className="py-4 pr-12 pl-12 w-full placeholder-gray-500 text-gray-900 rounded-xl border border-gray-200 backdrop-blur-sm transition-all duration-300 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 bg-white/50"
-          placeholder={placeholder}
-          required
-        />
-        <button
-          type="button"
-          className="flex absolute inset-y-0 right-0 items-center pr-4 text-gray-400 transition-colors duration-200 hover:text-gray-600"
-          onClick={() => toggleShow(name)}
-          tabIndex={-1}
-        >
-          {show[name] ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-        </button>
-      </div>
-      {errors[name] && (
-        <div className="flex items-center mt-2 space-x-2">
-          <AlertCircle className="w-4 h-4 text-red-500" />
-          <span className="text-sm font-medium text-red-600">{errors[name][0]}</span>
-        </div>
-      )}
-    </div>
-  )
+  };
 
   return (
-    <div className="mx-auto w-full max-w-md">
-      {/* Title Section */}
+    <div className="w-full max-w-md mx-auto">
       <div className="mb-8 text-center">
-        <div className="inline-flex justify-center items-center mb-4 w-16 h-16 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-full shadow-lg">
+        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg bg-gradient-to-r from-emerald-600 to-teal-600">
           <Key className="w-8 h-8 text-white" />
         </div>
         <h2 className="mb-2 text-3xl font-bold text-gray-900">Change Password</h2>
@@ -96,39 +77,120 @@ const PasswordChange = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="p-8 rounded-2xl border shadow-xl backdrop-blur-sm transition-all duration-300 bg-white/80 border-white/20 hover:shadow-2xl"
+        className="p-8 transition-shadow duration-300 border shadow-xl rounded-2xl backdrop-blur-sm bg-white/80 border-white/20 hover:shadow-2xl"
       >
-        {/* Success Message */}
         {success && (
-          <div className="flex items-start p-4 mb-6 space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 transition-all duration-300">
+          <div className="flex items-start p-4 mb-6 space-x-3 transition-all duration-300 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm font-medium text-green-800">{success}</p>
           </div>
         )}
 
-        {/* Error Message */}
         {errors.general && (
-          <div className="flex items-start p-4 mb-6 space-x-3 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl border border-red-200 transition-all duration-300">
+          <div className="flex items-start p-4 mb-6 space-x-3 transition-all duration-300 border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm font-medium text-red-800">{errors.general}</p>
           </div>
         )}
 
-        <PasswordField
-          name="old_password"
-          label="Current Password"
-          placeholder="Enter your current password"
-          icon={Lock}
-        />
+        <div className="mb-6">
+          <label className="block mb-3 text-sm font-semibold text-gray-700">Current Password</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+              <Lock className="w-5 h-5 text-gray-400" />
+            </div>
+            <input
+              ref={inputRefs.old_password}
+              type={show.old_password ? "text" : "password"}
+              name="old_password"
+              value={form.old_password}
+              onChange={handleChange}
+              className="w-full py-4 pl-12 pr-12 text-gray-900 placeholder-gray-500 transition border border-gray-200 rounded-xl focus:ring-emerald-100 focus:border-emerald-400 bg-white/50 focus:outline-none"
+              placeholder="Enter your current password"
+              required
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:outline-none"
+              onClick={() => toggleShow("old_password")}
+              tabIndex={-1}
+            >
+              {show.old_password ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          {errors.old_password && (
+            <div className="flex items-center mt-2 space-x-2 text-red-600">
+              <AlertCircle className="flex-shrink-0 w-4 h-4" />
+              <span className="text-sm font-medium">{errors.old_password[0]}</span>
+            </div>
+          )}
+        </div>
 
-        <PasswordField name="new_password" label="New Password" placeholder="Enter your new password" icon={Key} />
+        <div className="mb-6">
+          <label className="block mb-3 text-sm font-semibold text-gray-700">New Password</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+              <Key className="w-5 h-5 text-gray-400" />
+            </div>
+            <input
+              ref={inputRefs.new_password}
+              type={show.new_password ? "text" : "password"}
+              name="new_password"
+              value={form.new_password}
+              onChange={handleChange}
+              className="w-full py-4 pl-12 pr-12 text-gray-900 placeholder-gray-500 transition border border-gray-200 rounded-xl focus:ring-emerald-100 focus:border-emerald-400 bg-white/50 focus:outline-none"
+              placeholder="Enter your new password"
+              required
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:outline-none"
+              onClick={() => toggleShow("new_password")}
+              tabIndex={-1}
+            >
+              {show.new_password ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          {errors.new_password && (
+            <div className="flex items-center mt-2 space-x-2 text-red-600">
+              <AlertCircle className="flex-shrink-0 w-4 h-4" />
+              <span className="text-sm font-medium">{errors.new_password[0]}</span>
+            </div>
+          )}
+        </div>
 
-        <PasswordField
-          name="new_password2"
-          label="Confirm New Password"
-          placeholder="Confirm your new password"
-          icon={Key}
-        />
+        <div className="mb-6">
+          <label className="block mb-3 text-sm font-semibold text-gray-700">Confirm New Password</label>
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+              <Key className="w-5 h-5 text-gray-400" />
+            </div>
+            <input
+              ref={inputRefs.new_password2}
+              type={show.new_password2 ? "text" : "password"}
+              name="new_password2"
+              value={form.new_password2}
+              onChange={handleChange}
+              className="w-full py-4 pl-12 pr-12 text-gray-900 placeholder-gray-500 transition border border-gray-200 rounded-xl focus:ring-emerald-100 focus:border-emerald-400 bg-white/50 focus:outline-none"
+              placeholder="Confirm your new password"
+              required
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 flex items-center pr-4 text-gray-400 transition-colors duration-200 hover:text-gray-600 focus:outline-none"
+              onClick={() => toggleShow("new_password2")}
+              tabIndex={-1}
+            >
+              {show.new_password2 ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+            </button>
+          </div>
+          {errors.new_password2 && (
+            <div className="flex items-center mt-2 space-x-2 text-red-600">
+              <AlertCircle className="flex-shrink-0 w-4 h-4" />
+              <span className="text-sm font-medium">{errors.new_password2[0]}</span>
+            </div>
+          )}
+        </div>
 
         <button
           type="submit"
@@ -137,7 +199,7 @@ const PasswordChange = () => {
         >
           {loading ? (
             <>
-              <div className="w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"></div>
+              <div className="w-5 h-5 border-2 rounded-full animate-spin border-white/30 border-t-white"></div>
               <span>Changing...</span>
             </>
           ) : (
@@ -153,7 +215,7 @@ const PasswordChange = () => {
             Need help?{" "}
             <a
               href="/support"
-              className="font-semibold text-emerald-600 transition-colors duration-200 hover:text-emerald-700"
+              className="font-semibold transition-colors duration-200 text-emerald-600 hover:text-emerald-700"
             >
               Contact Support
             </a>
@@ -161,7 +223,7 @@ const PasswordChange = () => {
         </div>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default PasswordChange
+export default PasswordChange;

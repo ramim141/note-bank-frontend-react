@@ -2,115 +2,115 @@
 
 import { useState, useEffect } from "react"
 import {
-  ChevronLeft,
-  ChevronRight,
-  Search,
-  ZoomIn,
-  Star,
   Download,
-  MessageCircle,
-  Heart,
-  Bookmark,
-  Share2,
-  FileText,
-  Loader2,
+  FileText, // Generic icon for file
   AlertCircle,
 } from "lucide-react"
 import { downloadNote } from "../../api/apiService/userService"
-import { getFileType, supportsPreview } from "../../api/apiService/filePreviewService"
-import CodePreview from "./CodePreview"
+import { getFileType } from "../../api/apiService/filePreviewService" // Only need getFileType for context
+import filePreviewService from "../../api/apiService/filePreviewService"; // Import filePreviewService for direct file URL
 import { toast } from "react-toastify"
+import api from "../../api/apiService/axiosInstance"; // Import api for content fetching
 
 const NoteFilePreview = ({ note }) => {
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(6)
-  const [previewUrl, setPreviewUrl] = useState(null)
   const [fileType, setFileType] = useState(null)
-  const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [previewLoaded, setPreviewLoaded] = useState(false)
+  const [loading, setLoading] = useState(false); // Added loading state for content fetching
+  const [previewUrl, setPreviewUrl] = useState(null); // State to hold fetched content URL
 
   useEffect(() => {
     if (note?.file_name) {
-      const detectedFileType = getFileType(note.file_name)
-      setFileType(detectedFileType)
-      loadPreview(detectedFileType)
+      const detectedFileType = getFileType(note.file_name);
+      setFileType(detectedFileType);
+      if (detectedFileType === 'text' || detectedFileType === 'code') {
+        fetchFileContentForPreview(note.id); // Fetch content if text or code
+      } else if (detectedFileType === 'pdf') {
+        // For PDF, we need the direct URL. Assuming backend provides it via get-file-url endpoint
+        fetchDirectFileUrl(note.id);
+      } else if (detectedFileType === 'image') {
+        // For image, we also need the direct URL
+        fetchDirectFileUrl(note.id);
+      } else if (['document', 'spreadsheet', 'presentation'].includes(detectedFileType)) {
+
+        setError("Preview not available. Download to view.");
+      } else {
+        setError("Preview not available for this file type.");
+      }
+    } else {
+      setFileType(null)
+      setError("No file associated with this note.")
     }
   }, [note])
 
-  const loadPreview = async (type) => {
-    if (!supportsPreview(type)) {
-      setError("Preview not available for this file type")
-      return
-    }
-
-    setLoading(true)
-    setError(null)
-
+  const fetchFileContentForPreview = async (noteId) => {
+    setLoading(true);
+    setError(null);
     try {
-      if (type === "pdf") {
-        // For PDF, use a PDF viewer or embed
-        setPreviewUrl(
-          "https://mozilla.github.io/pdf.js/web/viewer.html?file=https://mozilla.github.io/pdf.js/web/compressed.tracemonkey-pldi-09.pdf",
-        )
-      } else if (type === "image") {
-        setPreviewUrl("https://via.placeholder.com/800x600/f3f4f6/6b7280?text=Image+Preview")
-      } else if (type === "text" || type === "code") {
-        const sampleContent =
-          type === "code"
-            ? `// Sample ${type} content\nfunction helloWorld() {\n    console.log("Hello, World!");\n    return "This is a sample code file";\n}\n\nconst example = {\n    language: "JavaScript",\n    framework: "React"\n};`
-            : "This is a sample text file content.\n\nYou can preview text files here.\n\nLorem ipsum dolor sit amet, consectetur adipiscing elit."
-        setPreviewUrl("data:text/plain;base64," + btoa(sampleContent))
+      const response = await api.get(`/api/notes/${noteId}/content/`);
+      if (response.data && response.data.content) {
+        setPreviewUrl(`data:text/plain;base64,${btoa(response.data.content)}`);
       } else {
-        setError("Preview not available for this file type")
+        throw new Error("Could not fetch file content.");
       }
-      setPreviewLoaded(true)
     } catch (err) {
-      console.error("Error loading preview:", err)
-      setError("Failed to load file preview")
+      console.error("Error fetching text/code file content:", err);
+      let errorMessage = "Failed to load file content for preview.";
+      if (err.response) errorMessage = err.response.data?.detail || err.response.data?.message || errorMessage;
+      setError(errorMessage);
+      toast.error(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const fetchDirectFileUrl = async (noteId) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const { directFileUrl } = await filePreviewService.getDirectFileUrl(noteId);
+      if (!directFileUrl) {
+        throw new Error("Could not obtain a direct file URL.");
+      }
+      setPreviewUrl(directFileUrl);
+    } catch (err) {
+      console.error("Error fetching direct file URL:", err);
+      let errorMessage = "Failed to get file preview URL.";
+      if (err.response) errorMessage = err.response.data?.detail || err.response.data?.message || errorMessage;
+      // setError(errorMessage);
+      // toast.error(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   const handleDownload = async () => {
+    if (!note || !note.id) {
+      toast.error("Cannot download: Note ID is missing.")
+      return
+    }
     try {
-      toast.info("Preparing download...")
+      toast.info(`Preparing download for ${note.file_name || "file"}...`)
       await downloadNote(note.id)
-      toast.success("Download started!")
+      toast.success(`Download for "${note.file_name || "file"}" started!`)
     } catch (error) {
       console.error("Download failed:", error)
       toast.error(error.message || "Failed to download the file.")
     }
   }
 
-  const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: note?.title || "Note from NoteBank",
-          text: note?.description || "Check out this note!",
-          url: window.location.href,
-        })
-      } catch (error) {
-        console.log("Error sharing:", error)
-      }
-    } else {
-      try {
-        await navigator.clipboard.writeText(window.location.href)
-        toast.success("Link copied to clipboard!")
-      } catch (error) {
-        toast.error("Failed to copy link")
-      }
-    }
+  // Generic icon component
+  const getIconComponent = () => {
+    return <FileText className="w-8 h-8 transition-all duration-300 text-slate-500 group-hover:text-blue-500" />
   }
 
-  const renderPreviewContent = () => {
+  // Renders the content for preview or download prompt
+  const renderContent = () => {
     if (loading) {
       return (
-        <div className="flex justify-center items-center h-full">
+        <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <Loader2 className="mx-auto mb-2 w-8 h-8 text-blue-600 animate-spin" />
+            <Loader2 className="w-8 h-8 mx-auto mb-2 text-blue-600 animate-spin" />
             <p className="text-sm text-gray-600">Loading preview...</p>
           </div>
         </div>
@@ -119,42 +119,56 @@ const NoteFilePreview = ({ note }) => {
 
     if (error) {
       return (
-        <div className="flex justify-center items-center h-full">
-          <div className="text-center">
-            <AlertCircle className="mx-auto mb-2 w-12 h-12 text-gray-400" />
-            <p className="mb-2 text-sm text-gray-600">{error}</p>
-            <button
-              onClick={handleDownload}
-              className="px-4 py-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
-            >
-              Download to View
-            </button>
-          </div>
+        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+          <AlertCircle className="w-16 h-16 mb-4 text-red-500" />
+          <p className="mb-2 text-lg font-medium text-gray-600">{error}</p>
+          <button
+            onClick={handleDownload}
+            className="px-4 py-2 text-sm text-white transition-colors bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Download to View
+          </button>
         </div>
       )
     }
 
-    if (!previewLoaded || !previewUrl) {
+    // If no file or preview not supported, show download prompt
+    if (!note?.id || !previewUrl || !['pdf', 'image', 'text', 'code'].includes(fileType)) {
       return (
-        <div className="flex justify-center items-center h-full">
-          <div className="text-center">
-            <FileText className="mx-auto mb-2 w-12 h-12 text-gray-400" />
-            <p className="text-sm text-gray-600">Click to load preview</p>
-          </div>
+        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+          <Download className="w-16 h-16 mb-4 text-blue-500 animate-bounce" />
+          <h2 className="mb-2 text-2xl font-bold text-gray-700">Download to Preview</h2>
+          <p className="mb-4 text-gray-500 text-md">
+            Preview is not available for this file type.
+          </p>
+          <button
+            onClick={handleDownload}
+            className="px-6 py-3 text-lg font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+          >
+            Download File
+          </button>
         </div>
       )
     }
 
-    // Render based on file type
+    // Render actual preview
     switch (fileType) {
       case "pdf":
-        return <iframe src={previewUrl} className="w-full h-full border-0" title="PDF Preview" />
+        return (
+          <iframe
+            src={previewUrl}
+            className="w-full h-full border-0"
+            title="PDF Preview"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+            onError={() => setError("Failed to load PDF preview.")}
+          />
+        )
 
       case "image":
         return (
-          <div className="flex justify-center items-center p-4 h-full">
+          <div className="flex items-center justify-center h-full p-4 overflow-hidden">
             <img
-              src={previewUrl || "/placeholder.svg"}
+              src={previewUrl}
               alt="File Preview"
               className="object-contain max-w-full max-h-full"
               onError={() => setError("Failed to load image")}
@@ -163,9 +177,10 @@ const NoteFilePreview = ({ note }) => {
         )
 
       case "text":
+      case "code":
         return (
-          <div className="overflow-auto p-4 h-full">
-            <pre className="font-mono text-sm text-gray-800 whitespace-pre-wrap">
+          <div className="h-full p-4 overflow-auto">
+            <pre className="font-mono text-sm text-gray-800 break-words whitespace-pre-wrap">
               {previewUrl && previewUrl.startsWith("data:text/plain;base64,")
                 ? atob(previewUrl.split(",")[1])
                 : "Loading content..."}
@@ -173,49 +188,58 @@ const NoteFilePreview = ({ note }) => {
           </div>
         )
 
-      case "code":
-        return (
-          <div className="h-full">
-            <CodePreview
-              content={
-                previewUrl && previewUrl.startsWith("data:text/plain;base64,")
-                  ? atob(previewUrl.split(",")[1])
-                  : "Loading code..."
-              }
-              fileName={note?.file_name}
-            />
-          </div>
-        )
-
       default:
+        // Fallback for any other supported types not explicitly handled
         return (
-          <div className="flex justify-center items-center h-full">
-            <div className="text-center">
-              <FileText className="mx-auto mb-2 w-12 h-12 text-gray-400" />
-              <p className="text-sm text-gray-600">Preview not available</p>
-              <button
-                onClick={handleDownload}
-                className="px-4 py-2 mt-2 text-sm text-white bg-blue-600 rounded hover:bg-blue-700"
-              >
-                Download File
-              </button>
-            </div>
+          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
+            <Download className="w-16 h-16 mb-4 text-blue-500 animate-bounce" />
+            <h2 className="mb-2 text-2xl font-bold text-gray-700">Download to Preview</h2>
+            <p className="mb-4 text-gray-500 text-md">
+              Preview is not available for this file type.
+            </p>
+            <button
+              onClick={handleDownload}
+              className="px-6 py-3 text-lg font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+            >
+              Download File
+            </button>
           </div>
         )
     }
   }
 
   return (
-    <div className="overflow-hidden bg-white rounded-lg border border-gray-300">
+    <div className="overflow-hidden transition-all duration-500 border bg-gradient-to-br from-white rounded-2xl backdrop-blur-sm to-slate-50 via-blue-50/30 border-slate-200/60">
       {/* Header */}
-      <div className="flex justify-between items-center p-4 border-b border-gray-300">
-        <h3 className="text-lg font-medium text-gray-800">Note Preview</h3>
+      <div className="flex flex-wrap items-center justify-between p-6 border-b bg-gradient-to-r backdrop-blur-sm sm:flex-nowrap from-slate-50/80 via-blue-50/50 to-purple-50/50 border-slate-200/60">
+        <div className="flex items-center flex-1 min-w-0 gap-3 mr-4"> {/* flex-1 to allow shrinking */}
+          <div className="p-2 transition-all duration-300 bg-gradient-to-br from-blue-200 to-purple-200 rounded-xl hover:bg-gradient-to-br">
+            {getIconComponent()}
+          </div>
+          <h3
+            className="text-lg font-bold text-slate-800 truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px] transition-colors duration-300 hover:text-blue-700"
+            title={note?.file_name || "Unknown File"}
+          >
+           Note Preview
+          </h3>
+        </div>
+        {/* Only show download button if there's a file and note ID */}
+        {note?.id && (
+          <button
+            onClick={handleDownload}
+            className="items-center flex-shrink-0 gap-2 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-105 active:scale-95 group"
+            title="Download file"
+          >
+            <Download className="w-4 h-4 group-hover:animate-pulse" />
+            <span className="hidden">Download</span>
+          </button>
+        )}
       </div>
 
-      {/* Preview Area - Now shows actual file content */}
-      <div className="relative h-[720px] bg-gray-50">{renderPreviewContent()}</div>
-
-     
+      {/* Preview Area */}
+      <div className="relative h-[400px] sm:h-[500px] md:h-[600px] lg:h-[720px] bg-gradient-to-br from-slate-100/50 via-blue-50/30 to-purple-50/30 flex justify-center items-center p-6 text-center">
+        {renderContent()}
+      </div>
     </div>
   )
 }

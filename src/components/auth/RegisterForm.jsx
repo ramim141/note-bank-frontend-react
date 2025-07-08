@@ -245,18 +245,18 @@ const RegisterForm = () => {
 
   // --- Render Logic ---
   return (
-    <div className="flex items-center justify-center min-h-screen px-4 py-8 bg-gray-100 pt-36 pb-36">
+    <div className="flex justify-center items-center px-4 py-8 pt-36 pb-36 min-h-screen bg-gray-100">
       {/* Desktop Layout */}
-      <div className="hidden w-full overflow-hidden bg-white shadow-2xl max-w-7xl rounded-3xl lg:flex">
+      <div className="hidden overflow-hidden w-full max-w-7xl bg-white rounded-3xl shadow-2xl lg:flex">
         {/* Left Panel - Yellow Section */}
-        <div className="relative flex flex-col items-center justify-center flex-1 p-12 text-center bg-gradient-to-br from-yellow-300 via-lime-300 to-yellow-400">
+        <div className="flex relative flex-col flex-1 justify-center items-center p-12 text-center bg-gradient-to-br from-yellow-300 via-lime-300 to-yellow-400">
           {/* Close Button - If needed, implement navigation to a different page */}
-          {/* <button className="absolute flex items-center justify-center w-8 h-8 transition-colors rounded-full top-6 right-6 bg-black/10 hover:bg-black/20">
+          {/* <button className="flex absolute top-6 right-6 justify-center items-center w-8 h-8 rounded-full transition-colors bg-black/10 hover:bg-black/20">
             <X className="w-4 h-4 text-black/60" />
           </button> */}
 
           {/* Logo */}
-          <div className="flex items-center justify-center w-20 h-20 mb-4 bg-black rounded-full">
+          <div className="flex justify-center items-center mb-4 w-20 h-20 bg-black rounded-full">
             <span className="text-4xl font-bold text-white">N</span>
           </div>
 
@@ -274,7 +274,7 @@ const RegisterForm = () => {
           </div>
 
           {/* Sign Up Button - Navigates to current page, might be redundant */}
-          <button className="px-12 py-3 mb-8 font-semibold tracking-wider text-white transition-colors bg-black rounded-lg hover:bg-gray-800">
+          <button className="px-12 py-3 mb-8 font-semibold tracking-wider text-white bg-black rounded-lg transition-colors hover:bg-gray-800">
             SIGN UP
           </button>
 
@@ -292,18 +292,18 @@ const RegisterForm = () => {
         </div>
 
         {/* Right Panel - Form Section */}
-        <div className="relative flex flex-col justify-start flex-1 p-8 pt-16"> {/* Added relative positioning for absolute elements */}
+        <div className="flex relative flex-col flex-1 justify-start p-8 pt-16"> {/* Added relative positioning for absolute elements */}
 
           {/* Close Button for Form Section */}
           <button
             onClick={() => navigate('/login')} // Example: navigate back to login
-            className="absolute flex items-center justify-center w-8 h-8 transition-colors bg-gray-100 rounded-full top-6 right-6 hover:bg-gray-200"
+            className="flex absolute top-6 right-6 justify-center items-center w-8 h-8 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
             aria-label="Close form"
           >
             <X className="w-4 h-4 text-gray-600" />
           </button>
 
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="mx-auto w-full max-w-4xl">
             <div className="mb-8 text-center">
               <h2 className="mb-2 text-3xl font-extrabold text-gray-800">Create Account</h2>
               <p className="text-gray-600">Join our learning community</p>
@@ -318,7 +318,7 @@ const RegisterForm = () => {
                     First Name
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <User className={`w-5 h-5 transition-colors duration-200 ${focusedField === "first_name" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -335,7 +335,7 @@ const RegisterForm = () => {
                     />
                   </div>
                   {errors.first_name && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.first_name[0]}</span>
                     </div>
@@ -348,7 +348,7 @@ const RegisterForm = () => {
                     Last Name
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <User className={`w-5 h-5 transition-colors duration-200 ${focusedField === "last_name" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -365,7 +365,7 @@ const RegisterForm = () => {
                     />
                   </div>
                   {errors.last_name && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.last_name[0]}</span>
                     </div>
@@ -379,7 +379,7 @@ const RegisterForm = () => {
                   Email Address <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <Mail className={`w-5 h-5 transition-colors duration-200 ${focusedField === "email" ? "text-yellow-500" : "text-gray-400"}`} />
                   </div>
                   <input
@@ -395,13 +395,13 @@ const RegisterForm = () => {
                     required // Added for basic HTML5 validation
                   />
                   {formData.email && !errors.email && (
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <div className="flex absolute inset-y-0 right-0 items-center pr-3">
                       <CheckCircle className="w-5 h-5 text-green-500" />
                     </div>
                   )}
                 </div>
                 {errors.email && (
-                  <div className="flex items-center gap-2 text-sm text-red-600">
+                  <div className="flex gap-2 items-center text-sm text-red-600">
                     <AlertCircle className="w-4 h-4" />
                     <span>{errors.email[0]}</span>
                   </div>
@@ -414,7 +414,7 @@ const RegisterForm = () => {
                   Username <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <User className={`w-5 h-5 transition-colors duration-200 ${focusedField === "username" ? "text-yellow-500" : "text-gray-400"}`} />
                   </div>
                   <input
@@ -430,13 +430,13 @@ const RegisterForm = () => {
                     required // Added for basic HTML5 validation
                   />
                   {formData.username && !errors.username && (
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <div className="flex absolute inset-y-0 right-0 items-center pr-3">
                       <CheckCircle className="w-5 h-5 text-green-500" />
                     </div>
                   )}
                 </div>
                 {errors.username && (
-                  <div className="flex items-center gap-2 text-sm text-red-600">
+                  <div className="flex gap-2 items-center text-sm text-red-600">
                     <AlertCircle className="w-4 h-4" />
                     <span>{errors.username[0]}</span>
                   </div>
@@ -451,7 +451,7 @@ const RegisterForm = () => {
                     Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <Lock className={`w-5 h-5 transition-colors duration-200 ${focusedField === "password" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -469,7 +469,7 @@ const RegisterForm = () => {
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('password')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 transition-colors duration-200 rounded-r-lg hover:bg-gray-100 focus:outline-none"
+                      className="flex absolute inset-y-0 right-0 items-center pr-3 rounded-r-lg transition-colors duration-200 hover:bg-gray-100 focus:outline-none"
                       aria-label="Toggle password visibility"
                     >
                       {showPassword ? (
@@ -480,7 +480,7 @@ const RegisterForm = () => {
                     </button>
                   </div>
                   {errors.password && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.password[0]}</span>
                     </div>
@@ -493,7 +493,7 @@ const RegisterForm = () => {
                     Confirm Password <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <Lock className={`w-5 h-5 transition-colors duration-200 ${focusedField === "password2" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -511,7 +511,7 @@ const RegisterForm = () => {
                     <button
                       type="button"
                       onClick={() => togglePasswordVisibility('password2')}
-                      className="absolute inset-y-0 right-0 flex items-center pr-3 transition-colors duration-200 rounded-r-lg hover:bg-gray-100 focus:outline-none"
+                      className="flex absolute inset-y-0 right-0 items-center pr-3 rounded-r-lg transition-colors duration-200 hover:bg-gray-100 focus:outline-none"
                       aria-label="Toggle confirm password visibility"
                     >
                       {showPassword2 ? (
@@ -522,7 +522,7 @@ const RegisterForm = () => {
                     </button>
                   </div>
                   {errors.password2 && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.password2[0]}</span>
                     </div>
@@ -536,7 +536,7 @@ const RegisterForm = () => {
                   Student ID <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <IdCard className={`w-5 h-5 transition-colors duration-200 ${focusedField === "student_id" ? "text-yellow-500" : "text-gray-400"}`} />
                   </div>
                   <input
@@ -552,13 +552,13 @@ const RegisterForm = () => {
                     required // Added for basic HTML5 validation
                   />
                   {formData.student_id && !errors.student_id && (
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                    <div className="flex absolute inset-y-0 right-0 items-center pr-3">
                       <CheckCircle className="w-5 h-5 text-green-500" />
                     </div>
                   )}
                 </div>
                 {errors.student_id && (
-                  <div className="flex items-center gap-2 text-sm text-red-600">
+                  <div className="flex gap-2 items-center text-sm text-red-600">
                     <AlertCircle className="w-4 h-4" />
                     <span>{errors.student_id[0]}</span>
                   </div>
@@ -573,17 +573,17 @@ const RegisterForm = () => {
                     Department
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <Building className={`w-5 h-5 transition-colors duration-200 ${focusedField === "department" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     {departmentLoading ? (
                       <div className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-lg flex items-center text-sm text-gray-500">
-                        <Loader2 className="w-4 h-4 mr-2 text-gray-400 animate-spin" />
+                        <Loader2 className="mr-2 w-4 h-4 text-gray-400 animate-spin" />
                         Loading Departments...
                       </div>
                     ) : departmentError ? (
                       <div className="w-full pl-10 pr-4 py-2.5 bg-red-50 border-2 border-red-200 rounded-lg flex items-center text-sm text-red-600">
-                        <AlertCircle className="w-4 h-4 mr-2 text-red-500" />
+                        <AlertCircle className="mr-2 w-4 h-4 text-red-500" />
                         Error loading departments
                       </div>
                     ) : departments && departments.length > 0 ? (
@@ -610,7 +610,7 @@ const RegisterForm = () => {
                     )}
                   </div>
                   {errors.department && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.department[0]}</span>
                     </div>
@@ -623,7 +623,7 @@ const RegisterForm = () => {
                     Batch
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <Calendar className={`w-5 h-5 transition-colors duration-200 ${focusedField === "batch" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -639,7 +639,7 @@ const RegisterForm = () => {
                     />
                   </div>
                   {errors.batch && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.batch[0]}</span>
                     </div>
@@ -652,7 +652,7 @@ const RegisterForm = () => {
                     Section
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <Users className={`w-5 h-5 transition-colors duration-200 ${focusedField === "section" ? "text-yellow-500" : "text-gray-400"}`} />
                     </div>
                     <input
@@ -668,7 +668,7 @@ const RegisterForm = () => {
                     />
                   </div>
                   {errors.section && (
-                    <div className="flex items-center gap-2 text-sm text-red-600">
+                    <div className="flex gap-2 items-center text-sm text-red-600">
                       <AlertCircle className="w-4 h-4" />
                       <span>{errors.section[0]}</span>
                     </div>
@@ -678,7 +678,7 @@ const RegisterForm = () => {
 
               {/* General Error Message */}
               {errors.non_field_errors && (
-                <div className="flex items-center gap-3 p-4 border border-red-200 rounded-lg bg-red-50">
+                <div className="flex gap-3 items-center p-4 bg-red-50 rounded-lg border border-red-200">
                   <AlertCircle className="flex-shrink-0 w-5 h-5 text-red-500" />
                   <span className="text-sm text-red-700">{errors.non_field_errors}</span>
                 </div>
@@ -688,15 +688,15 @@ const RegisterForm = () => {
               <button
                 type="submit"
                 disabled={isLoading || departmentLoading}
-                className="w-full px-4 py-3 mt-6 font-semibold text-black transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-yellow-300 to-lime-300 hover:from-yellow-400 hover:to-lime-400 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-400/50 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="px-4 py-3 mt-6 w-full font-semibold text-black bg-gradient-to-r from-yellow-300 to-lime-300 rounded-lg shadow-lg transition-all duration-300 hover:from-yellow-400 hover:to-lime-400 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-400/50 disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex gap-2 justify-center items-center">
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>REGISTERING...</span>
                   </div>
                 ) : departmentLoading ? (
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex gap-2 justify-center items-center">
                     <Loader2 className="w-5 h-5 animate-spin" />
                     <span>PREPARING...</span>
                   </div>
@@ -720,11 +720,11 @@ const RegisterForm = () => {
       </div>
 
       {/* Mobile Layout */}
-      <div className="flex flex-col w-full max-w-sm overflow-hidden bg-white shadow-2xl rounded-3xl lg:hidden">
+      <div className="flex overflow-hidden flex-col w-full max-w-sm bg-white rounded-3xl shadow-2xl lg:hidden">
         {/* Top Panel - Yellow Section */}
         <div className="relative px-6 py-8 text-center bg-gradient-to-br from-yellow-300 via-lime-300 to-yellow-400">
           {/* Logo */}
-          <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-black rounded-full">
+          <div className="flex justify-center items-center mx-auto mb-4 w-16 h-16 bg-black rounded-full">
             <span className="text-xl font-bold text-white">N</span>
           </div>
 
@@ -738,7 +738,7 @@ const RegisterForm = () => {
           </div>
 
           {/* Divider Line */}
-          <div className="w-16 h-1 mx-auto bg-black"></div>
+          <div className="mx-auto w-16 h-1 bg-black"></div>
         </div>
 
         {/* Bottom Panel - Form Section */}
@@ -751,7 +751,7 @@ const RegisterForm = () => {
                   First Name
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <User className="w-4 h-4 text-gray-400" />
                   </div>
                   <input
@@ -765,7 +765,7 @@ const RegisterForm = () => {
                   />
                 </div>
                 {errors.first_name && (
-                  <div className="flex items-center gap-2 text-xs text-red-600">
+                  <div className="flex gap-2 items-center text-xs text-red-600">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.first_name[0]}</span>
                   </div>
@@ -776,7 +776,7 @@ const RegisterForm = () => {
                   Last Name
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <User className="w-4 h-4 text-gray-400" />
                   </div>
                   <input
@@ -790,7 +790,7 @@ const RegisterForm = () => {
                   />
                 </div>
                 {errors.last_name && (
-                  <div className="flex items-center gap-2 text-xs text-red-600">
+                  <div className="flex gap-2 items-center text-xs text-red-600">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.last_name[0]}</span>
                   </div>
@@ -804,7 +804,7 @@ const RegisterForm = () => {
                 Email <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <Mail className={`w-4 h-4 transition-colors duration-200 ${focusedField === "email" ? "text-yellow-500" : "text-gray-400"}`} />
                 </div>
                 <input
@@ -820,7 +820,7 @@ const RegisterForm = () => {
                 />
               </div>
               {errors.email && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.email[0]}</span>
                 </div>
@@ -833,7 +833,7 @@ const RegisterForm = () => {
                 Username <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <User className={`w-4 h-4 transition-colors duration-200 ${focusedField === "username" ? "text-yellow-500" : "text-gray-400"}`} />
                 </div>
                 <input
@@ -849,7 +849,7 @@ const RegisterForm = () => {
                 />
               </div>
               {errors.username && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.username[0]}</span>
                 </div>
@@ -862,7 +862,7 @@ const RegisterForm = () => {
                 Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <Lock className={`w-4 h-4 transition-colors duration-200 ${focusedField === "password" ? "text-yellow-500" : "text-gray-400"}`} />
                 </div>
                 <input
@@ -879,7 +879,7 @@ const RegisterForm = () => {
                 <button
                   type="button"
                   onClick={() => togglePasswordVisibility('password')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="flex absolute inset-y-0 right-0 items-center pr-3"
                   aria-label="Toggle password visibility"
                 >
                   {showPassword ? (
@@ -890,7 +890,7 @@ const RegisterForm = () => {
                 </button>
               </div>
               {errors.password && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.password[0]}</span>
                 </div>
@@ -903,7 +903,7 @@ const RegisterForm = () => {
                 Confirm Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <Lock className={`w-4 h-4 transition-colors duration-200 ${focusedField === "password2" ? "text-yellow-500" : "text-gray-400"}`} />
                 </div>
                 <input
@@ -920,7 +920,7 @@ const RegisterForm = () => {
                 <button
                   type="button"
                   onClick={() => togglePasswordVisibility('password2')}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="flex absolute inset-y-0 right-0 items-center pr-3"
                   aria-label="Toggle confirm password visibility"
                 >
                   {showPassword2 ? (
@@ -931,7 +931,7 @@ const RegisterForm = () => {
                 </button>
               </div>
               {errors.password2 && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.password2[0]}</span>
                 </div>
@@ -944,7 +944,7 @@ const RegisterForm = () => {
                 Student ID <span className="text-red-500">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <IdCard className={`w-4 h-4 transition-colors duration-200 ${focusedField === "student_id" ? "text-yellow-500" : "text-gray-400"}`} />
                 </div>
                 <input
@@ -960,7 +960,7 @@ const RegisterForm = () => {
                 />
               </div>
               {errors.student_id && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.student_id[0]}</span>
                 </div>
@@ -973,12 +973,12 @@ const RegisterForm = () => {
                 Department
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                   <Building className="w-4 h-4 text-gray-400" />
                 </div>
                 {departmentLoading ? (
                   <div className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border-2 border-gray-200 rounded-lg flex items-center text-xs text-gray-500">
-                    <Loader2 className="w-3 h-3 mr-2 text-gray-400 animate-spin" />
+                    <Loader2 className="mr-2 w-3 h-3 text-gray-400 animate-spin" />
                     Loading Departments...
                   </div>
                 ) : (
@@ -1003,7 +1003,7 @@ const RegisterForm = () => {
                 )}
               </div>
               {errors.department && (
-                <div className="flex items-center gap-2 text-xs text-red-600">
+                <div className="flex gap-2 items-center text-xs text-red-600">
                   <AlertCircle className="w-3 h-3" />
                   <span>{errors.department[0]}</span>
                 </div>
@@ -1017,7 +1017,7 @@ const RegisterForm = () => {
                   Batch
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <Calendar className="w-4 h-4 text-gray-400" />
                   </div>
                   <input
@@ -1031,7 +1031,7 @@ const RegisterForm = () => {
                   />
                 </div>
                 {errors.batch && (
-                  <div className="flex items-center gap-2 text-xs text-red-600">
+                  <div className="flex gap-2 items-center text-xs text-red-600">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.batch[0]}</span>
                   </div>
@@ -1042,7 +1042,7 @@ const RegisterForm = () => {
                   Section
                 </label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                  <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                     <Users className="w-4 h-4 text-gray-400" />
                   </div>
                   <input
@@ -1056,7 +1056,7 @@ const RegisterForm = () => {
                   />
                 </div>
                 {errors.section && (
-                  <div className="flex items-center gap-2 text-xs text-red-600">
+                  <div className="flex gap-2 items-center text-xs text-red-600">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.section[0]}</span>
                   </div>
@@ -1066,7 +1066,7 @@ const RegisterForm = () => {
 
             {/* General Error Message */}
             {errors.non_field_errors && (
-              <div className="flex items-center gap-3 p-3 border border-red-200 rounded-lg bg-red-50">
+              <div className="flex gap-3 items-center p-3 bg-red-50 rounded-lg border border-red-200">
                 <AlertCircle className="flex-shrink-0 w-4 h-4 text-red-500" />
                 <span className="text-xs text-red-700">{errors.non_field_errors}</span>
               </div>
@@ -1076,15 +1076,15 @@ const RegisterForm = () => {
             <button
               type="submit"
               disabled={isLoading || departmentLoading}
-              className="w-full px-4 py-3 mt-6 font-semibold text-black transition-all duration-300 rounded-lg shadow-lg bg-gradient-to-r from-yellow-300 to-lime-300 hover:from-yellow-400 hover:to-lime-400 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-400/50 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="px-4 py-3 mt-6 w-full font-semibold text-black bg-gradient-to-r from-yellow-300 to-lime-300 rounded-lg shadow-lg transition-all duration-300 hover:from-yellow-400 hover:to-lime-400 hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-yellow-400/50 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex gap-2 justify-center items-center">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span className="text-sm">REGISTERING...</span>
                 </div>
               ) : departmentLoading ? (
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex gap-2 justify-center items-center">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   <span className="text-sm">PREPARING...</span>
                 </div>

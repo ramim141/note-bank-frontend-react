@@ -43,8 +43,9 @@ export const filePreviewService = {
    */
   getFileContent: (noteId) => {
     if (!noteId) return Promise.reject(new Error("Note ID is required."));
+    console.log("Making API call to:", `/api/notes/${noteId}/content/`);
     return api.get(`/api/notes/${noteId}/content/`, {
-      responseType: 'text'
+      responseType: 'json' // Changed from 'text' to 'json' since backend returns JSON
     });
   },
 
