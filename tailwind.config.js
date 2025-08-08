@@ -9,9 +9,9 @@ module.exports = {
   ],
   theme: {
     extend: {
-      // ... আপনার অন্যান্য extend ...
+      
 
-      // --- নতুন অ্যানিমেশন এবং কীফ্রেম যোগ করুন ---
+     
       animation: {
         'fade-in': 'fadeIn 0.5s ease-out',
         'fade-in-up': 'fadeInUp 0.6s ease-out',
@@ -52,7 +52,7 @@ module.exports = {
           '50%': { transform: 'translateY(-20px)' },
         },
       },
-      // --- অ্যানিমেশন এবং কীফ্রেম শেষ ---
+      
     },
   },
   plugins: [],

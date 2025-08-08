@@ -274,10 +274,10 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
   const [editRating, setEditRating] = useState(null);
 
   return (
-    <div className="overflow-hidden mb-32 bg-white rounded-3xl border border-gray-200 shadow-xl">
+    <div className="mb-32 overflow-hidden bg-white border border-gray-200 shadow-xl rounded-3xl">
       {/* Header */}
-      <div className="flex justify-between items-center p-6 text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-3xl">
-        <h2 className="flex gap-2 items-center text-2xl font-bold">
+      <div className="flex items-center justify-between p-6 text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-3xl">
+        <h2 className="flex items-center gap-2 text-2xl font-bold">
           <MessageCircle className="w-6 h-6" />
           Comments ({comments.length})
         </h2>
@@ -287,12 +287,12 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
       <div className="p-6 border-b border-gray-200">
         {isAuthenticated ? (
           userHasCommented ? (
-            <div className="p-4 text-center bg-gray-50 rounded-xl border border-gray-200">
+            <div className="p-4 text-center border border-gray-200 bg-gray-50 rounded-xl">
               <p className="mb-3 text-gray-600">You have already commented and rated this note.</p>
             </div>
           ) : (
             <form onSubmit={handleCombinedSubmit} className="space-y-4">
-              <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2">
                 <span className="text-lg font-semibold text-gray-700">Your Rating:</span>
                 <div className="flex">
                   {[1,2,3,4,5].map((star) => (
@@ -312,7 +312,7 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
                   placeholder="Share your thoughts about this note..."
-                  className="p-4 w-full rounded-xl border border-gray-300 shadow-sm transition-all duration-300 resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full p-4 transition-all duration-300 border border-gray-300 shadow-sm resize-none rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows="3"
                   disabled={submittingComment}
                 />
@@ -321,10 +321,10 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                 <button
                   type="submit"
                   disabled={submittingComment || !newComment.trim() || !selectedRating}
-                  className="flex gap-2 items-center px-6 py-2 font-semibold text-white bg-blue-600 rounded-xl shadow-md transition-all duration-300 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-6 py-2 font-semibold text-white transition-all duration-300 bg-blue-600 shadow-md rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {submittingComment ? (
-                    <Loader2 className="w-4 h-4 rounded-full border-2 border-white animate-spin border-t-transparent" />
+                    <Loader2 className="w-4 h-4 border-2 border-white rounded-full animate-spin border-t-transparent" />
                   ) : (
                     <Send className="w-4 h-4" />
                   )}
@@ -334,11 +334,11 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
             </form>
           )
         ) : (
-          <div className="p-4 text-center bg-gray-50 rounded-xl border border-gray-200">
+          <div className="p-4 text-center border border-gray-200 bg-gray-50 rounded-xl">
             <p className="mb-3 text-gray-600">Please log in to leave a comment and rating.</p>
             <button
               onClick={() => { window.location.href = '/login'; }}
-              className="px-6 py-2 font-semibold text-white bg-blue-600 rounded-xl shadow-md transition-colors duration-300 hover:bg-blue-700"
+              className="px-6 py-2 font-semibold text-white transition-colors duration-300 bg-blue-600 shadow-md rounded-xl hover:bg-blue-700"
             >
               Log In
             </button>
@@ -348,25 +348,25 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
 
       {/* Comments List Section */}
       <div className="p-6">
-        {/* Removed loadingComments state as comments are now part of noteDetail */}
+   
         {error ? (
           <div className="py-8 text-center">
-            <AlertCircle className="mx-auto mb-4 w-12 h-12 text-red-500" />
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-500" />
             <p className="text-gray-600">{error}</p>
           </div>
         ) : comments.length === 0 ? (
           <div className="py-8 text-center">
-            <MessageCircle className="mx-auto mb-4 w-12 h-12 text-gray-400" />
+            <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-400" />
             <p className="text-gray-600">No comments yet. Be the first to comment!</p>
           </div>
         ) : (
           <div className="space-y-6">
             {comments.map((comment) => (
-              <div key={comment.id} className="p-5 rounded-xl border border-gray-200 shadow-sm transition-shadow duration-300 hover:shadow-md hover:border-gray-300">
+              <div key={comment.id} className="p-5 transition-shadow duration-300 border border-gray-200 shadow-sm rounded-xl hover:shadow-md hover:border-gray-300">
                 {editingCommentId === comment.id ? (
                   // --- Editing View ---
                   <div className="space-y-3">
-                    <div className="flex gap-2 items-center">
+                    <div className="flex items-center gap-2">
                       <span className="text-sm font-semibold text-gray-700">Edit Rating:</span>
                       <div className="flex">
                         {[1,2,3,4,5].map((star) => (
@@ -384,11 +384,11 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                     <textarea
                       value={editText}
                       onChange={(e) => setEditText(e.target.value)}
-                      className="p-3 w-full rounded-lg border border-gray-300 shadow-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full p-3 border border-gray-300 rounded-lg shadow-sm resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       rows="3"
                       disabled={submittingComment}
                     />
-                    <div className="flex gap-2 justify-end">
+                    <div className="flex justify-end gap-2">
                       <button
                         onClick={() => handleUpdateComment(comment.id)}
                         disabled={submittingComment || !editText.trim() || !editRating}
@@ -408,10 +408,10 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                 ) : (
                   // --- Display View ---
                   <>
-                    <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-start justify-between mb-3">
                       {/* Commenter Info */}
-                      <div className="flex gap-3 items-center">
-                        <div className="flex justify-center items-center w-10 h-10 font-semibold text-white bg-gradient-to-r from-blue-500 to-purple-500 rounded-full shadow">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-10 h-10 font-semibold text-white rounded-full shadow bg-gradient-to-r from-blue-500 to-purple-500">
                           {comment.user_first_name?.[0] || comment.user_username?.[0] || 'U'}
                         </div>
                         <div>
@@ -420,7 +420,7 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                               ? `${comment.user_first_name} ${comment.user_last_name}`
                               : comment.user_username || 'Anonymous'}
                           </p>
-                          <p className="flex gap-1 items-center text-sm text-gray-500">
+                          <p className="flex items-center gap-1 text-sm text-gray-500">
                             <Calendar className="w-3 h-3" />
                             {formatDate(comment.created_at)}
                           </p>
@@ -431,7 +431,7 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                         <div className="flex gap-2">
                           <button
                             onClick={() => startEditing(comment)}
-                            className="flex gap-1 items-center p-1 text-gray-500 transition-colors duration-300 hover:text-blue-600"
+                            className="flex items-center gap-1 p-1 text-gray-500 transition-colors duration-300 hover:text-blue-600"
                             title="Edit comment"
                           >
                             <Edit className="w-4 h-4" />
@@ -439,7 +439,7 @@ const NoteComments = ({ noteId, initialAverageRating, noteDetail }) => { // Adde
                           </button>
                           <button
                             onClick={() => handleDeleteComment(comment.id)}
-                            className="flex gap-1 items-center p-1 text-gray-500 transition-colors duration-300 hover:text-red-600"
+                            className="flex items-center gap-1 p-1 text-gray-500 transition-colors duration-300 hover:text-red-600"
                             title="Delete comment"
                           >
                             <Trash2 className="w-4 h-4" />

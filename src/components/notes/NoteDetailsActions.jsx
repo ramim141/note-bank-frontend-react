@@ -1,7 +1,7 @@
 "use client"
-import { useState, useEffect } from "react" // Import useState and useEffect
+import { useState, useEffect } from "react" 
 import { Heart, Bookmark, Download, Share2, MessageCircle, Star, RefreshCw, FileText, AlertCircle, Loader2 } from "lucide-react" // Import all potentially used icons
-import { toast } from "react-toastify" // Assuming you use react-toastify for notifications
+import { toast } from "react-toastify" 
 
 const NoteDetailsActions = ({
   note,

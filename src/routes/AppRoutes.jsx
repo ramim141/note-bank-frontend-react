@@ -31,6 +31,7 @@ import PassrowdChangePages from '../pages/Password/PassrowdChangePages';
 import BookmarksPages from '../pages/Bookmarks/BookmarksPages';
 import FacultyPage from '../pages/Faculty/FacultyPage';
 import DashboardPage from '../pages/Dashboard/DashboardPage';
+import PublicNoteRequestsPage from '../pages/Notes/PublicNoteRequestsPage';
 
 const AppRoutes = () => {
     return (
@@ -47,6 +48,7 @@ const AppRoutes = () => {
             <Route path="/notes" element={<AllNotesPage />} />
             <Route path="/faculty" element={<FacultyPage />} />
             <Route path="/:noteId" element={<NoteDetailsPage />} />
+            <Route path="/note-requests" element={<PublicNoteRequestsPage />} />
             
             {/* Contributors page */}
             <Route path="/contributors" element={<ContributorsPage />} />

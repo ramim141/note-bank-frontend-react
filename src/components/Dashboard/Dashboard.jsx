@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { toast } from 'react-toastify'
+import { useNavigate } from "react-router-dom"
 
 // Custom Hooks and Services
 
@@ -31,8 +32,7 @@ import {
   MessageSquareIcon,
 } from "./DashboardIcons"
 
-// এই mock ডেটা এখন আর ব্যবহৃত হচ্ছে না যদি আপনার API অ্যাচিভমেন্ট ডেটা পাঠায়।
-// আপাতত রেখে দেওয়া হলো, কারণ আপনার API এখনো অ্যাচিভমেন্ট সেকশন ইমপ্লিমেন্ট করেনি।
+
 const mockAchievements = [
     {
         type: "trophy",
@@ -66,6 +66,7 @@ export default function DashboardPage() {
   const [dashboardData, setDashboardData] = useState(null)
 
   const user = dashboardData?.user
+  const navigate = useNavigate();
 
   const fetchDashboardData = useCallback(async () => {
     setIsLoading(true)
@@ -96,13 +97,12 @@ export default function DashboardPage() {
       }
     };
     loadData();
-  }, []); // শুধু একবার রান করার জন্য খালি dependency array
+  }, []); 
 
   const handleRefresh = useCallback(async () => {
-    // একটি "রিফ্রেশ" বাটনের জন্য এই ফাংশন ব্যবহার করা যেতে পারে
     setIsLoading(true);
     try {
-        localStorage.removeItem('dashboardDataCache'); // ক্যাশ ক্লিয়ার করুন
+        localStorage.removeItem('dashboardDataCache');
         const response = await getDashboardData();
         setDashboardData(response.data);
         toast.success("Dashboard has been updated!");
@@ -114,10 +114,9 @@ export default function DashboardPage() {
   }, []);
 
   const handleNavigation = (path) => {
-    console.log(`Navigating to: ${path}`);
+    navigate(path);
   }
 
-  // প্রাথমিক লোডিং এর জন্য এই কন্ডিশনটি গুরুত্বপূর্ণ
   if (isLoading) {
     return <EnhancedLoadingDashboard />;
   }
@@ -140,7 +139,7 @@ export default function DashboardPage() {
   const { stats, myNotes, bookmarks, performanceData } = dashboardData
 
   return (
-    <div className="overflow-hidden relative  min-h-screen bg-gradient-to-br via-blue-50 to-indigo-100 from-slate-50 pt-32">
+    <div className="overflow-hidden relative pt-32 min-h-screen bg-gradient-to-br via-blue-50 to-indigo-100 from-slate-50">
       {/* Enhanced Background Effects */}
       <div className="overflow-hidden absolute inset-0 pointer-events-none">
         <div className="absolute top-10 left-10 w-72 h-72 bg-gradient-to-r rounded-full blur-3xl from-blue-400/10 to-purple-400/10 animate-float" />
