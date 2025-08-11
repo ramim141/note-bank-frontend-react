@@ -1,7 +1,7 @@
 // src/components/Profile/ProfileDetails.jsx
 import React from 'react';
-import ProfileAvatar from '../../components/Profile/Avatar'; // Nested Avatar component
-import { Badge } from './badge.jsx'; // UI Badge component
+import ProfileAvatar from '../../components/Profile/Avatar'; 
+import { Badge } from './badge.jsx'; 
 import { BookOpen, Bookmark, User, Mail, Phone, Wifi, Calendar, MapPin, GraduationCap, Building, Award, Book } from 'lucide-react'; // Assuming you have these icons
 
 // Import your apiService
@@ -17,7 +17,6 @@ const ProfileDetails = () => {
       setLoading(true);
       setError(null);
       try {
-        // Assuming userService.getUserProfile() fetches data from your API
         const data = await getUserProfile();
         setProfileData(data);
       } catch (err) {
@@ -50,14 +49,14 @@ const ProfileDetails = () => {
 
   const userInitials = profileData?.first_name
     ? `${profileData.first_name[0]}${profileData.last_name ? profileData.last_name[0] : ''}`
-    : 'RA'; // Default initials
+    : 'RA'; 
 
   return (
     <div className="flex flex-col gap-6 items-center mb-8 md:flex-row">
       <ProfileAvatar
         profilePictureUrl={profileData?.profile_picture_url}
         initials={userInitials}
-        rating={profileData?.total_notes_liked_by_others !== undefined ? profileData.total_notes_liked_by_others : 0} // Example: using liked notes as rating for now
+        rating={profileData?.total_notes_liked_by_others !== undefined ? profileData.total_notes_liked_by_others : 0} 
         className="w-32 h-32 md:w-40 md:h-40"
       />
       <div className="text-center md:text-left">

@@ -1,43 +1,39 @@
 // src/pages/Contributions/ContributorsPage.jsx
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { fetchContributors } from '../../api/apiService/contributorsService'; // আমাদের সার্ভিস ফাইল
+import { fetchContributors } from '../../api/apiService/contributorsService'; 
 
-// পেজিনেশন কন্ট্রোল কম্পোনেন্ট (যদি আপনার প্রজেক্টে থাকে বা তৈরি করতে চান)
-// আপাতত আমরা একটি সাধারণ বাটন দিয়ে নেভিগেট করব।
-// আপনি চাইলে একটি সুন্দর পেজিনেশন কম্পোনেন্ট ব্যবহার করতে পারেন।
+
 
 const CACHE_KEY = 'contributorsData';
-const CACHE_EXPIRY_MS = 5 * 60 * 1000; // 5 মিনিট
+const CACHE_EXPIRY_MS = 5 * 60 * 1000; 
 
 const ContributorsPage = () => {
     const [contributors, setContributors] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-    // পেজিনেশন স্টেট
-    const [currentPage, setCurrentPage] = useState(1); // বর্তমান পৃষ্ঠা
-    const [totalPages, setTotalPages] = useState(1); // মোট পৃষ্ঠা সংখ্যা
-    const [totalCount, setTotalCount] = useState(0); // মোট কন্ট্রিবিউটরের সংখ্যা
 
-    // ডেটা ফেচ করার ফাংশন
-    const loadContributors = useCallback(async (page = 1) => { // পেজ নম্বর প্যারামিটার যোগ করা হয়েছে
+    const [currentPage, setCurrentPage] = useState(1); 
+    const [totalPages, setTotalPages] = useState(1); 
+    const [totalCount, setTotalCount] = useState(0); 
+
+
+    const loadContributors = useCallback(async (page = 1) => { 
         setLoading(true);
         setError(null);
 
         try {
-            // localStorage ক্যাশিং লজিক (আগের মতোই)
-            const cacheKey = `${CACHE_KEY}_page_${page}`; // প্রতি পেজের জন্য আলাদা ক্যাশে
+            const cacheKey = `${CACHE_KEY}_page_${page}`; 
             const cachedData = localStorage.getItem(cacheKey);
             if (cachedData) {
                 const { data, timestamp } = JSON.parse(cachedData);
                 if (Date.now() - timestamp < CACHE_EXPIRY_MS) {
                     console.log(`Loading contributors page ${page} from cache.`);
                     setContributors(data.results || data);
-                    // পেজিনেটেড ডেটার জন্য totalPages এবং totalCount সেট করা দরকার
                     if (data.count !== undefined && data.results) {
                         setTotalCount(data.count);
-                        setTotalPages(Math.ceil(data.count / 10)); // ধরে নিচ্ছি প্রতি পেজে 10 টি আইটেম
+                        setTotalPages(Math.ceil(data.count / 10)); 
                     }
                     setLoading(false);
                     return;
@@ -46,21 +42,19 @@ const ContributorsPage = () => {
                 }
             }
 
-            // API থেকে ফেচ করা হচ্ছে
+
             console.log(`Fetching contributors page ${page} from API.`);
-            const responseData = await fetchContributors({ page: page }); // API কলে পেজ নম্বর পাস করা হচ্ছে
+            const responseData = await fetchContributors({ page: page }); 
 
             let processedData = [];
             if (responseData && Array.isArray(responseData.results)) {
                 processedData = responseData.results;
-                // পেজিনেটেড ডেটার জন্য totalPages এবং totalCount সেট করা হচ্ছে
                 setTotalCount(responseData.count);
-                // Assuming default items per page is 10, adjust if your API returns it
                 setTotalPages(Math.ceil(responseData.count / 10)); 
             } else if (Array.isArray(responseData)) {
                 processedData = responseData;
                 setTotalCount(responseData.length);
-                setTotalPages(1); // যদি পেজিনেটেড না হয়
+                setTotalPages(1); 
             } else {
                 console.error("API response is not in the expected format:", responseData);
                 setError('Received invalid data format from the server.');
@@ -69,7 +63,6 @@ const ContributorsPage = () => {
             }
 
             setContributors(processedData);
-            // localStorage এ ডেটা সেভ করা হচ্ছে
             localStorage.setItem(cacheKey, JSON.stringify({ data: responseData, timestamp: Date.now() }));
             
         } catch (err) {
@@ -80,24 +73,24 @@ const ContributorsPage = () => {
         }
     }, []);
 
-    // useEffect দিয়ে loadContributors কে কল করা হচ্ছে
-    useEffect(() => {
-        loadContributors(currentPage); // ইনিশিয়ালি বর্তমান পেজ লোড করবে
-    }, [loadContributors, currentPage]); // currentPage পরিবর্তন হলে আবার লোড করবে
 
-    // পেজ পরিবর্তনের হ্যান্ডেলার
+    useEffect(() => {
+        loadContributors(currentPage);
+    }, [loadContributors, currentPage]); 
+
+
     const handlePageChange = (pageNumber) => {
         if (pageNumber >= 1 && pageNumber <= totalPages) {
             setCurrentPage(pageNumber);
         }
     };
 
-    // পেজিনেশন বাটনগুলো রেন্ডার করার জন্য একটি ফাংশন
+
     const renderPagination = () => {
-        if (totalPages <= 1) return null; // যদি মাত্র একটি পেজ থাকে, তবে পেজিনেশন দেখানোর প্রয়োজন নেই
+        if (totalPages <= 1) return null;
 
         const pageButtons = [];
-        const maxPageButtons = 5; // সর্বোচ্চ কয়টি পেজ বাটন দেখাবে
+        const maxPageButtons = 5; 
 
         // Page number buttons logic
         let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
@@ -118,7 +111,7 @@ const ContributorsPage = () => {
                 disabled={currentPage === 1}
                 className={`px-3 py-1 mx-1 rounded-md border ${currentPage === 1 ? 'border-gray-300 text-gray-500 cursor-not-allowed' : 'border-blue-500 text-blue-500 hover:bg-blue-100'} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
             >
-                « পূর্ববর্তী
+                « Previous
             </button>
         );
 
@@ -143,7 +136,7 @@ const ContributorsPage = () => {
                 disabled={currentPage === totalPages}
                 className={`px-3 py-1 mx-1 rounded-md border ${currentPage === totalPages ? 'border-gray-300 text-gray-500 cursor-not-allowed' : 'border-blue-500 text-blue-500 hover:bg-blue-100'} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
             >
-                পরবর্তী »
+                Next »
             </button>
         );
 
@@ -154,7 +147,7 @@ const ContributorsPage = () => {
         );
     };
 
-    // মূল JSX রেন্ডারিং
+
     return (
         <div className="p-4 pt-24 mt-12 min-h-screen bg-gray-50 sm:p-6 lg:p-8">
             <div className="mx-auto max-w-7xl">
@@ -228,7 +221,7 @@ const ContributorsPage = () => {
                     </table>
                 </div>
 
-                {/* পেজিনেশন কন্ট্রোল */}
+
                 {renderPagination()}
 
             </div>

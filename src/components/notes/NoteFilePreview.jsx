@@ -3,32 +3,30 @@
 import { useState, useEffect } from "react"
 import {
   Download,
-  FileText, // Generic icon for file
+  FileText, 
   AlertCircle,
 } from "lucide-react"
 import { downloadNote } from "../../api/apiService/userService"
-import { getFileType } from "../../api/apiService/filePreviewService" // Only need getFileType for context
-import filePreviewService from "../../api/apiService/filePreviewService"; // Import filePreviewService for direct file URL
+import { getFileType } from "../../api/apiService/filePreviewService" 
+import filePreviewService from "../../api/apiService/filePreviewService";
 import { toast } from "react-toastify"
-import api from "../../api/apiService/axiosInstance"; // Import api for content fetching
+import api from "../../api/apiService/axiosInstance"; 
 
 const NoteFilePreview = ({ note }) => {
   const [fileType, setFileType] = useState(null)
   const [error, setError] = useState(null)
-  const [loading, setLoading] = useState(false); // Added loading state for content fetching
-  const [previewUrl, setPreviewUrl] = useState(null); // State to hold fetched content URL
+  const [loading, setLoading] = useState(false); 
+  const [previewUrl, setPreviewUrl] = useState(null); 
 
   useEffect(() => {
     if (note?.file_name) {
       const detectedFileType = getFileType(note.file_name);
       setFileType(detectedFileType);
       if (detectedFileType === 'text' || detectedFileType === 'code') {
-        fetchFileContentForPreview(note.id); // Fetch content if text or code
+        fetchFileContentForPreview(note.id);
       } else if (detectedFileType === 'pdf') {
-        // For PDF, we need the direct URL. Assuming backend provides it via get-file-url endpoint
         fetchDirectFileUrl(note.id);
       } else if (detectedFileType === 'image') {
-        // For image, we also need the direct URL
         fetchDirectFileUrl(note.id);
       } else if (['document', 'spreadsheet', 'presentation'].includes(detectedFileType)) {
 
@@ -104,13 +102,13 @@ const NoteFilePreview = ({ note }) => {
     return <FileText className="w-8 h-8 transition-all duration-300 text-slate-500 group-hover:text-blue-500" />
   }
 
-  // Renders the content for preview or download prompt
+
   const renderContent = () => {
     if (loading) {
       return (
-        <div className="flex items-center justify-center h-full">
+        <div className="flex justify-center items-center h-full">
           <div className="text-center">
-            <Loader2 className="w-8 h-8 mx-auto mb-2 text-blue-600 animate-spin" />
+            <Loader2 className="mx-auto mb-2 w-8 h-8 text-blue-600 animate-spin" />
             <p className="text-sm text-gray-600">Loading preview...</p>
           </div>
         </div>
@@ -119,12 +117,12 @@ const NoteFilePreview = ({ note }) => {
 
     if (error) {
       return (
-        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-          <AlertCircle className="w-16 h-16 mb-4 text-red-500" />
+        <div className="flex flex-col justify-center items-center p-4 h-full text-center">
+          <AlertCircle className="mb-4 w-16 h-16 text-red-500" />
           <p className="mb-2 text-lg font-medium text-gray-600">{error}</p>
           <button
             onClick={handleDownload}
-            className="px-4 py-2 text-sm text-white transition-colors bg-blue-600 rounded hover:bg-blue-700"
+            className="px-4 py-2 text-sm text-white bg-blue-600 rounded transition-colors hover:bg-blue-700"
           >
             Download to View
           </button>
@@ -135,15 +133,15 @@ const NoteFilePreview = ({ note }) => {
     // If no file or preview not supported, show download prompt
     if (!note?.id || !previewUrl || !['pdf', 'image', 'text', 'code'].includes(fileType)) {
       return (
-        <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-          <Download className="w-16 h-16 mb-4 text-blue-500 animate-bounce" />
+        <div className="flex flex-col justify-center items-center p-4 h-full text-center">
+          <Download className="mb-4 w-16 h-16 text-blue-500 animate-bounce" />
           <h2 className="mb-2 text-2xl font-bold text-gray-700">Download to Preview</h2>
           <p className="mb-4 text-gray-500 text-md">
             Preview is not available for this file type.
           </p>
           <button
             onClick={handleDownload}
-            className="px-6 py-3 text-lg font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+            className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow transition hover:bg-blue-700"
           >
             Download File
           </button>
@@ -166,7 +164,7 @@ const NoteFilePreview = ({ note }) => {
 
       case "image":
         return (
-          <div className="flex items-center justify-center h-full p-4 overflow-hidden">
+          <div className="flex overflow-hidden justify-center items-center p-4 h-full">
             <img
               src={previewUrl}
               alt="File Preview"
@@ -179,8 +177,8 @@ const NoteFilePreview = ({ note }) => {
       case "text":
       case "code":
         return (
-          <div className="h-full p-4 overflow-auto">
-            <pre className="font-mono text-sm text-gray-800 break-words whitespace-pre-wrap">
+          <div className="overflow-auto p-4 h-full">
+            <pre className="font-mono text-sm text-gray-800 whitespace-pre-wrap break-words">
               {previewUrl && previewUrl.startsWith("data:text/plain;base64,")
                 ? atob(previewUrl.split(",")[1])
                 : "Loading content..."}
@@ -189,17 +187,16 @@ const NoteFilePreview = ({ note }) => {
         )
 
       default:
-        // Fallback for any other supported types not explicitly handled
         return (
-          <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-            <Download className="w-16 h-16 mb-4 text-blue-500 animate-bounce" />
+          <div className="flex flex-col justify-center items-center p-4 h-full text-center">
+            <Download className="mb-4 w-16 h-16 text-blue-500 animate-bounce" />
             <h2 className="mb-2 text-2xl font-bold text-gray-700">Download to Preview</h2>
             <p className="mb-4 text-gray-500 text-md">
               Preview is not available for this file type.
             </p>
             <button
               onClick={handleDownload}
-              className="px-6 py-3 text-lg font-semibold text-white transition bg-blue-600 rounded-lg shadow hover:bg-blue-700"
+              className="px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg shadow transition hover:bg-blue-700"
             >
               Download File
             </button>
@@ -209,11 +206,11 @@ const NoteFilePreview = ({ note }) => {
   }
 
   return (
-    <div className="overflow-hidden transition-all duration-500 border bg-gradient-to-br from-white rounded-2xl backdrop-blur-sm to-slate-50 via-blue-50/30 border-slate-200/60">
+    <div className="overflow-hidden bg-gradient-to-br from-white rounded-2xl border backdrop-blur-sm transition-all duration-500 to-slate-50 via-blue-50/30 border-slate-200/60">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between p-6 border-b bg-gradient-to-r backdrop-blur-sm sm:flex-nowrap from-slate-50/80 via-blue-50/50 to-purple-50/50 border-slate-200/60">
-        <div className="flex items-center flex-1 min-w-0 gap-3 mr-4"> {/* flex-1 to allow shrinking */}
-          <div className="p-2 transition-all duration-300 bg-gradient-to-br from-blue-200 to-purple-200 rounded-xl hover:bg-gradient-to-br">
+      <div className="flex flex-wrap justify-between items-center p-6 bg-gradient-to-r border-b backdrop-blur-sm sm:flex-nowrap from-slate-50/80 via-blue-50/50 to-purple-50/50 border-slate-200/60">
+        <div className="flex flex-1 gap-3 items-center mr-4 min-w-0"> {/* flex-1 to allow shrinking */}
+          <div className="p-2 bg-gradient-to-br from-blue-200 to-purple-200 rounded-xl transition-all duration-300 hover:bg-gradient-to-br">
             {getIconComponent()}
           </div>
           <h3
@@ -227,7 +224,7 @@ const NoteFilePreview = ({ note }) => {
         {note?.id && (
           <button
             onClick={handleDownload}
-            className="items-center flex-shrink-0 gap-2 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-105 active:scale-95 group"
+            className="flex-shrink-0 gap-2 items-center px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 rounded-xl shadow-lg transition-all duration-300 transform hover:from-blue-700 hover:to-blue-800 hover:shadow-xl hover:scale-105 active:scale-95 group"
             title="Download file"
           >
             <Download className="w-4 h-4 group-hover:animate-pulse" />

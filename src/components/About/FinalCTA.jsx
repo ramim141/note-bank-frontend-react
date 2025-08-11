@@ -6,7 +6,7 @@ const FinalCTA = () => {
     <div className="overflow-hidden relative p-12 mt-24 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 shadow-2xl md:p-16">
       <div className="absolute inset-0 opacity-10">
         <img
-          src={"../../assets/images/collaboration.jpg"} // Placeholder for actual image import
+          src={"../../assets/images/collaboration.jpg"} 
           alt="Students collaborating"
           className="object-cover w-full h-full"
           loading="lazy"

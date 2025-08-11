@@ -21,13 +21,12 @@ import {
   X,
 } from "lucide-react";
 
-// Ensure VITE_API_BASE_URL is correctly configured in your .env file
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const RegisterForm = () => {
   // --- State for Form Data ---
   const [formData, setFormData] = useState(() => {
-    // Try to load form data from localStorage on initial render
     const savedFormData = localStorage.getItem("registerFormData");
     return savedFormData
       ? JSON.parse(savedFormData)
@@ -39,7 +38,7 @@ const RegisterForm = () => {
           first_name: "",
           last_name: "",
           student_id: "",
-          department: null, // Use null for default unselected state
+          department: null, 
           batch: "",
           section: "",
         };
@@ -64,28 +63,25 @@ const RegisterForm = () => {
   // Fetch departments on component mount
   useEffect(() => {
     const fetchDepartments = async () => {
-      setDepartmentLoading(true); // Start loading state
-      setDepartmentError(null); // Reset any previous errors
+      setDepartmentLoading(true); 
+      setDepartmentError(null); 
 
       try {
-        // Check localStorage first for departments
         const savedDepartments = localStorage.getItem("departments");
         if (savedDepartments) {
           const parsedDepartments = JSON.parse(savedDepartments);
           if (Array.isArray(parsedDepartments) && parsedDepartments.length > 0) {
             setDepartments(parsedDepartments);
             setDepartmentLoading(false);
-            return; // Found valid departments in localStorage, so return
+            return; 
           } else {
-            // If localStorage has data but it's not a valid array, clear it
             console.warn("Invalid or empty data in localStorage for departments. Fetching from API.");
             localStorage.removeItem("departments");
           }
         }
 
-        // If not found in localStorage or invalid, fetch from API
         const data = await departmentService.getAllDepartments();
-        console.log("Fetched departments data:", data); // Log fetched data for debugging
+        console.log("Fetched departments data:", data); 
 
         // Ensure the fetched data is an array before setting
         if (data && Array.isArray(data)) {
@@ -94,8 +90,6 @@ const RegisterForm = () => {
           // Save departments to localStorage for future use
           localStorage.setItem("departments", JSON.stringify(data));
         } else {
-          // Handle cases where API might return data in a different structure, e.g., { results: [...] }
-          // Adjust 'results' based on your actual API response structure
           if (data && typeof data === 'object' && Array.isArray(data.results)) {
             setDepartments(data.results);
             setDepartmentLoading(false);
@@ -114,7 +108,7 @@ const RegisterForm = () => {
     };
 
     fetchDepartments();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []); 
 
   // --- Handlers ---
   const handleChange = (e) => {
@@ -131,13 +125,13 @@ const RegisterForm = () => {
 
   const handleSelectChange = (e) => {
     const { name, value } = e.target;
-    // Convert value to number for department ID, or set to null if empty
+
     const departmentValue = value === "" ? null : Number.parseInt(value, 10);
     setFormData({
       ...formData,
       [name]: departmentValue,
     });
-    // Clear specific field error when user changes selection
+
     if (errors[name]) {
       setErrors({ ...errors, [name]: undefined });
     }
@@ -154,7 +148,7 @@ const RegisterForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setErrors({}); // Clear previous errors
+    setErrors({}); 
 
     const dataToSend = { ...formData };
 
@@ -215,9 +209,7 @@ const RegisterForm = () => {
             return;
           }
 
-          // If there's a response body, you might log it or handle it
-          // const successData = JSON.parse(responseText);
-          // console.log("Registration success data:", successData);
+
 
           toast.success("Registration successful! Please check your email for verification.");
           localStorage.removeItem("registerFormData");
@@ -239,7 +231,7 @@ const RegisterForm = () => {
       toast.error("An unexpected error occurred. Please try again later.");
       setErrors({ non_field_errors: "An unexpected error occurred. Please check your internet connection or try again later." });
     } finally {
-      setIsLoading(false); // Ensure loading state is turned off
+      setIsLoading(false); 
     }
   };
 

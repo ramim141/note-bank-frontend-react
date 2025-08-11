@@ -6,7 +6,7 @@ import { cn } from "../../utils/cn";
 const Button = ({
   children,
   className = '',
-  variant = 'default', // 'default', 'outline'
+  variant = 'default', 
   type = 'button',
   onClick,
   disabled = false,

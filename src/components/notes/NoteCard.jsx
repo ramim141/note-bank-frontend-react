@@ -1,5 +1,4 @@
 // src/components/cards/NoteCard.jsx
-// NO CHANGES REQUIRED IN THIS FILE. It correctly uses the functions from userService.
 
 "use client"
 

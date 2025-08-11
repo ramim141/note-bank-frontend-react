@@ -3,10 +3,10 @@
 // src/pages/Notes/MyNotesPage.jsx
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuth } from "../../context/useAuth" // Import useAuth
-import ProtectedRoute from "../../routes/ProtectedRoute" // Import ProtectedRoute
-import NoteCard from "../../components/notes/NoteCard" // Fixed import path
-import { noteService } from "../../api/apiService/noteService" // Fixed import path
+import { useAuth } from "../../context/useAuth" 
+import ProtectedRoute from "../../routes/ProtectedRoute"
+import NoteCard from "../../components/notes/NoteCard" 
+import { noteService } from "../../api/apiService/noteService" 
 import { toast } from "react-toastify"
 import { Search, Upload, FileText, Clock, CheckCircle, Plus, MoreHorizontal, Trash2, Edit } from "lucide-react"
 
@@ -33,7 +33,7 @@ const MyNotesPage = () => {
 
       try {
         const data = await noteService.getMyNotes(token)
-        setNotes(data.results || data) // API might return {results: [...]} or just [...]
+        setNotes(data.results || data) 
         setLoading(false)
       } catch (err) {
         console.error("Error fetching my notes:", err)
@@ -116,10 +116,10 @@ const MyNotesPage = () => {
   }
 
   const LoadingSpinner = () => (
-    <div className="flex items-center justify-center h-64">
+    <div className="flex justify-center items-center h-64">
       <div className="relative">
-        <div className="w-12 h-12 border-4 border-purple-200 rounded-full animate-spin"></div>
-        <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent rounded-full animate-spin border-t-purple-600"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-purple-200 animate-spin"></div>
+        <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-transparent animate-spin border-t-purple-600"></div>
       </div>
       <span className="ml-4 text-xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-indigo-600">
         Loading your notes...
@@ -129,14 +129,14 @@ const MyNotesPage = () => {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen pb-64 bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/30">
+      <div className="pb-64 min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-indigo-50/30">
         {/* Header Section */}
         <div className="top-0 z-10 pt-32 border-b shadow-sm backdrop-blur-xl bg-white/80 border-purple-100/50">
           <div className="px-4 py-6 mx-auto max-w-7xl md:px-8 lg:px-12">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               {/* Title and Stats */}
-              <div className="flex items-center gap-4">
-                <div className="p-3 shadow-lg bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl">
+              <div className="flex gap-4 items-center">
+                <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg">
                   <FileText className="w-8 h-8 text-white" />
                 </div>
                 <div>
@@ -152,7 +152,7 @@ const MyNotesPage = () => {
               {/* Upload Button */}
               <button
                 onClick={() => navigate("/upload-note")}
-                className="flex items-center gap-3 px-6 py-3 font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl group hover:shadow-xl hover:scale-105 hover:from-purple-700 hover:to-indigo-700"
+                className="flex gap-3 items-center px-6 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-xl shadow-lg transition-all duration-300 transform group hover:shadow-xl hover:scale-105 hover:from-purple-700 hover:to-indigo-700"
               >
                 <Upload className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
                 Upload New Note
@@ -160,14 +160,14 @@ const MyNotesPage = () => {
             </div>
 
             {/* Search Bar */}
-            <div className="relative max-w-md mt-6">
-              <Search className="absolute w-5 h-5 text-gray-700 transform -translate-y-1/2 left-4 top-1/2" />
+            <div className="relative mt-6 max-w-md">
+              <Search className="absolute left-4 top-1/2 w-5 h-5 text-gray-700 transform -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search notes by title, description, or subject..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-3 pl-12 pr-4 placeholder-gray-500 transition-all duration-300 border rounded-xl backdrop-blur-sm bg-white/70 border-purple-200/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                className="py-3 pr-4 pl-12 w-full placeholder-gray-500 rounded-xl border backdrop-blur-sm transition-all duration-300 bg-white/70 border-purple-200/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
               />
             </div>
           </div>
@@ -176,7 +176,7 @@ const MyNotesPage = () => {
         {/* Main Content */}
         <div className="px-4 py-8 mx-auto max-w-7xl md:px-8 lg:px-12">
           {/* Tab Navigation */}
-          <div className="flex flex-wrap gap-2 p-1 mb-8 border shadow-sm rounded-2xl backdrop-blur-sm bg-white/60 border-purple-100/50">
+          <div className="flex flex-wrap gap-2 p-1 mb-8 rounded-2xl border shadow-sm backdrop-blur-sm bg-white/60 border-purple-100/50">
             <button
               onClick={() => setActiveTab("all")}
               className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
@@ -222,8 +222,8 @@ const MyNotesPage = () => {
             <LoadingSpinner />
           ) : error ? (
             <div className="py-16 text-center">
-              <div className="inline-block p-4 mb-4 border border-red-200 bg-red-50 rounded-2xl">
-                <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+              <div className="inline-block p-4 mb-4 bg-red-50 rounded-2xl border border-red-200">
+                <div className="flex justify-center items-center mx-auto mb-4 w-16 h-16 bg-red-100 rounded-full">
                   <FileText className="w-8 h-8 text-red-500" />
                 </div>
                 <p className="mb-2 text-xl font-semibold text-red-700">Oops! Something went wrong</p>
@@ -237,24 +237,24 @@ const MyNotesPage = () => {
                 {displayedNotes.map((note, index) => (
                   <div
                     key={note.id}
-                    className="transition-all duration-300 transform hover:scale-105 "
+                    className="transition-all duration-300 transform hover:scale-105"
                     style={{
                       animationDelay: `${index * 100}ms`,
                       animation: "fadeInUp 0.6s ease-out forwards",
                     }}
                   >
                     <div className="relative">
-                      <div className="absolute top-2 right-2 z-10 flex gap-2">
+                      <div className="flex absolute top-2 right-2 z-10 gap-2">
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/notes/${note.id}/edit`) }}
-                          className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100"
+                          className="p-2 text-blue-700 bg-blue-50 rounded-xl border border-blue-200 hover:bg-blue-100"
                           title="Edit"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(note.id) }}
-                          className="p-2 rounded-xl bg-red-50 border border-red-200 text-red-700 hover:bg-red-100"
+                          className="p-2 text-red-700 bg-red-50 rounded-xl border border-red-200 hover:bg-red-100"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -275,7 +275,7 @@ const MyNotesPage = () => {
                 <div className="text-center">
                   <button
                     onClick={() => setVisibleNotes((prev) => prev + 6)}
-                    className="flex items-center gap-3 px-8 py-4 mx-auto font-semibold text-purple-700 transition-all duration-300 transform border shadow-sm bg-gradient-to-r from-purple-100 to-indigo-100 rounded-2xl group hover:from-purple-200 hover:to-indigo-200 border-purple-200/50 hover:shadow-lg hover:scale-105"
+                    className="flex gap-3 items-center px-8 py-4 mx-auto font-semibold text-purple-700 bg-gradient-to-r from-purple-100 to-indigo-100 rounded-2xl border shadow-sm transition-all duration-300 transform group hover:from-purple-200 hover:to-indigo-200 border-purple-200/50 hover:shadow-lg hover:scale-105"
                   >
                     <MoreHorizontal className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
                     Load More Notes
@@ -288,14 +288,14 @@ const MyNotesPage = () => {
             </>
           ) : (
             <div className="py-16 text-center">
-              <div className="inline-block p-8 border border-purple-100 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl">
-                <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-100 to-indigo-100">
+              <div className="inline-block p-8 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl border border-purple-100">
+                <div className="flex justify-center items-center mx-auto mb-6 w-24 h-24 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-full">
                   <FileText className="w-12 h-12 text-purple-500" />
                 </div>
                 <h3 className="mb-3 text-2xl font-bold text-gray-800">
                   {searchQuery ? "No matching notes found" : "No notes uploaded yet!"}
                 </h3>
-                <p className="max-w-md mx-auto mb-6 text-gray-600">
+                <p className="mx-auto mb-6 max-w-md text-gray-600">
                   {searchQuery
                     ? "Try adjusting your search terms or browse all notes."
                     : "Upload your first note to get started and build your knowledge collection."}
@@ -303,7 +303,7 @@ const MyNotesPage = () => {
                 {!searchQuery && (
                   <button
                     onClick={() => navigate("/upload-note")}
-                    className="flex items-center gap-3 px-8 py-4 mx-auto font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl group hover:shadow-xl hover:scale-105 hover:from-purple-700 hover:to-indigo-700"
+                    className="flex gap-3 items-center px-8 py-4 mx-auto font-semibold text-white bg-gradient-to-r from-purple-600 to-indigo-600 rounded-2xl shadow-lg transition-all duration-300 transform group hover:shadow-xl hover:scale-105 hover:from-purple-700 hover:to-indigo-700"
                   >
                     <Plus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
                     Upload Your First Note

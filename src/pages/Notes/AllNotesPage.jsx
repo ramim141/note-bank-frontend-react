@@ -4,9 +4,9 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useSearchParams } from "react-router-dom"
 import { Search, Loader, ServerCrash, Frown, Filter, X } from 'lucide-react'
-import { useAuth } from "../../context/AuthContext" // আপনার useAuth হুকের সঠিক পাথ
+import { useAuth } from "../../context/AuthContext" 
 import { noteService } from "../../api/apiService/noteService"
-import { getDepartments, getCourses } from "../../api/apiService/userService" // userService থেকে ইম্পোর্ট করুন
+import { getDepartments, getCourses } from "../../api/apiService/userService" 
 
 import CategoryBar from "../../components/Notes/CategoryBar"
 import NoteCard from "../../components/notes/NoteCard"
@@ -33,7 +33,7 @@ const AllNotesPage = () => {
   const [page, setPage] = useState(1)
   const [hasNextPage, setHasNextPage] = useState(false)
   const observer = useRef()
-  const activeRequestController = useRef(null) // Request cancellation-এর জন্য
+  const activeRequestController = useRef(null) 
 
   // Dropdown data
   const [departments, setDepartments] = useState([])
@@ -58,13 +58,11 @@ const AllNotesPage = () => {
     setSearchParams(newSearchParams, { replace: true })
   }, [filters, page, setSearchParams])
 
-  // --- ডেটা ফেচ করার জন্য মূল useEffect ---
+
   useEffect(() => {
-    // আগের রিকোয়েস্ট বাতিল করুন
     if (activeRequestController.current) {
       activeRequestController.current.abort()
     }
-    // নতুন রিকোয়েস্টের জন্য নতুন কন্ট্রোলার তৈরি করুন
     const controller = new AbortController()
     activeRequestController.current = controller
 
@@ -82,12 +80,12 @@ const AllNotesPage = () => {
     }
     const cleanParams = Object.fromEntries(Object.entries(apiParams).filter(([_, v]) => v))
     
-    // Debug: Log the parameters being sent
+
     console.log('API Parameters being sent:', cleanParams)
     
     noteService.getNotes(cleanParams, token, controller.signal)
       .then(data => {
-        // Debug: Log the fetched notes data
+
         console.log('Fetched notes data:', data)
         console.log('First note sample:', data.results?.[0])
         
@@ -106,11 +104,9 @@ const AllNotesPage = () => {
         const newHasNextPage = !!data.next
 
         setNotes(prevNotes => {
-          // প্রথম পেইজ হলে, অ্যারে রিসেট করুন
           if (page === 1) {
             return newNotes
           }
-          // পরের পেইজ হলে, শুধুমাত্র ইউনিক নোট যোগ করুন
           const existingNoteIds = new Set(prevNotes.map(n => n.id))
           const uniqueNewNotes = newNotes.filter(n => !existingNoteIds.has(n.id))
           return [...prevNotes, ...uniqueNewNotes]
@@ -127,14 +123,14 @@ const AllNotesPage = () => {
         setLoading(false)
       })
 
-    // Cleanup ফাংশন: কম্পোনেন্ট আনমাউন্ট হলে বা useEffect আবার রান করলে রিকোয়েস্ট বাতিল হবে
+
     return () => {
       controller.abort()
     }
-  }, [page, filters, token]) // fetchNotes-কে আর useCallback বা dependency হিসেবে রাখার প্রয়োজন নেই
+  }, [page, filters, token])
 
 
-  // --- ইনফিনিট স্ক্রোলের জন্য Intersection Observer ---
+
   const lastNoteElementRef = useCallback(
     (node) => {
       if (loading) return
@@ -149,12 +145,12 @@ const AllNotesPage = () => {
     [loading, hasNextPage]
   )
   
-  // --- ইভেন্ট হ্যান্ডলার ---
+
   const handleFilterChange = (name, value) => {
     console.log('handleFilterChange called:', { name, value })
-    // আগের নোটগুলো না দেখিয়ে নতুন করে লোড করার জন্য
+
     setNotes([])
-    setPage(1) // ফিল্টার পরিবর্তনের সাথে সাথে পেইজ ১-এ ফিরে যান
+    setPage(1) 
     setFilters(prevFilters => {
       const newFilters = { ...prevFilters, [name]: value }
       console.log('New filters state:', newFilters)
@@ -169,7 +165,7 @@ const AllNotesPage = () => {
   const handleInputChange = (e) => {
     e.preventDefault()
     const { name, value } = e.target
-    // Debounce a search input could be a good idea here
+
     handleFilterChange(name, value)
   }
   
@@ -195,7 +191,7 @@ const AllNotesPage = () => {
   const courseOptions = courses.map((course) => ({ value: course.id, label: course.name }))
 
   return (
-    <div className="min-h-screen pt-32 pb-32 bg-gradient-to-br from-gray-50 via-purple-50/30 to-pink-50/20">
+    <div className="pt-32 pb-32 min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-pink-50/20">
       <div className="container px-3 py-6 mx-auto max-w-7xl sm:px-4 sm:py-8">
         {/* Page Header */}
         <header className="mb-8 text-center sm:mb-12">
@@ -206,8 +202,8 @@ const AllNotesPage = () => {
         </header>
 
         {/* Search and Filter Section */}
-        <div className="relative z-10 p-4 mb-6 border shadow-lg rounded-2xl backdrop-blur-md bg-white/80 border-gray-200/50 sm:p-6 sm:mb-8">
-           <div className="flex items-center justify-between mb-4 sm:hidden">
+        <div className="relative z-10 p-4 mb-6 rounded-2xl border shadow-lg backdrop-blur-md bg-white/80 border-gray-200/50 sm:p-6 sm:mb-8">
+           <div className="flex justify-between items-center mb-4 sm:hidden">
             <h3 className="text-lg font-semibold text-gray-800">Search & Filter</h3>
             <button
               type="button"
@@ -215,7 +211,7 @@ const AllNotesPage = () => {
                 e.preventDefault()
                 setShowMobileFilters(!showMobileFilters)
               }}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-purple-600 transition-colors rounded-lg bg-purple-50 hover:bg-purple-100"
+              className="flex gap-2 items-center px-3 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg transition-colors hover:bg-purple-100"
             >
               <Filter className="w-4 h-4" />
               {showMobileFilters ? "Hide Filters" : "Show Filters"}
@@ -228,7 +224,7 @@ const AllNotesPage = () => {
                 Search by Title, Tags, etc.
               </label>
               <div className="relative">
-                <Search className="absolute w-5 h-5 text-gray-400 -translate-y-1/2 left-3 top-1/2" />
+                <Search className="absolute left-3 top-1/2 w-5 h-5 text-gray-400 -translate-y-1/2" />
                 <input
                   type="text"
                   id="search"
@@ -239,7 +235,7 @@ const AllNotesPage = () => {
                     handleInputChange(e)
                   }}
                   placeholder="e.g., Data Structures, SVM, Final..."
-                  className="w-full py-3 pl-10 pr-4 text-base transition-all duration-300 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+                  className="py-3 pr-4 pl-10 w-full text-base rounded-xl border-2 border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
                 />
               </div>
             </div>
@@ -279,7 +275,7 @@ const AllNotesPage = () => {
                   handleInputChange(e)
                 }}
                 placeholder="e.g., 3rd Year 2nd Sem"
-                className="w-full px-4 py-3 text-base transition-all duration-300 bg-white border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
+                className="px-4 py-3 w-full text-base bg-white rounded-xl border-2 border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-purple-400 focus:border-purple-400 hover:border-gray-300"
               />
               <div className="flex items-end">
                 {hasActiveFilters && (
@@ -289,7 +285,7 @@ const AllNotesPage = () => {
                       e.preventDefault()
                       clearAllFilters()
                     }}
-                    className="flex items-center justify-center w-full gap-2 px-4 py-3 text-sm font-medium text-red-600 transition-all duration-300 bg-red-50 rounded-xl hover:bg-red-100 hover:shadow-sm"
+                    className="flex gap-2 justify-center items-center px-4 py-3 w-full text-sm font-medium text-red-600 bg-red-50 rounded-xl transition-all duration-300 hover:bg-red-100 hover:shadow-sm"
                   >
                     <X className="w-4 h-4" />
                     Clear Filters
@@ -307,7 +303,7 @@ const AllNotesPage = () => {
               
      
         {hasActiveFilters && (
-          <div className="flex flex-wrap items-center gap-2 p-4 mb-6 border bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border-blue-200/50">
+          <div className="flex flex-wrap gap-2 items-center p-4 mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200/50">
             <span className="text-sm font-medium text-gray-700">Active filters:</span>
             {filters.search && <span className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 rounded-full">Search: "{filters.search}"</span>}
             {filters.department && <span className="px-3 py-1 text-xs font-medium text-green-700 bg-green-100 rounded-full">Dept: {departmentOptions.find(d => d.value.toString() === filters.department)?.label || filters.department}</span>}
@@ -318,13 +314,13 @@ const AllNotesPage = () => {
         )}
         <main>
           {loading && notes.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center sm:py-20">
+            <div className="flex flex-col justify-center items-center py-16 text-center sm:py-20">
               <Loader className="w-12 h-12 text-purple-500 animate-spin" />
               <p className="mt-4 text-xl font-semibold text-gray-700">Loading Notes...</p>
             </div>
           ) : error ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center bg-red-50 rounded-2xl sm:py-20">
-              <ServerCrash className="w-12 h-12 mb-4 text-red-500" />
+            <div className="flex flex-col justify-center items-center py-16 text-center bg-red-50 rounded-2xl sm:py-20">
+              <ServerCrash className="mb-4 w-12 h-12 text-red-500" />
               <p className="text-xl font-semibold text-red-700">{error}</p>
             </div>
           ) : notes.length > 0 ? (
@@ -351,8 +347,8 @@ const AllNotesPage = () => {
               })}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-16 text-center bg-yellow-50 rounded-2xl sm:py-20">
-              <Frown className="w-12 h-12 mb-4 text-yellow-600" />
+            <div className="flex flex-col justify-center items-center py-16 text-center bg-yellow-50 rounded-2xl sm:py-20">
+              <Frown className="mb-4 w-12 h-12 text-yellow-600" />
               <p className="text-xl font-semibold text-yellow-800">No Notes Found</p>
               <p className="mt-2 text-base text-gray-600">Try adjusting your filters or search term.</p>
               {hasActiveFilters && (
@@ -362,7 +358,7 @@ const AllNotesPage = () => {
                     e.preventDefault()
                     clearAllFilters()
                   }}
-                  className="px-6 py-2 mt-4 text-sm font-medium text-yellow-700 transition-colors bg-yellow-100 rounded-lg hover:bg-yellow-200"
+                  className="px-6 py-2 mt-4 text-sm font-medium text-yellow-700 bg-yellow-100 rounded-lg transition-colors hover:bg-yellow-200"
                 >
                   Clear All Filters
                 </button>

@@ -100,7 +100,7 @@ const LoginForm = () => {
             </p>
           </div>
 
-          {/* Sign In Button (example, not functional here without linking to a different page or action) */}
+          {/* Sign In Button  */}
           <button className="px-12 py-3 mb-8 font-semibold tracking-wider text-white bg-black rounded-lg transition-colors hover:bg-gray-800">
             SIGN IN
           </button>
@@ -215,7 +215,7 @@ const LoginForm = () => {
                 </a>
               </div>
 
-              {/* General Error Message (e.g., from non_field_errors) */}
+              {/* General Error Message */}
               {errors.non_field_errors && (
                 <div className="flex gap-3 items-center p-4 bg-red-50 rounded-lg border border-red-200">
                   <AlertCircle className="flex-shrink-0 w-5 h-5 text-red-500" />
@@ -259,12 +259,11 @@ const LoginForm = () => {
         <div className="relative p-8 text-center bg-gradient-to-br from-yellow-300 via-lime-300 to-yellow-400">
           {/* Logo */}
           <div className="flex justify-center items-center mx-auto mb-3 w-16 h-16 bg-black rounded-full">
-            <span className="text-xl font-bold text-white">N</span> {/* Changed 'X' to 'N' to match desktop logo */}
+            <span className="text-xl font-bold text-white">N</span> 
           </div>
 
           {/* Brand Name */}
-          <h3 className="mb-6 text-base font-semibold text-black">NOTEBANK</h3> {/* Changed brand name */}
-
+          <h3 className="mb-6 text-base font-semibold text-black">NOTEBANK</h3> 
           {/* Divider Line */}
           <div className="mx-auto w-16 h-1 bg-black"></div>
         </div>
@@ -282,7 +281,7 @@ const LoginForm = () => {
               <div className="relative">
                 <input
                   type="text"
-                  id="username-mobile" // Unique ID for mobile version if needed, though name attribute is key
+                  id="username-mobile" 
                   name="username"
                   autoComplete="off"
                   value={formData.username}
@@ -313,7 +312,7 @@ const LoginForm = () => {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  id="password-mobile" // Unique ID for mobile version
+                  id="password-mobile" 
                   name="password"
                   autoComplete="current-password"
                   value={formData.password}

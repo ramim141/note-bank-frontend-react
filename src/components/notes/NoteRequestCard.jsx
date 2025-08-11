@@ -46,7 +46,7 @@ const NoteRequestCard = ({ request, onFulfill }) => {
             </button>
           ) : (
             <a
-              href={`/${fulfilled_note_id}`} // NoteDetailsPage-এর URL
+              href={`/${fulfilled_note_id}`} 
               className="block px-4 py-2 w-full font-bold text-center text-white bg-gradient-to-r from-green-500 to-teal-600 rounded-lg transition-all duration-300 hover:from-green-600 hover:to-teal-700"
             >
               View Uploaded Note

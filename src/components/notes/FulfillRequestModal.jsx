@@ -9,12 +9,12 @@ const FulfillRequestModal = ({ request, onClose, onFulfilled }) => {
     try {
       const response = await publicNoteRequestService.fulfillNoteRequest(request.id, formDataToSend);
       toast.success('Request fulfilled successfully!');
-      onFulfilled(response.data.note_request); // আপডেটেড অনুরোধের ডেটা পাস করা
-      onClose(); // মডাল বন্ধ করা
+      onFulfilled(response.data.note_request); 
+      onClose();
     } catch (error) {
       console.error('Fulfillment error:', error);
       toast.error(error.response?.data?.detail || 'Failed to fulfill request.');
-      throw error; // NoteForm-এর এরর হ্যান্ডলিং-এর জন্য এরর পুনরায় থ্রো করা
+      throw error; 
     }
   };
 
@@ -27,7 +27,6 @@ const FulfillRequestModal = ({ request, onClose, onFulfilled }) => {
           <p className="mb-6 text-lg text-violet-600">{request.course_name}</p>
           <NoteForm
             initialData={{
-              // এখানে আমরা অনুরোধ থেকে ডেটা পাস করতে পারি
               title: `Notes for ${request.course_name}`,
             }}
             onUploadSuccess={handleFulfillSubmit}

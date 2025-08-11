@@ -19,14 +19,14 @@ import Avatar from "../ui/Avatar"
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "https://edumetro.onrender.com"
 
 const Navbar = () => {
-  // --- AuthContext থেকে নতুন নোটিফিকেশন স্টেট নিন ---
+
   const { isAuthenticated, logout, user, loading, notifications, unreadCount, markNotificationsAsRead, clearNotifications } = useAuth()
   
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false) // নোটিফিকেশন ড্রপডাউনের জন্য নতুন স্টেট
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false) 
 
   const dropdownRef = useRef(null)
-  const notificationRef = useRef(null) // নোটিফিকেশন ড্রপডাউনের জন্য নতুন ref
+  const notificationRef = useRef(null) 
 
   const [isScrolled, setIsScrolled] = useState(false)
   const navigate = useNavigate()
@@ -56,15 +56,15 @@ const Navbar = () => {
 
   const handleProfileClick = () => {
     setIsDropdownOpen(prev => !prev)
-    setIsNotificationOpen(false) // প্রোফাইল মেনু খুললে নোটিফিকেশন মেনু বন্ধ হবে
+    setIsNotificationOpen(false) 
   }
 
   const handleNotificationClick = () => {
     setIsNotificationOpen(prev => !prev)
     if (!isNotificationOpen) {
-      markNotificationsAsRead() // ড্রপডাউন খুললেই নোটিফিকেশনগুলো পড়া হয়েছে হিসেবে মার্ক হবে
+      markNotificationsAsRead() 
     }
-    setIsDropdownOpen(false) // নোটিফিকেশন মেনু খুললে প্রোফাইল মেনু বন্ধ হবে
+    setIsDropdownOpen(false) 
   }
   
   const handleLogoutClick = async (e) => {
@@ -139,7 +139,6 @@ const Navbar = () => {
               <div className="relative"><div className={`${isScrolled ? "bg-gray-200" : "bg-white/20"} h-12 w-12 rounded-full animate-pulse`}></div><div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 rounded-full opacity-75 animate-spin"></div></div>
             ) : isAuthenticated ? (
               <div className="flex relative items-center space-x-4">
-                {/* --- নোটিফিকেশন আইকন এবং ড্রপডাউন --- */}
                 <div className="relative" ref={notificationRef}>
                   <button onClick={handleNotificationClick} className={`relative p-3 rounded-2xl transition-all duration-300 hover:scale-110 transform hover:-translate-y-1 group ${isScrolled ? "text-gray-600 hover:bg-gradient-to-r hover:from-violet-50 hover:to-purple-50" : "hover:bg-white/10 text-white/90"}`}>
                     <FaBell className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
@@ -178,7 +177,7 @@ const Navbar = () => {
                   )}
                 </div>
 
-                {/* প্রোফাইল আইকন এবং ড্রপডাউন */}
+
                 <div className="relative" ref={dropdownRef}>
                   <button onClick={handleProfileClick} className="overflow-hidden relative w-12 h-12 rounded-full transition-all duration-300 transform hover:scale-110 hover:-translate-y-1 focus:outline-none focus:ring-4 focus:ring-white/30 group" aria-label="Open user menu">
                     <div className="absolute inset-0 bg-gradient-to-r from-violet-400 via-purple-500 to-indigo-500 rounded-full opacity-75 blur transition-all duration-300 animate-pulse group-hover:opacity-100"></div>

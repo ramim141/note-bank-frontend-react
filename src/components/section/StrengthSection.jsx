@@ -16,10 +16,10 @@ const StrengthSection = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await getSiteStats(); // API call
-        console.log('API Response:', response); // Debug log
+        const response = await getSiteStats(); 
+        console.log('API Response:', response); 
         
-        // Handle different possible response structures
+   
         const statsData = {
           users: response?.total_users || response?.users || 0,
           notes: response?.total_notes || response?.notes || 0,
@@ -27,7 +27,7 @@ const StrengthSection = () => {
           departments: response?.total_departments || response?.departments || 0,
         };
         
-        console.log('Processed stats:', statsData); // Debug log
+        console.log('Processed stats:', statsData); 
         setStats(statsData);
       } catch (error) {
         console.error("Failed to fetch site stats:", error);
@@ -36,7 +36,6 @@ const StrengthSection = () => {
           status: error.response?.status,
           response: error.response?.data
         });
-        // Fallback to default values if API fails
         setStats({ users: '0', notes: '0', courses: '0', departments: '0' });
       } finally {
         setLoading(false);

@@ -16,11 +16,11 @@ const PasswordResetForm = () => {
     // Clear specific field error and general error on typing
     setErrors((prevErrors) => {
       const newErrors = { ...prevErrors };
-      delete newErrors.email; // Remove the email-specific error
-      delete newErrors.general; // Also clear general errors as the user is actively trying to correct it
+      delete newErrors.email; 
+      delete newErrors.general; 
       return newErrors;
     });
-    if (success) setSuccess(""); // Clear overall success message
+    if (success) setSuccess(""); 
   };
 
   const handleSubmit = async (e) => {
@@ -47,10 +47,10 @@ const PasswordResetForm = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="mx-auto w-full max-w-md">
       {/* Title Section */}
       <div className="mb-8 text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 mb-4 rounded-full shadow-lg bg-gradient-to-r from-violet-600 to-purple-600">
+        <div className="inline-flex justify-center items-center mb-4 w-16 h-16 bg-gradient-to-r from-violet-600 to-purple-600 rounded-full shadow-lg">
           <Mail className="w-8 h-8 text-white" />
         </div>
         <h2 className="mb-2 text-3xl font-bold text-gray-900">Reset Password</h2>
@@ -59,11 +59,11 @@ const PasswordResetForm = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="p-8 transition-all duration-300 border shadow-xl rounded-2xl backdrop-blur-sm bg-white/80 border-white/20 hover:shadow-2xl"
+        className="p-8 rounded-2xl border shadow-xl backdrop-blur-sm transition-all duration-300 bg-white/80 border-white/20 hover:shadow-2xl"
       >
         {/* Success Message */}
         {success && (
-          <div className="flex items-start p-4 mb-6 space-x-3 transition-all duration-300 border border-green-200 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl">
+          <div className="flex items-start p-4 mb-6 space-x-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border border-green-200 transition-all duration-300">
             <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm font-medium text-green-800">{success}</p>
           </div>
@@ -71,7 +71,7 @@ const PasswordResetForm = () => {
 
         {/* Error Message */}
         {errors.general && (
-          <div className="flex items-start p-4 mb-6 space-x-3 transition-all duration-300 border border-red-200 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl">
+          <div className="flex items-start p-4 mb-6 space-x-3 bg-gradient-to-r from-red-50 to-rose-50 rounded-xl border border-red-200 transition-all duration-300">
             <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
             <p className="text-sm font-medium text-red-800">{errors.general}</p>
           </div>
@@ -80,7 +80,7 @@ const PasswordResetForm = () => {
         <div className="mb-6">
           <label className="block mb-3 text-sm font-semibold text-gray-700">Email Address</label>
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+            <div className="flex absolute inset-y-0 left-0 items-center pl-4 pointer-events-none">
               <Mail className="w-5 h-5 text-violet-600" />
             </div>
             <input
@@ -88,7 +88,7 @@ const PasswordResetForm = () => {
               name="email"
               value={email}
               onChange={handleChange}
-              className="w-full py-4 pl-12 pr-4 text-gray-900 placeholder-gray-500 transition-all duration-300 border border-gray-200 rounded-xl backdrop-blur-sm focus:ring-4 focus:ring-violet-100 focus:border-violet-400 bg-white/50"
+              className="py-4 pr-4 pl-12 w-full placeholder-gray-500 text-gray-900 rounded-xl border border-gray-200 backdrop-blur-sm transition-all duration-300 focus:ring-4 focus:ring-violet-100 focus:border-violet-400 bg-white/50"
               placeholder="Enter your email address"
               required
             />
@@ -109,7 +109,7 @@ const PasswordResetForm = () => {
         >
           {loading ? (
             <>
-              <div className="w-5 h-5 border-2 rounded-full animate-spin border-white/30 border-t-white"></div>
+              <div className="w-5 h-5 rounded-full border-2 animate-spin border-white/30 border-t-white"></div>
               <span>Sending...</span>
             </>
           ) : (
@@ -125,7 +125,7 @@ const PasswordResetForm = () => {
             Remember your password?{" "}
             <a
               href="/login"
-              className="font-semibold transition-colors duration-200 text-violet-600 hover:text-violet-700"
+              className="font-semibold text-violet-600 transition-colors duration-200 hover:text-violet-700"
             >
               Sign in
             </a>

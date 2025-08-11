@@ -1,6 +1,6 @@
 // src/components/ui/Spinner.jsx
 import React from 'react';
-import { cn } from '../../utils/cn'; // Assuming cn is available in src/utils/cn
+import { cn } from '../../utils/cn'; 
 
 const Spinner = ({ size = 'md', className = '' }) => {
   const sizeClasses = {

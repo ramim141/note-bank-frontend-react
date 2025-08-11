@@ -163,7 +163,7 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
       console.log("ProfileEditForm: Update success response:", response);
       setIsSubmitting(false);
       if (onProfileUpdate) {
-        onProfileUpdate(response.data || response); // Handle both { data: { ... } } and flat response
+        onProfileUpdate(response.data || response); 
       }
       toast.success('Profile updated successfully!');
     } catch (err) {
@@ -188,10 +188,10 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
 
   return (
     <div className="mx-auto">
-      <div className="mt-32 overflow-hidden border shadow-2xl max-w-7xl bg-gradient-to-br from-white rounded-2xl backdrop-blur-sm via-blue-50/30 to-indigo-50/50 border-white/50">
+      <div className="overflow-hidden mt-32 max-w-7xl bg-gradient-to-br from-white rounded-2xl border shadow-2xl backdrop-blur-sm via-blue-50/30 to-indigo-50/50 border-white/50">
         <div className="flex justify-center pt-12 mb-12 bg-gradient-to-b to-transparent from-indigo-50/50">
           <div className="relative group">
-            <div className="flex items-center justify-center w-40 h-40 overflow-hidden transition-all duration-500 rounded-full shadow-2xl bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100 ring-4 ring-white group-hover:scale-105 group-hover:shadow-3xl">
+            <div className="flex overflow-hidden justify-center items-center w-40 h-40 bg-gradient-to-br from-indigo-100 via-blue-100 to-purple-100 rounded-full ring-4 ring-white shadow-2xl transition-all duration-500 group-hover:scale-105 group-hover:shadow-3xl">
               {profilePicturePreviewUrl ? (
                 <img src={profilePicturePreviewUrl} alt="Profile Preview" className="object-cover w-full h-full" />
               ) : (
@@ -208,7 +208,7 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
             <button
               type="button"
               onClick={() => document.getElementById("profilePictureInput")?.click()}
-              className="absolute right-0 p-3 text-white transition-all duration-300 rounded-full shadow-xl bottom-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 hover:scale-110 hover:shadow-2xl"
+              className="absolute right-0 bottom-2 p-3 text-white bg-gradient-to-r from-indigo-600 to-purple-600 rounded-full shadow-xl transition-all duration-300 hover:from-indigo-700 hover:to-purple-700 hover:scale-110 hover:shadow-2xl"
               title="Change Profile Picture"
             >
               <Camera className="w-5 h-5" />
@@ -222,13 +222,13 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
                   const input = document.getElementById("profilePictureInput");
                   if (input) input.value = "";
                 }}
-                className="absolute left-0 p-2 text-white transition-all duration-300 rounded-full shadow-lg bottom-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 hover:scale-110"
+                className="absolute left-0 bottom-2 p-2 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-full shadow-lg transition-all duration-300 hover:from-red-600 hover:to-red-700 hover:scale-110"
                 title="Remove Profile Picture"
               >
                 x
               </button>
             )}
-            <div className="absolute text-sm font-medium text-gray-600 transform -translate-x-1/2 -bottom-8 left-1/2 whitespace-nowrap">
+            <div className="absolute -bottom-8 left-1/2 text-sm font-medium text-gray-600 whitespace-nowrap transform -translate-x-1/2">
               Click camera to update photo
             </div>
           </div>
@@ -236,41 +236,41 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
 
         <form onSubmit={handleSubmit} className="p-8 mt-[-4rem] relative z-20 space-y-10 bg-white/80 backdrop-blur-sm border border-white/50 shadow-xl rounded-3xl">
           <div className="space-y-10">
-            <div className="p-8 border shadow-lg bg-gradient-to-br rounded-2xl from-blue-50/50 to-indigo-50/30 border-blue-100/50">
-              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex items-center justify-center w-10 h-10 mr-3 text-indigo-600 shadow-md bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl"><User className="w-5 h-5" /></span>Account Information</h2>
-              <div className="p-6 mb-6 border bg-gradient-to-r from-gray-50 rounded-xl to-blue-50/30 border-gray-200/50">
+            <div className="p-8 bg-gradient-to-br rounded-2xl border shadow-lg from-blue-50/50 to-indigo-50/30 border-blue-100/50">
+              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex justify-center items-center mr-3 w-10 h-10 text-indigo-600 bg-gradient-to-br from-indigo-100 to-blue-100 rounded-xl shadow-md"><User className="w-5 h-5" /></span>Account Information</h2>
+              <div className="p-6 mb-6 bg-gradient-to-r from-gray-50 rounded-xl border to-blue-50/30 border-gray-200/50">
                 <p className="mb-2 text-sm font-medium text-gray-600">Username (Cannot be updated)</p>
                 <p className="text-lg font-semibold text-gray-800">{initialData?.username || "N/A"}</p>
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="relative group">
-                  <label htmlFor="first_name" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> First Name</label>
+                  <label htmlFor="first_name" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> First Name</label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><User className="w-4 h-4" /></span>
-                    <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                    <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><User className="w-4 h-4" /></span>
+                    <input type="text" id="first_name" name="first_name" value={formData.first_name} onChange={handleChange} required className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                   </div>
                 </div>
                 <div className="relative group">
-                  <label htmlFor="last_name" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> Last Name</label>
+                  <label htmlFor="last_name" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> Last Name</label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><User className="w-4 h-4" /></span>
-                    <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                    <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><User className="w-4 h-4" /></span>
+                    <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} required className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 border shadow-lg bg-gradient-to-br rounded-2xl from-purple-50/50 to-indigo-50/30 border-purple-100/50">
-              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex items-center justify-center w-10 h-10 mr-3 text-purple-600 shadow-md bg-gradient-to-br from-purple-100 to-indigo-100 rounded-xl"><University className="w-5 h-5" /></span>Educational Information</h2>
+            <div className="p-8 bg-gradient-to-br rounded-2xl border shadow-lg from-purple-50/50 to-indigo-50/30 border-purple-100/50">
+              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex justify-center items-center mr-3 w-10 h-10 text-purple-600 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-xl shadow-md"><University className="w-5 h-5" /></span>Educational Information</h2>
               <div className="relative mb-6 group">
-                <label htmlFor="university" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><University className="w-4 h-4" /> University</label>
+                <label htmlFor="university" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><University className="w-4 h-4" /> University</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><University className="w-4 h-4" /></span>
-                  <input type="text" id="university" name="university" value={formData.university} onChange={handleChange} className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                  <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><University className="w-4 h-4" /></span>
+                  <input type="text" id="university" name="university" value={formData.university} onChange={handleChange} className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                 </div>
               </div>
               <div className="relative mb-6 group">
-                <label htmlFor="department" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Building className="w-4 h-4" /> Department</label>
+                <label htmlFor="department" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Building className="w-4 h-4" /> Department</label>
                 <Select value={formData.department} onValueChange={(value) => handleSelectChange("department", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select Department" />
@@ -289,52 +289,52 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
               </div>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="relative group">
-                  <label htmlFor="batch" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Users className="w-4 h-4" /> Batch</label>
+                  <label htmlFor="batch" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Users className="w-4 h-4" /> Batch</label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Users className="w-4 h-4" /></span>
-                    <input type="text" id="batch" name="batch" value={formData.batch} onChange={handleChange} placeholder="e.g., 57" className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                    <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Users className="w-4 h-4" /></span>
+                    <input type="text" id="batch" name="batch" value={formData.batch} onChange={handleChange} placeholder="e.g., 57" className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                   </div>
                 </div>
                 <div className="relative group">
-                  <label htmlFor="section" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Hash className="w-4 h-4" /> Section</label>
+                  <label htmlFor="section" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Hash className="w-4 h-4" /> Section</label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Hash className="w-4 h-4" /></span>
-                    <input type="text" id="section" name="section" value={formData.section} onChange={handleChange} placeholder="e.g., D" className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                    <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Hash className="w-4 h-4" /></span>
+                    <input type="text" id="section" name="section" value={formData.section} onChange={handleChange} placeholder="e.g., D" className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 border shadow-lg bg-gradient-to-br rounded-2xl from-green-50/50 to-teal-50/30 border-green-100/50">
-              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex items-center justify-center w-10 h-10 mr-3 text-green-600 shadow-md bg-gradient-to-br from-green-100 to-teal-100 rounded-xl"><Phone className="w-5 h-5" /></span>Contact Information</h2>
+            <div className="p-8 bg-gradient-to-br rounded-2xl border shadow-lg from-green-50/50 to-teal-50/30 border-green-100/50">
+              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex justify-center items-center mr-3 w-10 h-10 text-green-600 bg-gradient-to-br from-green-100 to-teal-100 rounded-xl shadow-md"><Phone className="w-5 h-5" /></span>Contact Information</h2>
               <div className="relative mb-6 group">
-                <label htmlFor="mobile_number" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Phone className="w-4 h-4" /> Mobile Number</label>
+                <label htmlFor="mobile_number" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Phone className="w-4 h-4" /> Mobile Number</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Phone className="w-4 h-4" /></span>
-                  <input type="tel" id="mobile_number" name="mobile_number" value={formData.mobile_number} onChange={handleChange} className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                  <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Phone className="w-4 h-4" /></span>
+                  <input type="tel" id="mobile_number" name="mobile_number" value={formData.mobile_number} onChange={handleChange} className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                 </div>
               </div>
               <div className="relative group">
-                <label htmlFor="website" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Globe className="w-4 h-4" /> Website</label>
+                <label htmlFor="website" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Globe className="w-4 h-4" /> Website</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Globe className="w-4 h-4" /></span>
-                  <input type="url" id="website" name="website" value={formData.website} onChange={handleChange} placeholder="https://..." className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                  <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Globe className="w-4 h-4" /></span>
+                  <input type="url" id="website" name="website" value={formData.website} onChange={handleChange} placeholder="https://..." className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                 </div>
               </div>
             </div>
 
-            <div className="p-8 border shadow-lg bg-gradient-to-br rounded-2xl from-yellow-50/50 to-orange-50/30 border-yellow-100/50">
-              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex items-center justify-center w-10 h-10 mr-3 text-yellow-600 shadow-md bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl"><Info className="w-5 h-5" /></span>Personal Information</h2>
+            <div className="p-8 bg-gradient-to-br rounded-2xl border shadow-lg from-yellow-50/50 to-orange-50/30 border-yellow-100/50">
+              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex justify-center items-center mr-3 w-10 h-10 text-yellow-600 bg-gradient-to-br from-yellow-100 to-orange-100 rounded-xl shadow-md"><Info className="w-5 h-5" /></span>Personal Information</h2>
               <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="relative group">
-                  <label htmlFor="birthday" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Calendar className="w-4 h-4" /> Birthday</label>
+                  <label htmlFor="birthday" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Calendar className="w-4 h-4" /> Birthday</label>
                   <div className="relative">
-                    <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Calendar className="w-4 h-4" /></span>
-                    <input type="date" id="birthday" name="birthday" value={formData.birthday} onChange={handleChange} className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
+                    <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Calendar className="w-4 h-4" /></span>
+                    <input type="date" id="birthday" name="birthday" value={formData.birthday} onChange={handleChange} className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"/>
                   </div>
                 </div>
                 <div className="relative group">
-                  <label htmlFor="gender" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> Gender</label>
+                  <label htmlFor="gender" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><User className="w-4 h-4" /> Gender</label>
                   <Select value={formData.gender} onValueChange={(value) => handleSelectChange("gender", value)}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select Gender" />
@@ -350,7 +350,7 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
                 </div>
               </div>
               <div className="relative mt-6 group">
-                <label htmlFor="bio" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Info className="w-4 h-4" /> Bio</label>
+                <label htmlFor="bio" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Info className="w-4 h-4" /> Bio</label>
                 <textarea
                   id="bio"
                   name="bio"
@@ -358,17 +358,17 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
                   onChange={handleChange}
                   rows="4"
                   placeholder="Tell us about yourself..."
-                  className="w-full px-4 py-3 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm resize-none bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"
+                  className="px-4 py-3 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 resize-none to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"
                 ></textarea>
               </div>
             </div>
 
-            <div className="p-8 border shadow-lg bg-gradient-to-br rounded-2xl from-pink-50/50 to-purple-50/30 border-pink-100/50">
-              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex items-center justify-center w-10 h-10 mr-3 text-pink-600 shadow-md bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl"><Code className="w-5 h-5" /></span>Skills & Expertise</h2>
+            <div className="p-8 bg-gradient-to-br rounded-2xl border shadow-lg from-pink-50/50 to-purple-50/30 border-pink-100/50">
+              <h2 className="flex items-center mb-6 text-xl font-bold text-gray-800"><span className="flex justify-center items-center mr-3 w-10 h-10 text-pink-600 bg-gradient-to-br from-pink-100 to-purple-100 rounded-xl shadow-md"><Code className="w-5 h-5" /></span>Skills & Expertise</h2>
               <div className="relative group">
-                <label htmlFor="skills" className="flex items-center gap-2 mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Code className="w-4 h-4" /> Skills (Comma-separated)</label>
+                <label htmlFor="skills" className="flex gap-2 items-center mb-2 text-sm font-semibold text-gray-700 transition-colors duration-200 group-focus-within:text-indigo-600"><Code className="w-4 h-4" /> Skills (Comma-separated)</label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-500 pointer-events-none"><Code className="w-4 h-4" /></span>
+                  <span className="flex absolute inset-y-0 left-0 items-center pl-4 text-gray-500 pointer-events-none"><Code className="w-4 h-4" /></span>
                   <input
                     type="text"
                     id="skills"
@@ -377,14 +377,14 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
                     onChange={handleSkillsInputChange}
                     onBlur={handleSkillsBlur}
                     placeholder="e.g., Python, React, Machine Learning, UI/UX Design"
-                    className="w-full px-4 py-3 pl-12 text-gray-800 transition-all duration-300 border-2 border-gray-200 rounded-lg shadow-sm bg-gradient-to-r from-white to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"
+                    className="px-4 py-3 pl-12 w-full text-gray-800 bg-gradient-to-r from-white rounded-lg border-2 border-gray-200 shadow-sm transition-all duration-300 to-gray-50/50 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:from-indigo-50/30 focus:to-blue-50/30 hover:border-gray-300 hover:shadow-md"
                   />
                 </div>
                 <p className="mt-2 text-sm font-medium text-gray-600">Add multiple skills separated by commas.</p>
                 {formData.skills.length > 0 && (
                   <div className="flex flex-wrap gap-3 mt-4">
                     {formData.skills.map((skill, index) => (
-                      <span key={index} className="inline-flex items-center px-4 py-2 text-sm font-semibold text-indigo-800 border rounded-full shadow-sm bg-gradient-to-r from-indigo-100 to-blue-100 border-indigo-200/50">{skill}</span>
+                      <span key={index} className="inline-flex items-center px-4 py-2 text-sm font-semibold text-indigo-800 bg-gradient-to-r from-indigo-100 to-blue-100 rounded-full border shadow-sm border-indigo-200/50">{skill}</span>
                     ))}
                   </div>
                 )}
@@ -396,18 +396,18 @@ export default function ProfileEditForm({ initialData, departments, onCancel, on
                 type="submit"
                 disabled={isSubmitting}
                 size="lg"
-                className="w-full py-4 text-lg font-bold shadow-2xl"
+                className="py-4 w-full text-lg font-bold shadow-2xl"
                 onClick={handleSubmit}
               >
-                <div className="flex items-center justify-center">
+                <div className="flex justify-center items-center">
                   {isSubmitting ? (
                     <>
-                      <div className="w-5 h-5 mr-3 border-2 border-white rounded-full animate-spin border-t-transparent"></div>
+                      <div className="mr-3 w-5 h-5 rounded-full border-2 border-white animate-spin border-t-transparent"></div>
                       Saving Changes...
                     </>
                   ) : (
                     <>
-                      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="mr-3 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       Save Changes

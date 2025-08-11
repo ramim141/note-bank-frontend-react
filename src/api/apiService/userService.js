@@ -159,7 +159,7 @@ export const downloadNote = async (noteId) => {
   } catch (error) {
     console.error('Download error:', error);
 
-    // --- উন্নত এরর হ্যান্ডলিং ---
+
     if (error.response) {
       const status = error.response.status;
       // Try to parse error message from blob if it exists

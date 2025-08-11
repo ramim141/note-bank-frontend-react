@@ -1,7 +1,7 @@
 // src/pages/Notes/UploadNotePage.jsx
 import React from 'react';
 import NoteForm from '../../components/notes/NoteForm';
-import ProtectedRoute from '../../routes/ProtectedRoute'; // Import ProtectedRoute
+import ProtectedRoute from '../../routes/ProtectedRoute';
 
 const UploadNotePage = () => {
   return (

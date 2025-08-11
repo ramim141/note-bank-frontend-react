@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react" 
-import { Heart, Bookmark, Download, Share2, MessageCircle, Star, RefreshCw, FileText, AlertCircle, Loader2 } from "lucide-react" // Import all potentially used icons
+import { Heart, Bookmark, Download, Share2, MessageCircle, Star, RefreshCw, FileText, AlertCircle, Loader2 } from "lucide-react" 
 import { toast } from "react-toastify" 
 
 const NoteDetailsActions = ({
@@ -14,11 +14,11 @@ const NoteDetailsActions = ({
   onBookmarkToggle,
   onDownload,
 }) => {
-  // State for share functionality
+
   const [isSharing, setIsSharing] = useState(false)
 
-  // Safely get and round the average rating
-  const roundedRating = note?.average_rating ? Math.round(note.average_rating * 10) / 10 : 0 // Round to 1 decimal place
+
+  const roundedRating = note?.average_rating ? Math.round(note.average_rating * 10) / 10 : 0 
   const totalRatings = note?.star_ratings ? note.star_ratings.length : 0
   // Handle share functionality
   const handleShare = async () => {
@@ -42,7 +42,6 @@ const NoteDetailsActions = ({
         setIsSharing(false)
       }
     } else {
-      // Fallback for browsers that don't support Web Share API
       try {
         await navigator.clipboard.writeText(window.location.href)
         toast.success("Link copied to clipboard!")
@@ -54,13 +53,13 @@ const NoteDetailsActions = ({
   }
 
   return (
-    <div className="p-8 border-t bg-gradient-to-br border-slate-200/50 from-slate-50/80 via-blue-50/30 to-purple-50/30">
-      <div className="flex flex-col items-center justify-between gap-8 xl:flex-row">
+    <div className="p-8 bg-gradient-to-br border-t border-slate-200/50 from-slate-50/80 via-blue-50/30 to-purple-50/30">
+      <div className="flex flex-col gap-8 justify-between items-center xl:flex-row">
         {/* Stats and Rating */}
-        <div className="flex flex-wrap items-center justify-center gap-6 xl:justify-start">
+        <div className="flex flex-wrap gap-6 justify-center items-center xl:justify-start">
           {/* Rating */}
-          <div className="flex items-center gap-4 p-4 transition-all duration-300 rounded-2xl backdrop-blur-sm border-slate-200/50">
-            <div className="flex gap-0.5"> {/* Tighter spacing for stars */}
+          <div className="flex gap-4 items-center p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 border-slate-200/50">
+            <div className="flex gap-0.5">
               {[1, 2, 3, 4, 5].map((star) => (
                 <Star
                   key={star}
@@ -81,13 +80,13 @@ const NoteDetailsActions = ({
           </div>
 
           {/* Other Stats */}
-          <div className="flex flex-wrap justify-center gap-6 xl:justify-start text-slate-600">
-            <div className="flex items-center gap-2 p-3 transition-all duration-300 rounded-xl backdrop-blur-sm border-slate-200/50 group">
+          <div className="flex flex-wrap gap-6 justify-center xl:justify-start text-slate-600">
+            <div className="flex gap-2 items-center p-3 rounded-xl backdrop-blur-sm transition-all duration-300 border-slate-200/50 group">
               <Download className="w-5 h-5 text-green-600 transition-transform duration-300 group-hover:scale-110" />
               <span className="font-semibold">{downloadCount}</span>
               <span className="hidden sm:inline">Downloads</span>
             </div>
-            <div className="flex items-center gap-2 p-3 transition-all duration-300 rounded-xl backdrop-blur-sm border-slate-200/50 group">
+            <div className="flex gap-2 items-center p-3 rounded-xl backdrop-blur-sm transition-all duration-300 border-slate-200/50 group">
               <MessageCircle className="w-5 h-5 text-blue-600 transition-transform duration-300 group-hover:scale-110" />
               <span className="font-semibold">{note?.comments?.length || 0}</span>
               <span className="hidden sm:inline">Reviews</span>
@@ -96,7 +95,7 @@ const NoteDetailsActions = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex flex-wrap justify-center gap-4 xl:justify-end">
+        <div className="flex flex-wrap gap-4 justify-center xl:justify-end">
           {/* Like Button */}
           <button
             onClick={onLikeToggle}
@@ -139,7 +138,7 @@ const NoteDetailsActions = ({
           <button
             onClick={handleShare}
             disabled={isSharing}
-            className="flex items-center gap-3 px-6 py-3 font-bold transition-all duration-300 border-2 shadow-lg bg-gradient-to-r rounded-2xl from-slate-100 to-slate-200 text-slate-700 border-slate-200 hover:from-slate-200 hover:to-slate-300 hover:scale-105 hover:shadow-xl active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex gap-3 items-center px-6 py-3 font-bold bg-gradient-to-r rounded-2xl border-2 shadow-lg transition-all duration-300 from-slate-100 to-slate-200 text-slate-700 border-slate-200 hover:from-slate-200 hover:to-slate-300 hover:scale-105 hover:shadow-xl active:scale-95 group disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Share2 className="w-5 h-5 transition-all duration-300 group-hover:text-blue-600 group-hover:scale-110" />
             <span className="hidden sm:inline">Share</span>
@@ -148,7 +147,7 @@ const NoteDetailsActions = ({
           {/* Download Button */}
           <button
             onClick={onDownload}
-            className="flex items-center gap-3 px-8 py-3 font-bold text-white transition-all duration-300 shadow-xl bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 rounded-2xl hover:from-green-700 hover:via-emerald-700 hover:to-green-800 hover:scale-105 hover:shadow-2xl active:scale-95 group"
+            className="flex gap-3 items-center px-8 py-3 font-bold text-white bg-gradient-to-r from-green-600 via-emerald-600 to-green-700 rounded-2xl shadow-xl transition-all duration-300 hover:from-green-700 hover:via-emerald-700 hover:to-green-800 hover:scale-105 hover:shadow-2xl active:scale-95 group"
           >
             <Download className="w-5 h-5 group-hover:animate-bounce" />
             <span className="hidden sm:inline">Download</span>
@@ -158,18 +157,18 @@ const NoteDetailsActions = ({
 
       {/* Additional Info */}
       <div className="pt-6 mt-8 border-t border-slate-200/50">
-        <div className="flex flex-wrap justify-center gap-4 text-sm xl:justify-start">
-          <div className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-xl backdrop-blur-sm border-slate-200/50 ">
+        <div className="flex flex-wrap gap-4 justify-center text-sm xl:justify-start">
+          <div className="flex gap-2 items-center px-4 py-2 rounded-xl backdrop-blur-sm transition-all duration-300 border-slate-200/50">
             <span className="font-semibold text-slate-600">File:</span>
             <span className="font-bold text-slate-800 truncate max-w-[200px]">{note?.file_name || "N/A"}</span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-xl backdrop-blur-sm border-slate-200/50 ">
+          <div className="flex gap-2 items-center px-4 py-2 rounded-xl backdrop-blur-sm transition-all duration-300 border-slate-200/50">
             <span className="font-semibold text-slate-600">Size:</span>
             <span className="font-bold text-slate-800">
               {note?.file_size ? `${(note.file_size / 1024 / 1024).toFixed(2)} MB` : "N/A"}
             </span>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2 transition-all duration-300 rounded-xl backdrop-blur-sm 0 border-slate-200/50 ">
+          <div className="flex gap-2 items-center px-4 py-2 rounded-xl backdrop-blur-sm transition-all duration-300 0 border-slate-200/50">
             <span className="font-semibold text-slate-600">Type:</span>
             <span className="font-bold text-slate-800">
               {note?.file_name ? note.file_name.split(".").pop()?.toUpperCase() || "N/A" : "N/A"}

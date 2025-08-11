@@ -1,8 +1,5 @@
 "use client"
 
-// components/dashboard/DashboardIcons.jsx
-
-// FloatingParticles কম্পোনেন্টটি নিচে সরানো হয়েছে, কারণ এটি একটি JSX কম্পোনেন্ট, আইকন নয়।
 
 export const BookIcon = ({ size = 24, className = "", animated = false }) => (
   <svg
