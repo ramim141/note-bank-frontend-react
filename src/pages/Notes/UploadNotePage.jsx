@@ -7,7 +7,7 @@ const UploadNotePage = () => {
   return (
     <ProtectedRoute> {/* Protect this page */}
       <div className="mx-auto">
-        <NoteForm />
+        <NoteForm mode="create" />
       </div>
     </ProtectedRoute>
   );

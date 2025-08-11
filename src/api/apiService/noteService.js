@@ -6,6 +6,9 @@ export const noteService = {
     getMyNotes,
     getNotes,
     getAllNotes,
+    getNoteById,
+    updateNote,
+    deleteNote,
 };
 
 
@@ -121,4 +124,59 @@ async function getAllNotes(token) {
     }
 
     return await response.json();
+}
+
+async function getNoteById(id, token) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+  const response = await fetch(`${API_BASE_URL}/api/notes/${id}/`, {
+    method: 'GET',
+    headers,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+    throw errorData;
+  }
+
+  return await response.json();
+}
+
+async function updateNote(id, payloadOrFormData, token, isFormData = false) {
+  const url = `${API_BASE_URL}/api/notes/${id}/`;
+  const options = {
+    method: 'PATCH',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: undefined,
+  };
+
+  if (isFormData) {
+    options.body = payloadOrFormData;
+  } else {
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify(payloadOrFormData);
+  }
+
+  const response = await fetch(url, options);
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw data || { message: `HTTP error! status: ${response.status}` };
+  }
+  return data;
+}
+
+async function deleteNote(id, token) {
+  const response = await fetch(`${API_BASE_URL}/api/notes/${id}/`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+  if (!response.ok && response.status !== 204) {
+    const errorData = await response.json().catch(() => ({ message: `HTTP error! status: ${response.status}` }));
+    throw errorData;
+  }
+  return true;
 }

@@ -16,7 +16,7 @@ import {
   FaCloudUploadAlt, FaSpinner, FaCheckCircle, FaUserTie
 } from 'react-icons/fa';
 
-const NoteForm = ({ initialData = {}, onUploadSuccess, isModal = false }) => {
+const NoteForm = ({ initialData = {}, onUploadSuccess, isModal = false, mode = 'create' }) => {
   const { token } = useAuth();
   const navigate = useNavigate();
 
@@ -153,9 +153,11 @@ const NoteForm = ({ initialData = {}, onUploadSuccess, isModal = false }) => {
       return;
     }
 
-    if (!formData.title || !formData.file || !formData.category) {
-      toast.error("Title, File, and Category are required.");
-      setErrors({ non_field_errors: "Title, File, and Category are required." });
+    const isEdit = mode === 'edit'
+    const isFileMissing = !formData.file && !isEdit
+    if (!formData.title || isFileMissing || !formData.category) {
+      toast.error(isEdit ? "Title and Category are required." : "Title, File, and Category are required.");
+      setErrors({ non_field_errors: isEdit ? "Title and Category are required." : "Title, File, and Category are required." });
       setIsLoading(false);
       return;
     }
@@ -163,7 +165,9 @@ const NoteForm = ({ initialData = {}, onUploadSuccess, isModal = false }) => {
     const formDataToSend = new FormData();
     formDataToSend.append('title', formData.title);
     formDataToSend.append('description', formData.description);
-    formDataToSend.append('file', formData.file);
+    if (formData.file) {
+      formDataToSend.append('file', formData.file);
+    }
     if (formData.category) formDataToSend.append('category', formData.category);
     if (formData.course) formDataToSend.append('course', formData.course);
     if (formData.department) formDataToSend.append('department', formData.department);
@@ -400,7 +404,7 @@ const NoteForm = ({ initialData = {}, onUploadSuccess, isModal = false }) => {
           ) : (categoriesLoading || coursesLoading || departmentsLoading || facultiesLoading) ? (
             <><FaSpinner className="text-xl animate-spin" /><span>Preparing...</span></>
           ) : (
-            <><FaCloudUploadAlt className="text-xl" /><span>{isModal ? 'Submit Note' : 'Upload Note'}</span></>
+            <><FaCloudUploadAlt className="text-xl" /><span>{mode === 'edit' ? 'Update Note' : (isModal ? 'Submit Note' : 'Upload Note')}</span></>
           )}
         </button>
       </div>

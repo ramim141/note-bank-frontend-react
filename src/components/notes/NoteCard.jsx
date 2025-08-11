@@ -20,9 +20,10 @@ import {
   GraduationCap,
   MessageCircle,
   Star,
+  Trash2,
 } from "lucide-react"
 
-const NoteCard = ({ note, onNoteUpdate }) => {
+const NoteCard = ({ note, onNoteUpdate, onRemoveBookmark, isRemoving = false }) => {
   const navigate = useNavigate()
   const { isAuthenticated } = useAuth()
 
@@ -329,6 +330,30 @@ const NoteCard = ({ note, onNoteUpdate }) => {
           </div>
 
           <div className="flex gap-3 items-center sm:gap-4">
+            {/* Remove Bookmark Button - Only show when onRemoveBookmark prop is provided */}
+            {onRemoveBookmark && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  onRemoveBookmark(note.id)
+                }}
+                disabled={isRemoving}
+                className="flex flex-col gap-1 items-center p-2 rounded-xl transition-all duration-300 hover:bg-red-50 hover:scale-110 hover:-translate-y-1 group/remove-bookmark focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                title="Remove from bookmarks"
+              >
+                {isRemoving ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-red-500 animate-spin sm:w-5 sm:h-5 border-t-transparent" />
+                ) : (
+                  <Trash2 className="w-4 h-4 text-red-500 transition-all duration-300 sm:w-5 sm:h-5 group-hover/remove-bookmark:scale-125 group-hover/remove-bookmark:text-red-600" />
+                )}
+                <span className="text-xs font-medium transition-all duration-300 group-hover/remove-bookmark:font-semibold group-hover/remove-bookmark:text-red-600 sm:text-sm">
+                  {isRemoving ? "Removing..." : " "}
+                </span>
+              </button>
+            )}
+
             <button
               type="button"
               onClick={handleBookmarkToggle}

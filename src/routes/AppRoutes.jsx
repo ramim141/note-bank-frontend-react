@@ -19,6 +19,7 @@ import PasswordResetPages from "../pages/Password/PasswordResetPages";
 import AllNotesPage from '../pages/Notes/AllNotesPage';
 import MyNotesPage from '../pages/Notes/MyNotesPage';
 import UploadNotePage from '../pages/Notes/UploadNotePage';
+import EditNotePage from '../pages/Notes/EditNotePage';
 import NoteDetailsPage from '../pages/Notes/NoteDetailsPage';
 import EditProfilePage from '../pages/Profile/EditProfilePage';
 // Contributors page
@@ -56,6 +57,7 @@ const AppRoutes = () => {
             {/* --- Protected Routes --- */}
             <Route path="/upload-note" element={<ProtectedRoute><UploadNotePage /></ProtectedRoute>} />
             <Route path="/my-notes" element={<ProtectedRoute><MyNotesPage /></ProtectedRoute>} />
+            <Route path="/notes/:noteId/edit" element={<ProtectedRoute><EditNotePage /></ProtectedRoute>} />
             <Route path="/profile"  element={<ProtectedRoute><ProfilePage  /></ProtectedRoute>} />
             {/* Edit Profile is a separate page, not nested under /profile */}
             <Route path="/edit-profile" element={<ProtectedRoute><EditProfilePage /></ProtectedRoute>} />

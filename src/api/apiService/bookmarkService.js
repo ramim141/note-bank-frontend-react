@@ -1,4 +1,5 @@
 import { fetchWrapper } from "../../utils/fetchWrapper";
+import { toggleBookmarkNote } from "./userService";
 
 const bookmarkService = {
   async getBookmarkedNotes(params = {}) {
@@ -8,6 +9,10 @@ const bookmarkService = {
       query = `?category_name=${encodeURIComponent(params.category_name)}`;
     }
     return fetchWrapper.get(`/api/users/user-activity/bookmarked-notes/${query}`);
+  },
+
+  async removeBookmark(noteId) {
+    return toggleBookmarkNote(noteId);
   },
 };
 

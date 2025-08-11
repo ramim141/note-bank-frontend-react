@@ -6,6 +6,7 @@ Modern React frontend for the Note Bank platform. Implements authentication, not
 - Authentication (JWT) with refresh handling
 - Browse, search, and filter notes
 - Upload new notes (pending admin approval)
+- Manage uploaded notes (edit or delete your own notes)
 - Public note requests (view for all; fulfill flow)
 - My note requests (create + list)
 - Bookmarks, likes, ratings

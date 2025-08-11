@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { toast } from "react-toastify"
 import bookmarkService from "../../api/apiService/bookmarkService"
 import CategoryBar from "../notes/CategoryBar"
 import NoteCard from "../notes/NoteCard"
@@ -16,6 +17,7 @@ const Bookmarks = () => {
   const [prev, setPrev] = useState(null)
   const [category, setCategory] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
+  const [removingBookmarks, setRemovingBookmarks] = useState(new Set())
 
   const fetchNotes = async (pageNum = 1, categoryName = "") => {
     setLoading(true)
@@ -41,9 +43,38 @@ const Bookmarks = () => {
     }
   }
 
+  const removeBookmark = async (noteId) => {
+    if (removingBookmarks.has(noteId)) return
+    
+    setRemovingBookmarks(prev => new Set(prev).add(noteId))
+    
+    try {
+      await bookmarkService.removeBookmark(noteId)
+      
+      // Add a small delay to allow the exit animation to play
+      setTimeout(() => {
+        // Remove the note from the local state with smooth transition
+        setNotes(prevNotes => prevNotes.filter(note => note.id !== noteId))
+        setCount(prevCount => prevCount - 1)
+      }, 300) // 300ms delay for smooth animation
+      
+      toast.success("Bookmark removed successfully!")
+    } catch (err) {
+      console.error("Failed to remove bookmark:", err)
+      toast.error("Failed to remove bookmark. Please try again.")
+    } finally {
+      setTimeout(() => {
+        setRemovingBookmarks(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(noteId)
+          return newSet
+        })
+      }, 500) // 500ms delay to match the animation duration
+    }
+  }
+
   useEffect(() => {
     fetchNotes(1, category)
-    // eslint-disable-next-line
   }, [category])
 
   // Filter notes based on search query
@@ -70,10 +101,10 @@ const Bookmarks = () => {
   }
 
   const LoadingSpinner = () => (
-    <div className="flex flex-col items-center justify-center py-16">
+    <div className="flex flex-col justify-center items-center py-16">
       <div className="relative mb-4">
-        <div className="w-12 h-12 border-4 border-purple-200 rounded-full animate-spin"></div>
-        <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent rounded-full animate-spin border-t-purple-600"></div>
+        <div className="w-12 h-12 rounded-full border-4 border-purple-200 animate-spin"></div>
+        <div className="absolute top-0 left-0 w-12 h-12 rounded-full border-4 border-transparent animate-spin border-t-purple-600"></div>
       </div>
       <p className="text-lg font-medium text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600">
         Loading your bookmarks...
@@ -88,17 +119,19 @@ const Bookmarks = () => {
         <div className="px-4 py-6 mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
             {/* Title and Stats */}
-            <div className="flex items-center gap-4">
-              <div className="p-3 shadow-lg bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl">
+            <div className="flex gap-4 items-center">
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl shadow-lg">
                 <Bookmark className="w-8 h-8 text-white" />
               </div>
               <div>
                 <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-indigo-600">
                   My Bookmarks
                 </h1>
-                <p className="flex items-center gap-2 font-medium text-gray-600">
+                <p className="flex gap-2 items-center font-medium text-gray-600">
                   <Heart className="w-4 h-4 text-pink-500" />
-                  {count} saved notes
+                  <span className="transition-all duration-500 ease-in-out transform">
+                    {count} saved notes
+                  </span>
                   {category && (
                     <>
                       <span className="text-gray-400">•</span>
@@ -111,18 +144,18 @@ const Bookmarks = () => {
 
             {/* Search Bar */}
             <div className="relative w-full max-w-md lg:max-w-sm">
-              <Search className="absolute w-5 h-5 text-gray-400 transform -translate-y-1/2 left-4 top-1/2" />
+              <Search className="absolute left-4 top-1/2 w-5 h-5 text-gray-400 transform -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Search bookmarks..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full py-3 pl-12 pr-4 text-gray-700 placeholder-gray-500 transition-all duration-300 border rounded-xl backdrop-blur-sm bg-white/70 border-purple-200/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
+                className="py-3 pr-4 pl-12 w-full placeholder-gray-500 text-gray-700 rounded-xl border backdrop-blur-sm transition-all duration-300 bg-white/70 border-purple-200/50 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-transparent"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="absolute p-1 transition-colors duration-200 transform -translate-y-1/2 rounded-full right-3 top-1/2 hover:bg-gray-200"
+                  className="absolute right-3 top-1/2 p-1 rounded-full transition-colors duration-200 transform -translate-y-1/2 hover:bg-gray-200"
                 >
                   <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -138,7 +171,7 @@ const Bookmarks = () => {
       <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
         {/* Category Filter */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-4">
+          <div className="flex gap-3 items-center mb-4">
             <Filter className="w-5 h-5 text-purple-600" />
             <h2 className="text-lg font-semibold text-gray-800">Filter by Category</h2>
           </div>
@@ -150,8 +183,8 @@ const Bookmarks = () => {
           <LoadingSpinner />
         ) : error ? (
           <div className="py-16 text-center">
-            <div className="inline-block p-8 border border-red-100 bg-gradient-to-br from-red-50 to-pink-50 rounded-3xl">
-              <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 bg-red-100 rounded-full">
+            <div className="inline-block p-8 bg-gradient-to-br from-red-50 to-pink-50 rounded-3xl border border-red-100">
+              <div className="flex justify-center items-center mx-auto mb-4 w-16 h-16 bg-red-100 rounded-full">
                 <Bookmark className="w-8 h-8 text-red-500" />
               </div>
               <h3 className="mb-2 text-xl font-semibold text-red-700">Oops! Something went wrong</h3>
@@ -160,14 +193,14 @@ const Bookmarks = () => {
           </div>
         ) : filteredNotes.length === 0 ? (
           <div className="py-16 text-center">
-            <div className="inline-block p-8 border border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl">
-              <div className="flex items-center justify-center w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-purple-100 to-pink-100">
+            <div className="inline-block p-8 bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl border border-purple-100">
+              <div className="flex justify-center items-center mx-auto mb-6 w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full">
                 <Bookmark className="w-12 h-12 text-purple-500" />
               </div>
               <h3 className="mb-3 text-2xl font-bold text-gray-800">
                 {searchQuery ? "No matching bookmarks found" : "No bookmarks yet!"}
               </h3>
-              <p className="max-w-md mx-auto mb-6 text-gray-600">
+              <p className="mx-auto mb-6 max-w-md text-gray-600">
                 {searchQuery
                   ? "Try adjusting your search terms or browse all categories."
                   : "Start bookmarking your favorite notes to see them here."}
@@ -175,7 +208,7 @@ const Bookmarks = () => {
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery("")}
-                  className="px-6 py-3 font-semibold text-white transition-all duration-300 transform shadow-lg bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl hover:shadow-xl hover:scale-105"
+                  className="px-6 py-3 font-semibold text-white bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-lg transition-all duration-300 transform hover:shadow-xl hover:scale-105"
                 >
                   Clear Search
                 </button>
@@ -185,9 +218,11 @@ const Bookmarks = () => {
         ) : (
           <>
             {/* Results Info */}
-            <div className="flex items-center justify-between mb-6">
+            <div className="flex justify-between items-center mb-6">
               <p className="text-gray-600">
-                Showing {filteredNotes.length} of {count} bookmarks
+                <span className="transition-all duration-500 ease-in-out">
+                  Showing {filteredNotes.length} of {count} bookmarks
+                </span>
                 {searchQuery && (
                   <span className="px-3 py-1 ml-2 text-sm font-medium text-purple-700 bg-purple-100 rounded-full">
                     "{searchQuery}"
@@ -201,15 +236,19 @@ const Bookmarks = () => {
               {filteredNotes.map((note, index) => (
                 <div
                   key={note.id}
-                  className="transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                  className="transition-all duration-500 ease-in-out transform hover:scale-105 hover:shadow-xl"
                   style={{
                     animationDelay: `${index * 100}ms`,
                     animation: "fadeInUp 0.6s ease-out forwards",
+                    opacity: removingBookmarks.has(note.id) ? 0.5 : 1,
+                    transform: removingBookmarks.has(note.id) ? "scale(0.95) translateY(10px)" : "scale(1) translateY(0)",
                   }}
                 >
                   <NoteCard 
                     note={note} 
                     onNoteUpdate={updateNoteInList}
+                    onRemoveBookmark={removeBookmark}
+                    isRemoving={removingBookmarks.has(note.id)}
                   />
                 </div>
               ))}
@@ -219,17 +258,17 @@ const Bookmarks = () => {
 
         {/* Pagination */}
         {!searchQuery && (prev || next) && (
-          <div className="flex items-center justify-center gap-4 mt-12">
+          <div className="flex gap-4 justify-center items-center mt-12">
             <button
               onClick={() => fetchNotes(page - 1, category)}
               disabled={!prev || loading || page === 1}
-              className="flex items-center gap-2 px-6 py-3 font-semibold text-gray-700 transition-all duration-300 transform border shadow-sm rounded-xl backdrop-blur-sm group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
+              className="flex gap-2 items-center px-6 py-3 font-semibold text-gray-700 rounded-xl border shadow-sm backdrop-blur-sm transition-all duration-300 transform group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
             >
               <ChevronLeft className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" />
               Previous
             </button>
 
-            <div className="flex items-center gap-2 px-4 py-3 border bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border-purple-200/50">
+            <div className="flex gap-2 items-center px-4 py-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-xl border border-purple-200/50">
               <span className="text-sm font-medium text-gray-600">Page</span>
               <span className="px-3 py-1 font-bold text-purple-600 bg-white rounded-lg shadow-sm">{page}</span>
             </div>
@@ -237,7 +276,7 @@ const Bookmarks = () => {
             <button
               onClick={() => fetchNotes(page + 1, category)}
               disabled={!next || loading}
-              className="flex items-center gap-2 px-6 py-3 font-semibold text-gray-700 transition-all duration-300 transform border shadow-sm rounded-xl backdrop-blur-sm group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
+              className="flex gap-2 items-center px-6 py-3 font-semibold text-gray-700 rounded-xl border shadow-sm backdrop-blur-sm transition-all duration-300 transform group bg-white/80 border-purple-200/50 hover:shadow-lg hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-sm"
             >
               Next
               <ChevronRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1" />
@@ -256,6 +295,21 @@ const Bookmarks = () => {
               opacity: 1;
               transform: translateY(0);
             }
+          }
+          
+          @keyframes fadeOutDown {
+            from {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+            to {
+              opacity: 0;
+              transform: translateY(20px) scale(0.95);
+            }
+          }
+          
+          .note-card-removing {
+            animation: fadeOutDown 0.5s ease-in-out forwards;
           }
         `}</style>
       </div>

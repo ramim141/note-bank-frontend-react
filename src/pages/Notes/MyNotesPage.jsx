@@ -8,7 +8,7 @@ import ProtectedRoute from "../../routes/ProtectedRoute" // Import ProtectedRout
 import NoteCard from "../../components/notes/NoteCard" // Fixed import path
 import { noteService } from "../../api/apiService/noteService" // Fixed import path
 import { toast } from "react-toastify"
-import { Search, Upload, FileText, Clock, CheckCircle, Plus, MoreHorizontal } from "lucide-react"
+import { Search, Upload, FileText, Clock, CheckCircle, Plus, MoreHorizontal, Trash2, Edit } from "lucide-react"
 
 const MyNotesPage = () => {
   const { token, logout } = useAuth() // Get token and logout function
@@ -95,6 +95,24 @@ const MyNotesPage = () => {
           : note
       )
     )
+  }
+
+  const removeNoteFromList = (noteId) => {
+    setNotes(prevNotes => prevNotes.filter(n => n.id !== noteId))
+  }
+
+  const handleDelete = async (noteId) => {
+    if (!token) return
+    const confirmed = window.confirm("Are you sure you want to delete this note? This action cannot be undone.")
+    if (!confirmed) return
+    try {
+      await noteService.deleteNote(noteId, token)
+      removeNoteFromList(noteId)
+      toast.success("Note deleted.")
+    } catch (e) {
+      console.error(e)
+      toast.error(e?.detail || e?.message || "Failed to delete note.")
+    }
   }
 
   const LoadingSpinner = () => (
@@ -225,11 +243,29 @@ const MyNotesPage = () => {
                       animation: "fadeInUp 0.6s ease-out forwards",
                     }}
                   >
-                    <NoteCard 
-                      note={note} 
-                      onNoteUpdate={updateNoteInList}
-                      onClick={() => console.log("Note clicked:", note.id)} 
-                    />
+                    <div className="relative">
+                      <div className="absolute top-2 right-2 z-10 flex gap-2">
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); navigate(`/notes/${note.id}/edit`) }}
+                          className="p-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 hover:bg-blue-100"
+                          title="Edit"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleDelete(note.id) }}
+                          className="p-2 rounded-xl bg-red-50 border border-red-200 text-red-700 hover:bg-red-100"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <NoteCard 
+                        note={note} 
+                        onNoteUpdate={updateNoteInList}
+                        onClick={() => console.log("Note clicked:", note.id)} 
+                      />
+                    </div>
                   </div>
                 ))}
               </div>
